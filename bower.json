@@ -1,0 +1,21 @@
+{
+  "name": "hex-form",
+  "private": false,
+   "main": [
+    "dist/hex-form.min.js",
+    "dist/hex-form.min.css"
+  ],
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+	"jquery": ">=1.10",
+	"bootstrap-daterangepicker": "~2.1.17",
+    "select2": "~4.0.1",
+    "select2-bootstrap-theme": "~0.1.0-beta.4",
+    "jquery.inputmask": "~3.2.5"
+  }  
+}
