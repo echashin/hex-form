@@ -252,7 +252,43 @@ this.hexForm = (function () {
   function HexFormSingle(f) {
     var self = this;
     self.controls = [];
+
     var form = f;
+
+    var handlers = {};
+
+    function Event(type) {
+      this.type = type;
+      this.stoped = false;
+      this.stop = function () {
+        this.stoped = true;
+      };
+    }
+
+    self.on = function (eventName, fn) {
+      if (handlers[eventName] === undefined) {
+        handlers[eventName] = [];
+      }
+      handlers[eventName].push(fn);
+    };
+
+    self.off = function (eventName, fn) {
+      if (handlers[eventName] !== undefined) {
+        handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
+      }
+    };
+
+    self.fire = function (eventName, params) {
+      var evnt = new Event(eventName);
+      if (handlers[eventName] !== undefined) {
+        for (var fnIndex in handlers[eventName]) {
+          var func = handlers[eventName][fnIndex];
+          func(params, evnt);
+        }
+      }
+      return !evnt.stoped;
+    };
+
     var findControls = function () {
       $.each(form.find('input[type!="submit"],select,textarea'), function (i, field) {
         var input = $(field);
@@ -347,6 +383,7 @@ this.hexForm = (function () {
 
     var submit = function (event) {
       event.preventDefault();
+
       var valid = true;
       for (var i in self.controls) {
         if (self.controls.hasOwnProperty(i)) {
@@ -356,50 +393,52 @@ this.hexForm = (function () {
         }
       }
       if (valid === true) {
-        var data = getValues();
-        var url = form.attr('action');
 
         clearErrors();
-
-        /*Отправка на разные URL аттрибут data-action*/
-        var submitBtn = form.find('button[type=submit]:focus');
-        if (submitBtn.size() > 0) {
-          if (submitBtn.attr('data-action') !== undefined) {
-            url = submitBtn.attr('data-action');
-          }
-        }
-        $.ajax({
-          url: url,
-          data: data,
-          type: 'POST',
-          dataType: 'json',
-          success: function (res) {
-            if (res.success === true) {
-              clearErrors();
-              if (res.reload !== undefined) {
-                if (res.reload === true) {
-                  window.location.href = window.location.href;
-                } else {
-                  window.location.href = res.reload;
-                }
-              }
-              if (res.alerts !== undefined) {
-                for (var m in res.alerts) {
-                  form.find('.messages').append($('<div>').html(res.alerts[m]));
-                }
-              }
-            } else {
-              if (res.alerts !== undefined) {
-                for (var a in res.alerts) {
-                  form.find('.alerts').append($('<div>').html(res.alerts[a]));
-                }
-              }
+        var data = getValues();
+        var dontBreakBefore = self.fire('beforeSubmit', {values: data});
+        if (dontBreakBefore) {
+          var url = form.attr('action');
+          /*Отправка на разные URL аттрибут data-action*/
+          var submitBtn = form.find('button[type=submit]:focus');
+          if (submitBtn.size() > 0) {
+            if (submitBtn.attr('data-action') !== undefined) {
+              url = submitBtn.attr('data-action');
             }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
           }
-        });
+          $.ajax({
+            url: url,
+            data: data,
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+              if (res.success === true) {
+                clearErrors();
+                if (res.reload !== undefined) {
+                  if (res.reload === true) {
+                    window.location.href = window.location.href;
+                  } else {
+                    window.location.href = res.reload;
+                  }
+                }
+                if (res.alerts !== undefined) {
+                  for (var m in res.alerts) {
+                    form.find('.messages').append($('<div>').html(res.alerts[m]));
+                  }
+                }
+              } else {
+                if (res.alerts !== undefined) {
+                  for (var a in res.alerts) {
+                    form.find('.alerts').append($('<div>').html(res.alerts[a]));
+                  }
+                }
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(textStatus, errorThrown);
+            }
+          });
+        }
       }
       return false;
     };
@@ -410,6 +449,7 @@ this.hexForm = (function () {
     self.getValues = function () {
       return getValues();
     };
+
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.bind('submit', submit);

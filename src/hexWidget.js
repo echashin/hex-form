@@ -149,6 +149,22 @@ this.HexWidget = (function () {
 
     init(config);
   }
+  function Select2(config) {
+    var input;
+
+    function init(conf) {
+      if (conf.input !== undefined) {
+        input = conf.input;
+        var defaultSettings = {
+          theme: 'bootstrap'
+        };
+        $.extend(defaultSettings, conf);
+        input.select2(defaultSettings);
+      }
+    }
+
+    init(config);
+  }
 
   function Phone(config) {
     var input;
@@ -181,6 +197,10 @@ this.HexWidget = (function () {
         case 'phone':
         {
           return new Phone(conf);
+        }
+        case 'select2':
+        {
+          return new Select2(conf);
         }
         default :
         {
