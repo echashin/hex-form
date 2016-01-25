@@ -88,10 +88,10 @@ this.hexForm = (function () {
       }
     };
 
-    self.trigger = function(event){
-        for(var i = 0; i < inputs.length; i++){
-            inputs[i].trigger(event);
-        }
+    self.trigger = function (event) {
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].trigger(event);
+      }
     };
 
     var getAttributes = function (input) {
@@ -289,9 +289,6 @@ this.hexForm = (function () {
                 }
 
 
-
-
-
                 if (input.attr('data-hex-false-value') !== undefined) {
                   control.falseValue = input.attr('data-hex-false-value');
                 }
@@ -333,7 +330,7 @@ this.hexForm = (function () {
     };
 
     var reset = function () {
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         for (var i in self.controls) {
           if (self.controls.hasOwnProperty(i)) {
             self.controls[i].trigger('change');
@@ -341,9 +338,10 @@ this.hexForm = (function () {
         }
       }, 1);
     };
-    var clearErrors = function(){
+    var clearErrors = function () {
       form.find('.has-error').removeClass('has-error');
       form.find('.alerts div').remove();
+      form.find('.messages div').remove();
       form.find('.errors .active').removeClass('active');
     };
 
@@ -376,20 +374,27 @@ this.hexForm = (function () {
           type: 'POST',
           dataType: 'json',
           success: function (res) {
-              if(res.success === true){
-                clearErrors();
-                if(res.reload !== undefined){
-                  if(res.reload === true){
-                    window.location.href = window.location.href;
-                  }else{
-                    window.location.href = res.reload;
-                  }
-                }
-              }else{
-                for(var a in res.alerts){
-                    form.find('.alerts').append($('<div>').html(res.alerts[a]));
+            if (res.success === true) {
+              clearErrors();
+              if (res.reload !== undefined) {
+                if (res.reload === true) {
+                  window.location.href = window.location.href;
+                } else {
+                  window.location.href = res.reload;
                 }
               }
+              if (res.alerts !== undefined) {
+                for (var m in res.alerts) {
+                  form.find('.messages').append($('<div>').html(res.alerts[m]));
+                }
+              }
+            } else {
+              if (res.alerts !== undefined) {
+                for (var a in res.alerts) {
+                  form.find('.alerts').append($('<div>').html(res.alerts[a]));
+                }
+              }
+            }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown);
@@ -428,7 +433,7 @@ this.hexForm = (function () {
         }
         hexForms[formId] = new HexFormSingle($(this));
       });
-    }else{
+    } else {
       return hexForms[id];
     }
     return hexForms;
