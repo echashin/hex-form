@@ -88,6 +88,11 @@ this.hexForm = (function () {
       }
     };
 
+    self.trigger = function(event){
+        for(var i = 0; i < inputs.length; i++){
+            inputs[i].trigger(event);
+        }
+    };
 
     var getAttributes = function (input) {
       var map = {};
@@ -244,9 +249,10 @@ this.hexForm = (function () {
     init(config);
   }
 
-  function HexFormSingle(form) {
+  function HexFormSingle(f) {
     var self = this;
     self.controls = [];
+    var form = f;
     var findControls = function () {
       $.each(form.find('input[type!="submit"],select,textarea'), function (i, field) {
         var input = $(field);
@@ -275,11 +281,15 @@ this.hexForm = (function () {
               case 'checkbox':
               {
                 var control = new Control({type: 'checkbox', inputs: [input], form: self, name: input.attr('name')});
-                if (input.attr('data-hex-true-value') !== undefined) {
-                  control.trueValue = input.attr('data-hex-true-value');
-                } else {
+                if (input.attr('value') !== undefined) {
                   control.trueValue = input.attr('value');
                 }
+                if (input.attr('data-hex-true-value') !== undefined) {
+                  control.trueValue = input.attr('data-hex-true-value');
+                }
+
+
+
 
 
                 if (input.attr('data-hex-false-value') !== undefined) {
@@ -322,7 +332,21 @@ this.hexForm = (function () {
       return values;
     };
 
-    //public Отправка формы
+    var reset = function () {
+      window.setTimeout(function() {
+        for (var i in self.controls) {
+          if (self.controls.hasOwnProperty(i)) {
+            self.controls[i].trigger('change');
+          }
+        }
+      }, 1);
+    };
+    var clearErrors = function(){
+      form.find('.has-error').removeClass('has-error');
+      form.find('.alerts div').remove();
+      form.find('.errors .active').removeClass('active');
+    };
+
     var submit = function (event) {
       event.preventDefault();
       var valid = true;
@@ -337,8 +361,7 @@ this.hexForm = (function () {
         var data = getValues();
         var url = form.attr('action');
 
-        form.find('.has-error').removeClass('has-error');
-        form.find('.alert').remove();
+        clearErrors();
 
         /*Отправка на разные URL аттрибут data-action*/
         var submitBtn = form.find('button[type=submit]:focus');
@@ -352,8 +375,21 @@ this.hexForm = (function () {
           data: data,
           type: 'POST',
           dataType: 'json',
-          complete: function () {
-
+          success: function (res) {
+              if(res.success === true){
+                clearErrors();
+                if(res.reload !== undefined){
+                  if(res.reload === true){
+                    window.location.href = window.location.href;
+                  }else{
+                    window.location.href = res.reload;
+                  }
+                }
+              }else{
+                for(var a in res.alerts){
+                    form.find('.alerts').append($('<div>').html(res.alerts[a]));
+                }
+              }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown);
@@ -372,6 +408,7 @@ this.hexForm = (function () {
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.bind('submit', submit);
+      form.bind('reset', reset);
       findControls();
     };
 
@@ -382,19 +419,21 @@ this.hexForm = (function () {
   var hexForms = {};
 
   function hexFormInit(id) {
-    var forms = $('form.hex-form');
-    forms.each(function () {
-      var formId = $(this).attr('id');
-      if (formId === undefined) {
-        throw new Error('Form dont have id attr');
-      }
-      hexForms[formId] = new HexFormSingle($(this));
-    });
-    if (id !== undefined) {
+    if (id === undefined) {
+      var forms = $('form.hex-form');
+      forms.each(function () {
+        var formId = $(this).attr('id');
+        if (formId === undefined) {
+          throw new Error('Form dont have id attr');
+        }
+        hexForms[formId] = new HexFormSingle($(this));
+      });
+    }else{
       return hexForms[id];
     }
     return hexForms;
   }
+
 
   return hexFormInit;
 })();
