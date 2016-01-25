@@ -474,6 +474,9 @@ this.hexForm = (function () {
         hexForms[formId] = new HexFormSingle($(this));
       });
     } else {
+      if (hexForms[id] === undefined) {
+        hexForms[id] = new HexFormSingle($('#' + id));
+      }
       return hexForms[id];
     }
     return hexForms;
