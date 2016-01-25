@@ -95,7 +95,9 @@ this.HexValidator = (function () {
     }
 
     self.isValid = function (value) {
-
+      if(value == '' || value === false){
+        return true;
+      }
       return emailPattern.test(value);
     };
     init(config);
