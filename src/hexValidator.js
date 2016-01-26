@@ -65,7 +65,7 @@ this.HexValidator = (function () {
     }
 
     self.isValid = function (value) {
-      if(value === '' || value === undefined){
+      if (value === '' || value === undefined || value === false) {
         return true;
       }
       var mask = input.inputmask('option', 'mask');
@@ -98,7 +98,7 @@ this.HexValidator = (function () {
     }
 
     self.isValid = function (value) {
-      if(value === '' || value === false){
+      if (value === '' || value === undefined || value === false) {
         return true;
       }
       return emailPattern.test(value);
