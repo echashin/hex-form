@@ -257,13 +257,13 @@ this.hexForm = (function () {
 
     var handlers = {};
 
-    function Event(type) {
+    var FormEvent = function (type) {
       this.type = type;
       this.stoped = false;
       this.stop = function () {
         this.stoped = true;
       };
-    }
+    };
 
     self.on = function (eventName, fn) {
       if (handlers[eventName] === undefined) {
@@ -279,14 +279,14 @@ this.hexForm = (function () {
     };
 
     self.fire = function (eventName, params) {
-      var evnt = new Event(eventName);
+      var formEvent = new FormEvent(eventName);
       if (handlers[eventName] !== undefined) {
         for (var fnIndex in handlers[eventName]) {
           var func = handlers[eventName][fnIndex];
-          func(params, evnt);
+          func(params, formEvent);
         }
       }
-      return !evnt.stoped;
+      return !formEvent.stoped;
     };
 
     var findControls = function () {
@@ -364,6 +364,7 @@ this.hexForm = (function () {
       return values;
     };
 
+
     var reset = function (event) {
       var dontBreakReset = self.fire('beforeReset', {values: self.getValues()});
       if (dontBreakReset) {
@@ -382,8 +383,6 @@ this.hexForm = (function () {
     var clearErrors = function () {
       form.find('.has-error').removeClass('has-error');
       form.find('.alerts div').remove();
-      form.find('.messages div').remove();
-      form.find('.errors .active').removeClass('active');
     };
 
     var submit = function (event) {
@@ -397,12 +396,13 @@ this.hexForm = (function () {
           }
         }
       }
-      if (valid === true) {
 
+      if (valid === true) {
         clearErrors();
         var data = getValues();
         var dontBreakBefore = self.fire('beforeSubmit', {values: data});
         if (dontBreakBefore) {
+          self.loaderShow();
           var url = form.attr('action');
           /*Отправка на разные URL аттрибут data-action*/
           var submitBtn = form.find('button[type=submit]:focus');
@@ -411,13 +411,19 @@ this.hexForm = (function () {
               url = submitBtn.attr('data-action');
             }
           }
+          var method = 'POST';
+
+          if (form.attr('method') !== undefined) {
+            method = form.attr('method');
+          }
 
           $.ajax({
             url: url,
             data: data,
-            type: 'POST',
+            type: method,
             dataType: 'json',
             success: function (res) {
+              self.loaderHide();
               if (res.success === true) {
                 clearErrors();
                 if (res.reload !== undefined) {
@@ -427,26 +433,28 @@ this.hexForm = (function () {
                     window.location.href = res.reload;
                   }
                 }
-                if (res.alerts !== undefined) {
-                  for (var m in res.alerts) {
-                    form.find('.messages').append($('<div>').html(res.alerts[m]));
-                  }
-                }
-              } else {
-                if (res.alerts !== undefined) {
-                  for (var a in res.alerts) {
-                    form.find('.alerts').append($('<div>').html(res.alerts[a]));
-                  }
+              }
+              if (res.alerts !== undefined) {
+                for (var m in res.alerts) {
+                  var message = res.alerts[m];
+                  form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
                 }
               }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-              console.log(textStatus, errorThrown);
+              self.loaderHide();
             }
           });
         }
       }
       return false;
+    };
+
+    self.loaderShow = function () {
+      form.find('.loader').show();
+    };
+    self.loaderHide = function () {
+      form.find('.loader').hide();
     };
 
     self.submit = function () {
@@ -460,6 +468,9 @@ this.hexForm = (function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.bind('submit', submit);
       form.bind('reset', reset);
+      if (form.find('.loader').size() === 0) {
+        form.append('<div class="loader"></div>');
+      }
       findControls();
     };
 
