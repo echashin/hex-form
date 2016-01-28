@@ -149,6 +149,7 @@ this.HexWidget = (function () {
 
     init(config);
   }
+
   function Select2(config) {
     var input;
 
@@ -160,6 +161,43 @@ this.HexWidget = (function () {
         };
         $.extend(defaultSettings, conf);
         input.select2(defaultSettings);
+      }
+    }
+
+    init(config);
+  }
+
+  function FileUpload(config) {
+    var input;
+
+    function init(conf) {
+      if (conf.input !== undefined) {
+        input = conf.input;
+        var defaultSettings = {};
+        $.extend(defaultSettings, conf);
+
+        input.fileupload({
+          url: defaultSettings.url,
+          dataType: 'json',
+          formData: function () {
+            return {};
+          },
+          paramName: 'files[]',
+          done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+              $('<p/>').text(file.name).appendTo('#files');
+            });
+          },
+          progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+              'width',
+              progress + '%'
+            );
+          }
+        }).prop('disabled', !$.support.fileInput)
+          .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
       }
     }
 
@@ -201,6 +239,10 @@ this.HexWidget = (function () {
         case 'select2':
         {
           return new Select2(conf);
+        }
+        case 'fileupload':
+        {
+          return new FileUpload(conf);
         }
         default :
         {

@@ -344,7 +344,6 @@ this.hexForm = (function () {
                 } else {
                   self.controls[input.attr('name')].addInput(input);
                 }
-
                 break;
               }
             }
@@ -365,14 +364,20 @@ this.hexForm = (function () {
       return values;
     };
 
-    var reset = function () {
-      window.setTimeout(function () {
-        for (var i in self.controls) {
-          if (self.controls.hasOwnProperty(i)) {
-            self.controls[i].trigger('change');
+    var reset = function (event) {
+      var dontBreakReset = self.fire('beforeReset', {values: self.getValues()});
+      if (dontBreakReset) {
+        window.setTimeout(function () {
+          for (var i in self.controls) {
+            if (self.controls.hasOwnProperty(i)) {
+              self.controls[i].trigger('change');
+            }
           }
-        }
-      }, 1);
+        }, 1);
+      } else {
+        event.preventDefault();
+      }
+      self.fire('afterReset', {});
     };
     var clearErrors = function () {
       form.find('.has-error').removeClass('has-error');
@@ -406,6 +411,7 @@ this.hexForm = (function () {
               url = submitBtn.attr('data-action');
             }
           }
+
           $.ajax({
             url: url,
             data: data,
