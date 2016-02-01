@@ -18,8 +18,6 @@
     "bootstrap-daterangepicker": "~2.1.17",
     "select2": "~4.0.1",
     "select2-bootstrap-theme": "~0.1.0-beta.4",
-    "jquery.inputmask": "~3.2.5",
-    "bootstrap-sweetalert": "~0.4.5",
-    "blueimp-file-upload": "~9.11.2"
+    "jquery.inputmask": "~3.2.5"
   }
 }
