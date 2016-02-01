@@ -270,6 +270,7 @@ this.HexWidget = (function () {
 
 
         var uploader = input.fileupload(defaultSettings);
+
         uploader.bind('fileuploaddone', function (e, data) {
           var fIndex = 0;
           $.each(data.files, function (index, file) {
@@ -279,6 +280,9 @@ this.HexWidget = (function () {
             tempValue[fIndex] = file;
           });
           change();
+        });
+        uploader.bind('fileuploadprocessfail', function () {
+          swal('Ошибка!', 'Не удалось загрузить файл', 'error');
         });
         uploader.bind('fileuploadprocessalways', function (e, data) {
           var currentFile = data.files[data.index];
@@ -292,6 +296,7 @@ this.HexWidget = (function () {
             });
           }
         });
+
         uploader.bind('fileuploadadd', function () {
           if (limit !== undefined && limit < tempValue.length) {
             disable();
