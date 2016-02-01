@@ -128,6 +128,7 @@ this.hexForm = (function () {
       }
       validators.push(validator);
     };
+
     var addWidget = function (wType, conf, input) {
       var widgetConfig = {
         'input': input,
@@ -195,7 +196,7 @@ this.hexForm = (function () {
               }
 
             }
-          } else if (widgets.fileupload !== undefined) {
+          } else if (widgets.fileupload !== undefined || widgets.filesimple !== undefined) {
             return controlValue;
           } else {
             return inputs[0].val();
@@ -409,6 +410,7 @@ this.hexForm = (function () {
 
     var submit = function (event) {
       event.preventDefault();
+      event.stopPropagation();
 
       var valid = true;
       for (var i in self.controls) {
@@ -438,12 +440,19 @@ this.hexForm = (function () {
           if (form.attr('method') !== undefined) {
             method = form.attr('method');
           }
+          var formData = new FormData();
+
+          $.each(data, function (k, v) {
+            formData.append(k, v);
+          });
 
           $.ajax({
             url: url,
-            data: data,
+            data: formData,
             type: method,
             dataType: 'json',
+            processData: false,
+            contentType: false,
             success: function (res) {
               self.loaderHide();
               if (res.success === true) {
