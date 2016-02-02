@@ -183,9 +183,18 @@ this.HexWidget = (function () {
     }
 
     init(config);
-
-
   }
+
+  function Mask(config) {
+    var input;
+
+    function init(conf) {
+      input = conf.input;
+      input.inputmask(conf.mask);
+    }
+    init(config);
+  }
+
 
   /*
    function FileUpload(config) {
@@ -366,6 +375,10 @@ this.HexWidget = (function () {
         case 'select2':
         {
           return new Select2(conf);
+        }
+        case 'mask':
+        {
+          return new Mask(conf);
         }
         /*
          case 'fileupload':

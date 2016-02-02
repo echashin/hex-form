@@ -507,6 +507,15 @@ this.hexForm = (function () {
       });
     }
 
+    function multyCheck(multy) {
+      var items = multy.find('[data-hex-multy-item]');
+      if (items.size() <= 1) {
+        multy.find('[data-hex-multy-remove]').attr('disabled', 'disabled');
+      } else {
+        multy.find('[data-hex-multy-remove]').removeAttr('disabled');
+      }
+    }
+
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.bind('submit', submit);
@@ -515,6 +524,12 @@ this.hexForm = (function () {
         form.append('<div class="loader"></div>');
       }
       addControls(form);
+
+      if (form.find('div[data-hex-multy]').size() > 0) {
+        form.find('div[data-hex-multy]').each(function () {
+          multyCheck($(this));
+        });
+      }
 
       form.find('div[data-hex-multy]').on('click', 'button[data-hex-multy-add]', function () {
         var multy = $(this).closest('div[data-hex-multy]');
@@ -526,12 +541,15 @@ this.hexForm = (function () {
         updateItemIndex(clonedFieldset, newIndex);
         addControls(clonedFieldset);
         clonedFieldset.insertAfter(lastFieldSet);
+        multyCheck(multy);
       });
 
       form.find('div[data-hex-multy]').on('click', 'button[data-hex-multy-remove]', function () {
+        var multy = $(this).closest('div[data-hex-multy]');
         var item = $(this).closest('[data-hex-multy-item]');
+
         var removedIndex = parseInt(item.attr('data-hex-multy-item'));
-        var items = $(this).closest('[data-hex-multy]').find('[data-hex-multy-item]');
+        var items = multy.find('[data-hex-multy-item]');
         removeControls(item);
         item.remove();
         items.each(function (index, value) {
@@ -539,6 +557,7 @@ this.hexForm = (function () {
             updateItemIndex($(this), --index);
           }
         });
+        multyCheck(multy);
       });
 
 

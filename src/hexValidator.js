@@ -27,7 +27,6 @@ this.HexValidator = (function () {
 
     self.isValid = function (value) {
       if (value === false || value === undefined || value === '' || ($.isArray(value) && value.length === 0)) {
-        console.log(value);
         return false;
       } else {
         return true;
