@@ -539,6 +539,26 @@ this.hexForm = (function () {
         var newIndex = items.size();
         var clonedFieldset = lastFieldSet.clone(false);
         clonedFieldset.find('[data-hex-multy-hide]').remove();
+
+        clonedFieldset.find('[data-hex-multy-attr]').each(function () {
+          var element = $(this);
+          var attrConf = element.data('hex-multy-attr');
+
+          if (attrConf.add !== undefined) {
+            $.each(attrConf.add, function (i, attr) {
+              for (var aName in attr) {
+                element.attr(aName, attr[aName]);
+              }
+            });
+          }
+          if (attrConf.remove !== undefined) {
+            for (var a in attrConf.remove) {
+              element.removeAttr(attrConf.remove[a]);
+            }
+          }
+          console.log(element);
+        });
+
         updateItemIndex(clonedFieldset, newIndex);
 
         addControls(clonedFieldset);

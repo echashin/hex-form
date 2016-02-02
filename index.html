@@ -221,7 +221,12 @@
                       <div class="col-xs-4">
                         <div class="form-group">
                           <label class="control-label required">Название</label>
-                          <input required type="text" class="form-control" name="items[0][label]" value="">
+                          <input data-hex-multy-attr='{"add":[{"data-hex-validator-required":""}],"remove":["data-test"]}'
+                                 type="text"
+                                 data-test="asd"
+                                 class="form-control"
+                                 name="items[0][label]"
+                                 value="">
                             <div data-hex-multy-hide>***</div>
                           <div class="errors">
                             <span class="error-required label label-danger">Введите название</span>
@@ -263,7 +268,7 @@
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 <div class="form-group">
-                  <input data-hex-widget-filesimple required id="file" type="file" name="image">
+                  <input data-hex-widget-filesimple id="file" type="file" name="image">
 
                   <div class="errors">
                     <span class="error-required label label-danger">Загрузите изображения</span>
@@ -306,12 +311,15 @@
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="age">Возраст</label>
-                  <select data-hex-widget-select2 style="width: 100%" id="age" name="age" class="form-control"
+                  <select required data-hex-widget-select2 style="width: 100%" id="age" name="age" class="form-control"
                           multiple="multiple">
-                    <option value="5-10" selected="selected">5-10</option>
+                    <option value="5-10">5-10</option>
                     <option value="10-20">10-20</option>
                     <option value="20-30">20-30</option>
                   </select>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Внесите возраст</span>
+                  </div>
                 </div>
               </div>
             </div>
