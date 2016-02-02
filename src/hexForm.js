@@ -538,8 +538,11 @@ this.hexForm = (function () {
         var items = $(this).closest('[data-hex-multy]').find('[data-hex-multy-item]');
         var newIndex = items.size();
         var clonedFieldset = lastFieldSet.clone(false);
+        clonedFieldset.find('[data-hex-multy-hide]').remove();
         updateItemIndex(clonedFieldset, newIndex);
+
         addControls(clonedFieldset);
+
         clonedFieldset.insertAfter(lastFieldSet);
         multyCheck(multy);
       });
