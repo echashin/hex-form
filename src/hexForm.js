@@ -381,7 +381,11 @@ this.hexForm = (function () {
       for (var i in self.controls) {
         if (self.controls.hasOwnProperty(i)) {
           var name = self.controls[i].name;
-          values[name] = self.controls[i].getValue();
+          var value = self.controls[i].getValue();
+          if (value === undefined) {
+            value = '';
+          }
+          values[name] = value;
         }
       }
       return values;
@@ -556,7 +560,6 @@ this.hexForm = (function () {
               element.removeAttr(attrConf.remove[a]);
             }
           }
-          console.log(element);
         });
 
         updateItemIndex(clonedFieldset, newIndex);

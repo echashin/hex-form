@@ -29,7 +29,6 @@ this.HexValidator = (function () {
       if (value === null || value === false || value === undefined || value === '' || ($.isArray(value) && value.length === 0)) {
         return false;
       } else {
-        console.log(value);
         return true;
       }
     };
