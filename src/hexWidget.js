@@ -153,15 +153,50 @@ this.HexWidget = (function () {
 
   function Select2(config) {
     var input;
+    var mode = 'local';
 
     function init(conf) {
       if (conf.input !== undefined) {
         input = conf.input;
+
+        if (conf.url !== undefined) {
+          mode = 'ajax';
+          var selected = input.find('option[selected]');
+          conf.ajax = {
+            url: conf.url,
+            method: 'POST',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              return {
+                search: params.term, // search term
+                page: params.page
+              };
+            },
+            processResults: function (data, params) {
+              params.page = params.page || 1;
+              return {
+                results: data.rows,
+                pagination: {
+                  more: (params.page * data.limit) < data.total
+                }
+              };
+            },
+            cache: false
+          };
+          delete conf.url;
+        }
         var defaultSettings = {
           theme: 'bootstrap'
         };
         $.extend(defaultSettings, conf);
         input.select2(defaultSettings);
+        if (mode === 'ajax') {
+          selected.each(function () {
+            input.append($(this));
+          });
+          input.trigger('change');
+        }
       }
     }
 
@@ -192,6 +227,7 @@ this.HexWidget = (function () {
       input = conf.input;
       input.inputmask(conf.mask);
     }
+
     init(config);
   }
 

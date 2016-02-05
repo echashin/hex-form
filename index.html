@@ -226,7 +226,7 @@
                                  data-test="asd"
                                  class="form-control"
                                  name="items[0][label]"
-                                 value="">
+                                 value="sss">
                             <div data-hex-multy-hide>***</div>
                           <div class="errors">
                             <span class="error-required label label-danger">Введите название</span>
@@ -242,7 +242,7 @@
                       <div class="col-xs-4">
                         <div class="form-group">
                           <label class="control-label">Вес</label>
-                          <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control" name="items[0][weight]" value="">
+                          <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control" name="items[0][weight]" value="12">
                         </div>
                       </div>
                     </div>
@@ -310,15 +310,38 @@
                   <textarea class="form-control" id="comment" name="comment"></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="control-label" for="age">Возраст</label>
-                  <select required data-hex-widget-select2 style="width: 100%" id="age" name="age" class="form-control"
-                          multiple="multiple">
-                    <option value="5-10">5-10</option>
-                    <option value="10-20">10-20</option>
-                    <option value="20-30">20-30</option>
+                  <label class="control-label" for="user_ajax">Пользователи AJAX</label>
+                  <select required  data-hex-widget-select2='{"url":"http://bimlibfrontend.lc/backend/data/select2.php"}' style="width: 100%" id="user_ajax" name="user_ajax" class="form-control" multiple="multiple">
+                    <option value="193" selected="selected">Sykes Collins</option>
                   </select>
                   <div class="errors">
-                    <span class="error-required label label-danger">Внесите возраст</span>
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_simple">Пользователи</label>
+                  <select required  data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple" class="form-control" multiple="multiple">
+                    <option value="190">Buckley Riddle</option>
+                    <option value="191">Suarez Tran</option>
+                    <option value="192">Morales Preston</option>
+                    <option value="193">Sykes Collins</option>
+                    <option value="194">Luella Beck</option>
+                  </select>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_simple2">Пользователи 2</label>
+                  <select style="width: 100%" id="user_simple2" name="user_simple2" class="form-control" multiple="multiple">
+                    <option value="190">Buckley Riddle</option>
+                    <option value="191">Suarez Tran</option>
+                    <option value="192">Morales Preston</option>
+                    <option value="193">Sykes Collins</option>
+                    <option value="194">Luella Beck</option>
+                  </select>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
                   </div>
                 </div>
               </div>
