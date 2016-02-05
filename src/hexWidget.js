@@ -156,6 +156,9 @@ this.HexWidget = (function () {
     var mode = 'local';
 
     function init(conf) {
+      var defaultSettings = {
+        theme: 'bootstrap'
+      };
       if (conf.input !== undefined) {
         input = conf.input;
 
@@ -186,11 +189,12 @@ this.HexWidget = (function () {
           };
           delete conf.url;
         }
-        var defaultSettings = {
-          theme: 'bootstrap'
-        };
+
+
         $.extend(defaultSettings, conf);
+        //enable select2 plugin
         input.select2(defaultSettings);
+
         if (mode === 'ajax') {
           selected.each(function () {
             input.append($(this));
