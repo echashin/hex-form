@@ -164,16 +164,20 @@ this.HexWidget = (function () {
     var mode = 'local';
 
     function init(conf) {
-      var defaultSettings = {
-        theme: 'bootstrap',
-        allowClear: true
-      };
+
       if (conf.control !== undefined) {
         control = conf.control;
       }
 
       if (conf.input !== undefined) {
         input = conf.input;
+        var placeholder = conf.placeholder || '';
+        var defaultSettings = {
+          theme: 'bootstrap',
+          allowClear: true,
+          placeholder: placeholder
+        };
+
         if (conf.url !== undefined) {
           mode = 'ajax';
           var selected = input.find('option[selected]');
