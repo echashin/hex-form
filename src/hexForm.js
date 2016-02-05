@@ -222,6 +222,11 @@ this.hexForm = (function () {
             return self.falseValue;
           }
         }
+        case 'select':
+        {
+          var tmpVal = inputs[0].val();
+          return tmpVal;
+        }
       }
     };
 
@@ -447,9 +452,16 @@ this.hexForm = (function () {
           var formData = new FormData();
 
           $.each(data, function (k, v) {
-            formData.append(k, v);
+            if ($.isArray(v) || $.isPlainObject(v)) {
+              for (var j in v) {
+                formData.append(k, v[j]);
+              }
+            } else {
+              formData.append(k, v);
+            }
           });
-
+          console.log(data);
+          console.log(formData);
           $.ajax({
             url: url,
             data: formData,
