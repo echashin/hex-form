@@ -165,7 +165,8 @@ this.HexWidget = (function () {
 
     function init(conf) {
       var defaultSettings = {
-        theme: 'bootstrap'
+        theme: 'bootstrap',
+        allowClear: true
       };
       if (conf.control !== undefined) {
         control = conf.control;
