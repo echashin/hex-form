@@ -2,6 +2,14 @@
 'use strict';
 this.HexWidget = (function () {
 
+  function isEmpty(v) {
+    if (v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function PasswordShow(config) {
     var button, input;
     var currentType = 'password';
@@ -152,16 +160,19 @@ this.HexWidget = (function () {
   }
 
   function Select2(config) {
-    var input;
+    var input, control;
     var mode = 'local';
 
     function init(conf) {
       var defaultSettings = {
         theme: 'bootstrap'
       };
+      if (conf.control !== undefined) {
+        control = conf.control;
+      }
+
       if (conf.input !== undefined) {
         input = conf.input;
-
         if (conf.url !== undefined) {
           mode = 'ajax';
           var selected = input.find('option[selected]');
@@ -188,19 +199,51 @@ this.HexWidget = (function () {
             cache: false
           };
           delete conf.url;
-        }
 
+          if (conf.parent !== undefined) {
+            var pId = conf.parent.selector;
+            var paramName = conf.parent.param || 'parent_id';
+            if (isEmpty($(pId).val())) {
+              control.disable();
+              input.val('').trigger('change');
+            }
+
+            $(pId).on('change', function () {
+              if (isEmpty($(this).val())) {
+                control.disable();
+                input.val('').trigger('change');
+              } else {
+                control.enable();
+              }
+            });
+            delete conf.parent;
+
+            var parentId = function () {
+              return $(pId).val();
+            };
+
+            conf.ajax.data = function (params) {
+              var requestParams = {
+                search: params.term, // search term
+                page: params.page
+              };
+              requestParams[paramName] = parentId;
+              return requestParams;
+            };
+          }
+        }
 
         $.extend(defaultSettings, conf);
         //enable select2 plugin
         input.select2(defaultSettings);
-
         if (mode === 'ajax') {
           selected.each(function () {
             input.append($(this));
           });
           input.trigger('change');
         }
+
+
       }
     }
 

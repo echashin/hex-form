@@ -3,7 +3,7 @@
 this.HexValidator = (function () {
   function Required(config) {
     var self = this;
-    var events = ['blur'];
+    var events = ['blur', 'change'];
     self.weight = 0;
     var className = 'required';
 

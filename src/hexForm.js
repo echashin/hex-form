@@ -16,10 +16,24 @@ this.hexForm = (function () {
     var widgets = {};
     var events = {};
     var controlValue;
+    var disabled = false;
 
     self.setValid = function () {
       formGroup.removeClass('has-error');
       errors.find('span').removeClass('active');
+    };
+
+    self.enable = function () {
+      for (var inp in inputs) {
+        inputs[inp].prop('disabled', false);
+      }
+      disabled = false;
+    };
+    self.disable = function () {
+      for (var inp in inputs) {
+        inputs[inp].prop('disabled', true);
+      }
+      disabled = true;
     };
 
     var byProperty = function (prop) {
@@ -221,11 +235,6 @@ this.hexForm = (function () {
           } else {
             return self.falseValue;
           }
-        }
-        case 'select':
-        {
-          var tmpVal = inputs[0].val();
-          return tmpVal;
         }
       }
     };
@@ -516,7 +525,7 @@ this.hexForm = (function () {
       item.find('input[type!="submit"],select,textarea').each(function () {
         $(this).val('');
         var name = $(this).attr('name');
-        name = name.replace(/\[\d+\]/g, function (n) {
+        name = name.replace(/\[\d+\]/g, function () {
           return '[' + newIndex + ']';
         });
         $(this).attr('name', name);
