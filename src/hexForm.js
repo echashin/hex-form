@@ -560,60 +560,53 @@ this.hexForm = (function () {
       return getValues();
     };
 
-    function updateItemIndex(item, newIndex) {
-      item.attr('data-hex-multy-item', newIndex);
-      item.find('input[type!="submit"],select,textarea').each(function () {
-        //$(this).val('');
-        var name = $(this).attr('name');
-        name = name.replace(/\[\d+\]/g, function () {
-          return '[' + newIndex + ']';
-        });
-        $(this).attr('name', name);
+
+    function multy(block) {
+      var multyConf = block.data('hex-multy');
+
+      var allowNull = false;
+      if (multyConf.allow_empty !== undefined && multyConf.allow_empty === true) {
+        allowNull = true;
+      }
+      var firstBlock = block.find('[data-hex-multy-item="$"]');
+
+      var baseBlock = firstBlock.clone(false);
+      firstBlock.remove();
+      baseBlock.find('input[type!="submit"],select,textarea').each(function () {
+        $(this).val('');
       });
-    }
 
-    function multyCheck(multy) {
-      var items = multy.find('[data-hex-multy-item]');
-      if (items.size() <= 1) {
-        multy.find('[data-hex-multy-remove]').attr('disabled', 'disabled');
-      } else {
-        multy.find('[data-hex-multy-remove]').removeAttr('disabled');
-      }
-    }
-
-    var init = function () {
-      form.addClass('loader-container').append('<div class="loader"></div>');
-      form.bind('submit', submit);
-      form.bind('reset', reset);
-      if (form.find('.loader').size() === 0) {
-        form.append('<div class="loader"></div>');
-      }
-      addControls(form);
-
-      if (form.find('div[data-hex-multy]').size() > 0) {
-        form.find('div[data-hex-multy]').each(function () {
-          multyCheck($(this));
+      function updateItemIndex(item, newIndex) {
+        item.attr('data-hex-multy-item', newIndex);
+        item.find('input[type!="submit"],select,textarea').each(function () {
+          var name = $(this).attr('name');
+          name = name.replace(/\[\d+\]/g, function () {
+            return '[' + newIndex + ']';
+          });
+          $(this).attr('name', name);
         });
       }
 
-      form.find('div[data-hex-multy]').on('click', 'button[data-hex-multy-add]', function () {
-        var multy = $(this).closest('div[data-hex-multy]');
-        var lastFieldSet = multy.find('[data-hex-multy-item]').last();
-        var index = parseInt(lastFieldSet.attr('data-hex-multy-item'));
+      function multyCheck() {
+        if (allowNull === false) {
+          var items = block.find('[data-hex-multy-item]');
+          if (items.size() <= 1) {
+            block.find('[data-hex-multy-remove]').attr('disabled', 'disabled');
+          } else {
+            block.find('[data-hex-multy-remove]').removeAttr('disabled');
+          }
+        }
+      }
+
+
+      block.on('click', '[data-hex-multy-add]', function () {
         var items = $(this).closest('[data-hex-multy]').find('[data-hex-multy-item]');
         var newIndex = items.size();
-        var clonedFieldset = lastFieldSet.clone(false);
-
-        clonedFieldset.find('input[type!="submit"],select,textarea').each(function () {
-          $(this).val('');
-        });
-
+        var clonedFieldset = baseBlock.clone(false);
         clonedFieldset.find('[data-hex-multy-hide]').remove();
-
         clonedFieldset.find('[data-hex-multy-attr]').each(function () {
           var element = $(this);
           var attrConf = element.data('hex-multy-attr');
-
           if (attrConf.add !== undefined) {
             $.each(attrConf.add, function (i, attr) {
               for (var aName in attr) {
@@ -629,19 +622,15 @@ this.hexForm = (function () {
         });
 
         updateItemIndex(clonedFieldset, newIndex);
-
         addControls(clonedFieldset);
-
-        clonedFieldset.insertAfter(lastFieldSet);
-        multyCheck(multy);
+        clonedFieldset.appendTo(block.find('[data-hex-multy-items]'));
+        multyCheck();
       });
 
-      form.find('div[data-hex-multy]').on('click', 'button[data-hex-multy-remove]', function () {
-        var multy = $(this).closest('div[data-hex-multy]');
+      block.on('click', '[data-hex-multy-remove]', function () {
         var item = $(this).closest('[data-hex-multy-item]');
-
         var removedIndex = parseInt(item.attr('data-hex-multy-item'));
-        var items = multy.find('[data-hex-multy-item]');
+        var items = block.find('[data-hex-multy-item]');
         removeControls(item);
         item.remove();
         items.each(function (index, value) {
@@ -649,8 +638,28 @@ this.hexForm = (function () {
             updateItemIndex($(this), --index);
           }
         });
-        multyCheck(multy);
+        multyCheck();
       });
+
+      multyCheck();
+    }
+
+
+    var init = function () {
+      form.addClass('loader-container').append('<div class="loader"></div>');
+      form.bind('submit', submit);
+      form.bind('reset', reset);
+      if (form.find('.loader').size() === 0) {
+        form.append('<div class="loader"></div>');
+      }
+      addControls(form);
+
+
+      if (form.find('div[data-hex-multy]').size() > 0) {
+        form.find('div[data-hex-multy]').each(function () {
+          multy($(this));
+        });
+      }
 
 
     };
