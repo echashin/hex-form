@@ -563,7 +563,7 @@ this.hexForm = (function () {
     function updateItemIndex(item, newIndex) {
       item.attr('data-hex-multy-item', newIndex);
       item.find('input[type!="submit"],select,textarea').each(function () {
-        $(this).val('');
+        //$(this).val('');
         var name = $(this).attr('name');
         name = name.replace(/\[\d+\]/g, function () {
           return '[' + newIndex + ']';
