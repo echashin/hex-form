@@ -613,6 +613,7 @@ this.hexForm = (function () {
                 element.attr(aName, attr[aName]);
               }
             });
+            
           }
           if (attrConf.remove !== undefined) {
             for (var a in attrConf.remove) {
