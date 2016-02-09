@@ -13,7 +13,7 @@ $(document).ready(function () {
     console.log(data);
   });
   */
-
+  $('#user_ajax').trigger('disable');
 
 
 });

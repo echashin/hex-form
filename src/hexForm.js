@@ -16,7 +16,8 @@ this.hexForm = (function () {
     var widgets = {};
     var events = {};
     var controlValue;
-    var disabled = false;
+    self.disabled = false;
+    self.readonly = false;
 
     self.setValid = function () {
       formGroup.removeClass('has-error');
@@ -27,13 +28,28 @@ this.hexForm = (function () {
       for (var inp in inputs) {
         inputs[inp].prop('disabled', false);
       }
-      disabled = false;
+      self.disabled = false;
     };
+
     self.disable = function () {
       for (var inp in inputs) {
         inputs[inp].prop('disabled', true);
       }
-      disabled = true;
+      self.disabled = true;
+    };
+
+    self.addReadonly = function () {
+      for (var inp in inputs) {
+        inputs[inp].prop('readonly', true);
+      }
+      self.readonly = true;
+    };
+
+    self.removeReadonly = function () {
+      for (var inp in inputs) {
+        inputs[inp].prop('readonly', false);
+      }
+      self.readonly = false;
     };
 
     var byProperty = function (prop) {
@@ -49,15 +65,17 @@ this.hexForm = (function () {
     var validateFunc = function () {
       var errorsCount = 0;
       errors.find('span').removeClass('active');
-      for (var vIndex in validators) {
-        if (validators.hasOwnProperty(vIndex)) {
-          var validator = validators[vIndex];
-          var value = self.getValue();
-          var isValid = validator.isValid(value);
-          if (isValid === false || isValid === 'false') {
-            errorsCount++;
-            errors.find('span.error-' + validator.getClassName()).addClass('active');
-            break;
+      if (!self.disabled) {
+        for (var vIndex in validators) {
+          if (validators.hasOwnProperty(vIndex)) {
+            var validator = validators[vIndex];
+            var value = self.getValue();
+            var isValid = validator.isValid(value);
+            if (isValid === false || isValid === 'false') {
+              errorsCount++;
+              errors.find('span.error-' + validator.getClassName()).addClass('active');
+              break;
+            }
           }
         }
       }
@@ -72,7 +90,6 @@ this.hexForm = (function () {
       }
 
       if (tab !== undefined) {
-
         var controlsValid = true;
         for (var c in form.controls) {
           if (form.controls.hasOwnProperty(c)) {
@@ -156,6 +173,9 @@ this.hexForm = (function () {
     };
 
     self.addInput = function (input) {
+      input.bind('hex-get-control', function () {
+        return self;
+      });
       inputs.push(input);
       //Подключение валидаторов и виджетов
       var attributes = getAttributes(input);
@@ -185,6 +205,19 @@ this.hexForm = (function () {
         }
       }
       validators.sort(byProperty('weight'));
+      if (input.prop('disabled')) {
+        self.disable();
+      }
+      if (input.prop('readonly')) {
+        self.addReadonly();
+      }
+
+      input.bind('disable', function () {
+        self.disable();
+      });
+      input.bind('enable', function () {
+        self.enable();
+      });
     };
 
     self.getValue = function () {
@@ -275,6 +308,8 @@ this.hexForm = (function () {
         }
         self.tabPanelId = tabId;
       }
+
+
       self.setValid();
     };
     initControl(config);
@@ -394,12 +429,15 @@ this.hexForm = (function () {
       var values = {};
       for (var i in self.controls) {
         if (self.controls.hasOwnProperty(i)) {
-          var name = self.controls[i].name;
-          var value = self.controls[i].getValue();
-          if (value === undefined) {
-            value = '';
+          if (self.controls[i].disabled === false) {
+            var name = self.controls[i].name;
+            var value = self.controls[i].getValue();
+            if (value === null || ($.isArray(value) && value.length === 0)) {
+              value = '';
+            } else {
+              values[name] = value;
+            }
           }
-          values[name] = value;
         }
       }
       return values;
@@ -462,15 +500,17 @@ this.hexForm = (function () {
 
           $.each(data, function (k, v) {
             if ($.isArray(v) || $.isPlainObject(v)) {
+
               for (var j in v) {
-                formData.append(k, v[j]);
+                if (v[j] !== null && v[j] !== false && v[j] !== undefined) {
+                  formData.append(k, v[j]);
+                }
               }
             } else {
               formData.append(k, v);
             }
           });
-          console.log(data);
-          console.log(formData);
+
           $.ajax({
             url: url,
             data: formData,
