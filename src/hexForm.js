@@ -603,6 +603,11 @@ this.hexForm = (function () {
         var items = $(this).closest('[data-hex-multy]').find('[data-hex-multy-item]');
         var newIndex = items.size();
         var clonedFieldset = lastFieldSet.clone(false);
+
+        clonedFieldset.find('input[type!="submit"],select,textarea').each(function () {
+          $(this).val('');
+        });
+
         clonedFieldset.find('[data-hex-multy-hide]').remove();
 
         clonedFieldset.find('[data-hex-multy-attr]').each(function () {
