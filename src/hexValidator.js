@@ -187,7 +187,10 @@ this.HexValidator = (function () {
       }
     }
 
-    self.isValid = function () {
+    self.isValid = function (value) {
+      if (value === '' || value === undefined || value === false || value === null) {
+        return true;
+      }
       var mask = input.inputmask('option', 'mask');
       return Inputmask.isValid(input.val(), {alias: mask});
     };
