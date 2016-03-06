@@ -1,6 +1,9 @@
 /*global HexWidget:true,HexValidator:true */
-'use strict';
-this.hexForm = (function () {
+
+var hexForm = (function (window, document) {
+  'use strict';
+  var hexForms = {};
+
   function Control(config) {
     var self = this;
     self.type = undefined;
@@ -52,7 +55,7 @@ this.hexForm = (function () {
       self.readonly = false;
     };
 
-    var byProperty = function (prop) {
+    function sortByProperty(prop) {
       return function (a, b) {
         if (typeof a[prop] === 'number') {
           return (a[prop] - b[prop]);
@@ -60,7 +63,7 @@ this.hexForm = (function () {
           return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
         }
       };
-    };
+    }
 
     var validateFunc = function () {
       var errorsCount = 0;
@@ -100,7 +103,6 @@ this.hexForm = (function () {
             }
           }
         }
-
         if (controlsValid === true) {
           tab.removeClass('has-error');
         } else {
@@ -173,9 +175,6 @@ this.hexForm = (function () {
     };
 
     self.addInput = function (input) {
-      input.bind('hex-get-control', function () {
-        return self;
-      });
       inputs.push(input);
       //Подключение валидаторов и виджетов
       var attributes = getAttributes(input);
@@ -204,7 +203,7 @@ this.hexForm = (function () {
           input.bind(eventName, self.validate);
         }
       }
-      validators.sort(byProperty('weight'));
+      validators.sort(sortByProperty('weight'));
       if (input.prop('disabled')) {
         self.disable();
       }
@@ -320,7 +319,7 @@ this.hexForm = (function () {
     self.controls = {};
 
     var form = f;
-
+    var formId = form.attr('id');
     var handlers = {};
 
     var FormEvent = function (type) {
@@ -519,7 +518,6 @@ this.hexForm = (function () {
             processData: false,
             contentType: false,
             success: function (res) {
-              self.loaderHide();
               if (res.success === true) {
                 clearErrors();
                 if (res.reload !== undefined) {
@@ -528,13 +526,18 @@ this.hexForm = (function () {
                   } else {
                     window.location.href = res.reload;
                   }
+                } else {
+                  self.loaderHide();
                 }
+              } else {
+                self.loaderHide();
               }
               if (res.alerts !== undefined) {
                 for (var m in res.alerts) {
                   var message = res.alerts[m];
                   form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
                 }
+                self.loaderHide();
               }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -648,8 +651,8 @@ this.hexForm = (function () {
 
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
-      form.bind('submit', submit);
-      form.bind('reset', reset);
+      $(document).on('submit', '#' + formId, submit);
+      $(document).on('reset', '#' + formId, reset);
       if (form.find('.loader').size() === 0) {
         form.append('<div class="loader"></div>');
       }
@@ -669,7 +672,6 @@ this.hexForm = (function () {
     return self;
   }
 
-  var hexForms = {};
 
   function hexFormInit(id) {
     if (id === undefined) {
@@ -690,7 +692,6 @@ this.hexForm = (function () {
     return hexForms;
   }
 
-
   return hexFormInit;
-})();
+})(window, document);
 

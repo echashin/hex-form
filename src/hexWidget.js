@@ -1,7 +1,7 @@
 /* global moment:true,swal:true*/
-'use strict';
-this.HexWidget = (function () {
 
+var HexWidget = (function (window, document) {
+  'use strict';
   function isEmpty(v) {
     if (v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0)) {
       return true;
@@ -489,6 +489,6 @@ this.HexWidget = (function () {
 
 
   return Widget;
-})();
+})(window, document);
 
 

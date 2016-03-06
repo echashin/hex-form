@@ -1,6 +1,7 @@
 /* global Inputmask:true*/
-'use strict';
-this.HexValidator = (function () {
+
+var HexValidator = (function () {
+  'use strict';
   function Required(config) {
     var self = this;
     var events = ['blur', 'change'];
@@ -178,6 +179,44 @@ this.HexValidator = (function () {
     self.getEvents = function () {
       return events;
     };
+
+    function init(conf) {
+      if (conf.events !== undefined) {
+        self.setEvents(conf.events);
+      }
+      if (conf.input !== undefined) {
+        input = conf.input;
+      }
+    }
+
+    self.isValid = function (value) {
+      if (value === '' || value === undefined || value === false || value === null) {
+        return true;
+      }
+      var mask = input.inputmask('option', 'mask');
+      return Inputmask.isValid(input.val(), {alias: mask});
+    };
+    init(config);
+  }
+
+  function Mask(config) {
+    var self = this;
+    var input;
+    var className = 'mask';
+    var events = ['blur'];
+
+    self.getClassName = function () {
+      return className;
+    };
+    self.weight = 4;
+    self.setEvents = function (e) {
+      events = e;
+    };
+
+    self.getEvents = function () {
+      return events;
+    };
+
     function init(conf) {
       if (conf.events !== undefined) {
         self.setEvents(conf.events);
@@ -308,6 +347,10 @@ this.HexValidator = (function () {
         case 'phone':
         {
           return new Phone(conf);
+        }
+        case 'mask':
+        {
+          return new Mask(conf);
         }
         default :
         {
