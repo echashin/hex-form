@@ -233,9 +233,13 @@ var hexForm = (function (window, document) {
                 return false;
               } else {
                 var value = '';
-                value += picker.startDate.format('YYYY-MM-DD');
+                var format = 'YYYY-MM-DD';
+                if (picker.timePicker === true) {
+                  format += ' HH:mm';
+                }
+                value += picker.startDate.format(format);
                 if (picker.singleDatePicker === false) {
-                  var endDate = picker.endDate.format('YYYY-MM-DD');
+                  var endDate = picker.endDate.format(format);
                   value += ' - ' + endDate;
                 }
                 return value;
