@@ -139,8 +139,11 @@ var HexWidget = (function (window, document) {
           }
         };
         $.extend(defaultSettings, conf);
+        if (defaultSettings.timePicker !== undefined && defaultSettings.timePicker === true && defaultSettings.timePicker24Hour !== undefined && defaultSettings.timePicker24Hour === true) {
+          defaultSettings.locale.format += ' HH:mm';
+        }
 
-        var mask = defaultSettings.locale.format.replace(/[D]+/g, 'd').replace(/[M]+/g, 'm').replace(/[Y]+/g, 'y');
+        var mask = defaultSettings.locale.format.replace(/[H]/g, '9').replace(/[m]/g, '9').replace(/[D]+/g, 'd').replace(/[M]+/g, 'm').replace(/[Y]+/g, 'y');
         if (defaultSettings.singleDatePicker === false) {
           mask += defaultSettings.locale.separator + mask;
         }
@@ -152,6 +155,7 @@ var HexWidget = (function (window, document) {
           }
           input.val(value);
           input.trigger('blur');
+
         });
       }
     }
