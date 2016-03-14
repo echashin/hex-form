@@ -305,6 +305,7 @@ var hexForm = (function (window, document) {
 
 
     var initControl = function (conf) {
+
       if (conf.type !== undefined) {
         self.type = conf.type;
         if (conf.type === 'checkbox') {
@@ -397,61 +398,68 @@ var hexForm = (function (window, document) {
 
     var addControls = function (container) {
       $.each(container.find('input[type!="submit"],select,textarea'), function (i, field) {
+
         var input = $(field);
-        var controlName = input.attr('name');
-        var tagName = input.prop('tagName').toLowerCase();
-        switch (tagName) {
-          case 'select':
-          case 'textarea':
-          {
-            self.controls[controlName] = new Control({type: tagName, inputs: [input], form: self, name: controlName});
-            break;
-          }
-          case 'input':
-          {
-            var type = input.attr('type').toLowerCase();
-            switch (type) {
-              default:
-              {
-                self.controls[controlName] = new Control({type: type, inputs: [input], form: self, name: controlName});
-                break;
-              }
-              case 'checkbox':
-              {
-                var checkboxControl = new Control({type: 'checkbox', inputs: [input], form: self, name: controlName});
-                if (input.attr('value') !== undefined) {
-                  checkboxControl.trueValue = input.attr('value');
-                }
-                if (input.attr('data-hex-true-value') !== undefined) {
-                  checkboxControl.trueValue = input.attr('data-hex-true-value');
-                }
-
-                if (input.attr('data-hex-false-value') !== undefined) {
-                  checkboxControl.falseValue = input.attr('data-hex-false-value');
-                }
-
-                self.controls[controlName] = checkboxControl;
-                break;
-              }
-              case 'radio':
-              {
-                if (self.controls[controlName] === undefined) {
+        if (input.parents('[data-hex-multy-item="$"]').size() === 0) {
+          var controlName = input.attr('name');
+          var tagName = input.prop('tagName').toLowerCase();
+          switch (tagName) {
+            case 'select':
+            case 'textarea':
+            {
+              self.controls[controlName] = new Control({type: tagName, inputs: [input], form: self, name: controlName});
+              break;
+            }
+            case 'input':
+            {
+              var type = input.attr('type').toLowerCase();
+              switch (type) {
+                default:
+                {
                   self.controls[controlName] = new Control({
-                    type: 'radio',
+                    type: type,
                     inputs: [input],
                     form: self,
                     name: controlName
                   });
-                } else {
-                  self.controls[controlName].addInput(input);
+                  break;
                 }
-                break;
+                case 'checkbox':
+                {
+                  var checkboxControl = new Control({type: 'checkbox', inputs: [input], form: self, name: controlName});
+                  if (input.attr('value') !== undefined) {
+                    checkboxControl.trueValue = input.attr('value');
+                  }
+                  if (input.attr('data-hex-true-value') !== undefined) {
+                    checkboxControl.trueValue = input.attr('data-hex-true-value');
+                  }
+
+                  if (input.attr('data-hex-false-value') !== undefined) {
+                    checkboxControl.falseValue = input.attr('data-hex-false-value');
+                  }
+
+                  self.controls[controlName] = checkboxControl;
+                  break;
+                }
+                case 'radio':
+                {
+                  if (self.controls[controlName] === undefined) {
+                    self.controls[controlName] = new Control({
+                      type: 'radio',
+                      inputs: [input],
+                      form: self,
+                      name: controlName
+                    });
+                  } else {
+                    self.controls[controlName].addInput(input);
+                  }
+                  break;
+                }
               }
+              break;
             }
-            break;
           }
         }
-
       });
     };
     var getValues = function () {
@@ -642,10 +650,12 @@ var hexForm = (function (window, document) {
         }
         item.find('input[type!="submit"],select,textarea').each(function () {
           var name = $(this).attr('name');
-          name = name.replace(/\[\d+\]/g, function () {
-            return '[' + newIndex + ']';
-          });
-          $(this).attr('name', name);
+          if (name !== undefined) {
+            name = name.replace(/\[\d+\]/g, function () {
+              return '[' + newIndex + ']';
+            });
+            $(this).attr('name', name);
+          }
         });
       }
 
@@ -684,7 +694,6 @@ var hexForm = (function (window, document) {
           }
         });
 
-
         updateItemIndex(clonedFieldset, newIndex);
         clonedFieldset.appendTo(block.find('[data-hex-multy-items]'));
         if (tabs !== undefined) {
@@ -692,10 +701,10 @@ var hexForm = (function (window, document) {
           updateItemIndex(clonedTab, newIndex);
           tabs.append(clonedTab);
         }
+
         addControls(clonedFieldset);
         if (tabs !== undefined) {
           $('a[href="#' + clonedFieldset.attr('id') + '"]').trigger('click');
-
         }
       });
 

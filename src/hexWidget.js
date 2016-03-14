@@ -168,7 +168,7 @@ var HexWidget = (function (window, document) {
     var mode = 'local';
 
     function init(conf) {
-
+      console.log('select2 init');
       if (conf.control !== undefined) {
         control = conf.control;
       }

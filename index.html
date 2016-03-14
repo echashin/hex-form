@@ -253,8 +253,14 @@
                         </div>
                         <div class="col-xs-4">
                           <div class="form-group">
-                            <label class="control-label">Цена</label>
-                            <input type="text" class="form-control" name="items[0][price]" value="">
+                            <label class="control-label">Пользователь</label>
+                            <select data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}' style="width: 100%"
+                                    name="items[0][user][]" class="form-control" multiple>
+
+                            </select>
+                            <div class="errors">
+                              <span class="error-required label label-danger">Выберите пользователей</span>
+                            </div>
                           </div>
                         </div>
                         <div class="col-xs-4">
