@@ -221,8 +221,18 @@
                 <h4>Товары</h4>
 
                 <div data-hex-multy='{"allow_empty":true}'>
-                  <div data-hex-multy-items>
-                    <fieldset class="well" data-hex-multy-item="$">
+
+                  <ul class="nav nav-tabs" role="tablist" data-hex-multy-tabs>
+                    <li role="presentation" data-hex-multy-tab="$"><a href="#slot_0" aria-controls="slot_0" role="tab" data-toggle="tab"> <span
+                      class="error glyphicon glyphicon-exclamation-sign"></span> <span data-hex-multy-tab-label>Слот 0</span></a>
+                    </li>
+                    <li role="presentation">
+                      <span data-hex-multy-add  class="btn btn-success">+ Добавить</span>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content" data-hex-multy-items>
+                    <div role="tabpanel" class="tab-pane" data-hex-multy-item="$" id="slot_0">
                       <div class="row">
                         <div class="col-xs-4">
                           <div class="form-group">
@@ -260,52 +270,10 @@
                           <button data-hex-multy-remove class="btn btn-danger" type="button">Удалить</button>
                         </div>
                       </div>
-                    </fieldset>
-                    <fieldset class="well" data-hex-multy-item="0">
-                      <div class="row">
-                        <div class="col-xs-4">
-                          <div class="form-group">
-                            <label class="control-label required">Название</label>
-                            <input
-                              data-hex-multy-attr='{"add":[{"data-hex-validator-required":""}],"remove":["data-test"]}'
-                              type="text"
-                              data-test="asd"
-                              class="form-control"
-                              name="items[0][label]"
-                              value="sss">
-
-                            <div data-hex-multy-hide>***</div>
-                            <div class="errors">
-                              <span class="error-required label label-danger">Введите название</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xs-4">
-                          <div class="form-group">
-                            <label class="control-label">Цена</label>
-                            <input type="text" class="form-control" name="items[0][price]" value="">
-                          </div>
-                        </div>
-                        <div class="col-xs-4">
-                          <div class="form-group">
-                            <label class="control-label">Вес</label>
-                            <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control"
-                                   name="items[0][weight]" value="12">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-xs-6" style="text-align: right">
-                          <button data-hex-multy-remove class="btn btn-danger" type="button">Удалить</button>
-                        </div>
-                      </div>
-                    </fieldset>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <button data-hex-multy-add class="btn btn-info" type="button">Добавить</button>
                     </div>
+
                   </div>
+
                 </div>
               </div>
             </div>

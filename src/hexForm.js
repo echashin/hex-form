@@ -12,8 +12,13 @@ var hexForm = (function (window, document) {
     var inputs = [];
     var form = config.form;
 
-    var tab, errors, formGroup, timerId;
-    self.tabPanelId = undefined;
+    var errors, timerId;
+
+    self.formGroup = undefined;
+
+
+    self.panels = [];
+    self.tabs = [];
 
     var validators = [];
     var widgets = {};
@@ -23,7 +28,7 @@ var hexForm = (function (window, document) {
     self.readonly = false;
 
     self.setValid = function () {
-      formGroup.removeClass('has-error');
+      self.formGroup.removeClass('has-error');
       errors.find('span').removeClass('active');
     };
 
@@ -85,30 +90,48 @@ var hexForm = (function (window, document) {
 
       if (errorsCount > 0) {
         self.valid = false;
-        formGroup.addClass('has-error');
+        self.formGroup.addClass('has-error');
       }
       else {
-        formGroup.removeClass('has-error');
+        self.formGroup.removeClass('has-error');
         self.valid = true;
       }
 
-      if (tab !== undefined) {
+
+      if (self.panels.length > 0) {
         var controlsValid = true;
-        for (var c in form.controls) {
-          if (form.controls.hasOwnProperty(c)) {
-            var otherControl = form.controls[c];
-            if (otherControl.tabPanelId === self.tabPanelId && otherControl.valid === false) {
-              controlsValid = false;
-              break;
+        if (self.valid === true) {
+          for (var c in form.controls) {
+            if (form.controls.hasOwnProperty(c)) {
+              var otherControl = form.controls[c];
+              if (otherControl.valid === false) {
+                for (var o in otherControl.panels) {
+                  var otherPanel = otherControl.panels[o];
+                  for (var s in self.panels) {
+                    if (otherPanel === self.panels[s]) {
+                      controlsValid = false;
+                      break;
+                    }
+                  }
+                }
+              }
             }
           }
-        }
-        if (controlsValid === true) {
-          tab.removeClass('has-error');
         } else {
-          tab.addClass('has-error');
+          controlsValid = false;
+        }
+
+        if (controlsValid === true) {
+          $.each(self.tabs, function (tKey, tab) {
+            tab.removeClass('has-error');
+          });
+        } else {
+          $.each(self.tabs, function (tKey, tab) {
+            tab.addClass('has-error');
+          });
         }
       }
+
 
       return self.valid;
     };
@@ -300,18 +323,21 @@ var hexForm = (function (window, document) {
           }
         }
       }
-      formGroup = inputs[0].closest('div.form-group');
-      errors = formGroup.find('.errors');
-      var tabPanel = formGroup.closest('.tab-pane');
-      if (tabPanel.size() > 0) {
-        var tabId = tabPanel.attr('id');
-        var tabEl = $('.nav a[href="#' + tabId + '"]');
-        if (tabEl.size() > 0) {
-          tab = tabEl;
-        }
-        self.tabPanelId = tabId;
-      }
+      self.formGroup = inputs[0].closest('div.form-group');
+      errors = self.formGroup.find('.errors');
 
+      if (self.formGroup.parents('[role="tabpanel"]').size() > 0) {
+        self.formGroup.parents('[role="tabpanel"]').each(function () {
+          var tabPanel = $(this);
+          var tabId = tabPanel.attr('id');
+          self.panels.push(tabId);
+          var tabEl = $('.nav a[href="#' + tabId + '"]');
+          if (tabEl.size() > 0) {
+            self.tabs.push(tabEl);
+          }
+        });
+
+      }
 
       self.setValid();
     };
@@ -571,12 +597,21 @@ var hexForm = (function (window, document) {
     function multy(block) {
       var multyConf = block.data('hex-multy');
 
+      var tabs, baseTab;
+
       var allowNull = false;
       if (multyConf.allow_empty !== undefined && multyConf.allow_empty === true) {
         allowNull = true;
       }
-      var firstBlock = block.find('[data-hex-multy-item="$"]');
 
+      if (block.find('[data-hex-multy-tabs]').size() > 0) {
+        tabs = block.find('[data-hex-multy-tabs]');
+        baseTab = tabs.find('[data-hex-multy-tab="$"]').clone(false);
+        tabs.find('[data-hex-multy-tab="$"]').remove();
+      }
+
+
+      var firstBlock = block.find('[data-hex-multy-item="$"]');
       var baseBlock = firstBlock.clone(false);
       firstBlock.remove();
       baseBlock.find('input[type!="submit"],select,textarea').each(function () {
@@ -584,7 +619,27 @@ var hexForm = (function (window, document) {
       });
 
       function updateItemIndex(item, newIndex) {
-        item.attr('data-hex-multy-item', newIndex);
+        if (item.attr('data-hex-multy-item') !== undefined) {
+          item.attr('data-hex-multy-item', newIndex);
+        }
+        if (item.attr('data-hex-multy-tab') !== undefined) {
+          item.attr('data-hex-multy-tab', newIndex);
+          var tabA = item.find('a');
+          tabA.attr('href', tabA.attr('href').replace(/\d+/g, newIndex));
+          tabA.attr('aria-controls', tabA.attr('aria-controls').replace(/\d+/g, newIndex));
+          if (tabA.find('[data-hex-multy-tab-label]').size() > 0) {
+            var tabHtml = tabA.find('[data-hex-multy-tab-label]').html();
+            tabHtml = tabHtml.replace(/\d+/g, newIndex + 1);
+            tabA.find('[data-hex-multy-tab-label]').html(tabHtml);
+          }
+
+
+        }
+
+        if (item.attr('id') !== undefined) {
+          var itemId = item.attr('id');
+          item.attr('id', itemId.replace(/\d+/, newIndex));
+        }
         item.find('input[type!="submit"],select,textarea').each(function () {
           var name = $(this).attr('name');
           name = name.replace(/\[\d+\]/g, function () {
@@ -629,10 +684,19 @@ var hexForm = (function (window, document) {
           }
         });
 
+
         updateItemIndex(clonedFieldset, newIndex);
-        addControls(clonedFieldset);
         clonedFieldset.appendTo(block.find('[data-hex-multy-items]'));
-        multyCheck();
+        if (tabs !== undefined) {
+          var clonedTab = baseTab.clone(false);
+          updateItemIndex(clonedTab, newIndex);
+          tabs.append(clonedTab);
+        }
+        addControls(clonedFieldset);
+        if (tabs !== undefined) {
+          $('a[href="#' + clonedFieldset.attr('id') + '"]').trigger('click');
+
+        }
       });
 
       block.on('click', '[data-hex-multy-remove]', function () {
@@ -641,11 +705,22 @@ var hexForm = (function (window, document) {
         var items = block.find('[data-hex-multy-item]');
         removeControls(item);
         item.remove();
-        items.each(function (index, value) {
-          if (index > removedIndex) {
-            updateItemIndex($(this), --index);
+        items.each(function () {
+          if ($(this).attr('data-hex-multy-item') > removedIndex) {
+            updateItemIndex($(this), $(this).attr('data-hex-multy-item') - 1);
           }
         });
+        if (tabs !== undefined) {
+          tabs.find('[data-hex-multy-tab="' + removedIndex + '"]').remove();
+          tabs.find('[data-hex-multy-tab]').each(function () {
+            if ($(this).attr('data-hex-multy-tab') > removedIndex) {
+              updateItemIndex($(this), $(this).attr('data-hex-multy-tab') - 1);
+            }
+          });
+
+          tabs.find('a[role="tab"]:first').trigger('click');
+        }
+
         multyCheck();
       });
 
