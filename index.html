@@ -289,7 +289,53 @@
           <div role="tabpanel" class="tab-pane" id="tab-other">
 
             <div class="row">
+
+
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <div class="form-group">
+                  <div class="btn-group btn-group-justified">
+                    <label class="btn btn-default" for="project_type_prod"><input type="radio" name="code_type_facility" value="production"
+                                                                                  id="project_type_prod"
+                                                                                  checked> Производственный</label>
+                    <label class="btn btn-default" for="project_type_line"><input type="radio" name="code_type_facility" value="linear"
+                                                                                  id="project_type_line"> Линейный</label>
+                    <label class="btn btn-default" for="project_type_unprod"><input type="radio" name="code_type_facility" value="nonmanufacturing"
+                                                                                    id="project_type_unprod"> Непроизводственный</label>
+                  </div>
+                  <div data-hex-disabled='{"control":"code_type_facility","value":"production"}'>
+                    <div class="form-group" >
+                      <label class="control-label">Производственный</label>
+                      <textarea required class="form-control" id="commentp" name="commentp"></textarea>
+                      <div class="errors">
+                        <span class="error-required label label-danger">Заполните поле</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-hex-disabled='{"control":"code_type_facility","value":"linear"}'>
+                    <div class="form-group">
+                      <label class="control-label">Линейный</label>
+                      <textarea required class="form-control" id="commentl" name="commentl"></textarea>
+                      <div class="errors">
+                        <span class="error-required label label-danger">Заполните поле</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-hex-disabled='{"control":"code_type_facility","value":"nonmanufacturing"}'>
+                    <div class="form-group">
+                      <label class="control-label">Непроизводственный</label>
+                      <textarea required class="form-control" id="commentn" name="commentn"></textarea>
+                      <div class="errors">
+                        <span class="error-required label label-danger">Заполните поле</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="errors">
+                  <span class="error-required label label-danger">Заполните поле</span>
+                </div>
+
+
                 <div class="form-group">
                   <input data-hex-widget-filesimple id="file" type="file" name="image">
 

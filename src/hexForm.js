@@ -157,6 +157,12 @@ var hexForm = (function (window, document) {
       }
     };
 
+    self.addEvent = function (eventName, func) {
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].bind(eventName, func);
+      }
+    };
+
     var getAttributes = function (input) {
       var map = {};
       var attributes = input[0].attributes;
@@ -737,6 +743,25 @@ var hexForm = (function (window, document) {
     }
 
 
+    function hexDisabled(panel) {
+      var data = panel.data('hexDisabled');
+      var searchValue = data.value;
+      var control = self.controls[data.control];
+
+      function onChange() {
+        if (control.getValue() !== searchValue) {
+          panel.hide();
+          panel.find('input[type!="submit"],select,textarea').trigger('disable');
+        } else {
+          panel.show();
+          panel.find('input[type!="submit"],select,textarea').trigger('enable');
+        }
+      }
+
+      control.addEvent('change', onChange);
+      control.trigger('change');
+    }
+
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       $(document).on('submit', '#' + formId, submit);
@@ -747,9 +772,14 @@ var hexForm = (function (window, document) {
       addControls(form);
 
 
-      if (form.find('div[data-hex-multy]').size() > 0) {
-        form.find('div[data-hex-multy]').each(function () {
+      if (form.find('[data-hex-multy]').size() > 0) {
+        form.find('[data-hex-multy]').each(function () {
           multy($(this));
+        });
+      }
+      if (form.find('[data-hex-disabled]').size() > 0) {
+        form.find('[data-hex-disabled]').each(function () {
+          hexDisabled($(this));
         });
       }
 

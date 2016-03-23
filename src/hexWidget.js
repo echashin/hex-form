@@ -1,4 +1,4 @@
-/* global moment:true,swal:true*/
+/* global moment:true*/
 
 var HexWidget = (function (window, document) {
   'use strict';
