@@ -617,9 +617,6 @@ var hexForm = (function (window, document) {
       var searchValue = data.value;
       var control = self.controls[data.control];
       if (control === undefined) {
-        console.log(panel);
-        console.log(data);
-
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
@@ -818,6 +815,7 @@ var hexForm = (function (window, document) {
             hexDisabled($(this));
           });
         }
+        multyCheck();
       });
 
       block.on('click', '[data-hex-multy-remove]', function () {
