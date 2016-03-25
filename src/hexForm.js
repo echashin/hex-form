@@ -616,7 +616,9 @@ var hexForm = (function (window, document) {
 
       var searchValue = data.value;
       var control = self.controls[data.control];
-
+      if (control === undefined) {
+        throw new Error('Control "' + data.control + '" not found');
+      }
       function onChange() {
         if (control.getValue() !== searchValue) {
           panel.hide();
@@ -641,7 +643,7 @@ var hexForm = (function (window, document) {
       block.find('[data-hex-bind]').each(function () {
         nodes.push($(this));
       });
-      function expr (ex) {
+      function expr(ex) {
         var chars = ex.split('');
         var nn = [], op = [], index = 0, oplast = true;
         nn[index] = '';
@@ -868,6 +870,7 @@ var hexForm = (function (window, document) {
           multy($(this));
         });
       }
+
       if (form.find('[data-hex-disabled]').size() > 0) {
         form.find('[data-hex-disabled]').each(function () {
           hexDisabled($(this));
