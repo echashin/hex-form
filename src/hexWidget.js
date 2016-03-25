@@ -121,12 +121,16 @@ var HexWidget = (function () {
       if (conf.input !== undefined) {
         input = conf.input;
         var localeData = moment.localeData();
+        var localeFormat = localeData.longDateFormat('L');
+        if (conf.timePicker !== undefined && conf.timePicker === true) {
+          localeFormat += ' ' + localeData.longDateFormat('LT');
+        }
         var defaultSettings = {
           'autoUpdateInput': false,
           'linkedCalendars': false,
           'singleDatePicker': true,
           'locale': {
-            'format': localeData.longDateFormat('L'),
+            'format': localeFormat,
             'separator': ' - ',
             'applyLabel': 'Готово',
             'cancelLabel': 'Отмена',
@@ -139,24 +143,23 @@ var HexWidget = (function () {
           }
         };
         $.extend(defaultSettings, conf);
-        if (defaultSettings.timePicker !== undefined && defaultSettings.timePicker === true && defaultSettings.timePicker24Hour !== undefined && defaultSettings.timePicker24Hour === true) {
-          defaultSettings.locale.format += ' HH:mm';
-        }
+
 
         var mask = defaultSettings.locale.format.replace(/[H]/g, '9').replace(/[m]/g, '9').replace(/[D]+/g, 'd').replace(/[M]+/g, 'm').replace(/[Y]+/g, 'y');
         if (defaultSettings.singleDatePicker === false) {
           mask += defaultSettings.locale.separator + mask;
         }
         input.inputmask(mask);
-        input.daterangepicker(defaultSettings, function (start, end) {
-          var value = start.format(defaultSettings.locale.format);
+        input.daterangepicker(defaultSettings);
+        input.on('apply.daterangepicker', function (ev, picker) {
+          var value = picker.startDate.format(defaultSettings.locale.format);
           if (defaultSettings.singleDatePicker === false) {
-            value += defaultSettings.locale.separator + end.format(defaultSettings.locale.format);
+            value += defaultSettings.locale.separator + picker.endDate.format(defaultSettings.locale.format);
           }
           input.val(value);
           input.trigger('blur');
-
         });
+
       }
     }
 

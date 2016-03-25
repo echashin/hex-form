@@ -154,13 +154,27 @@
                 <br/><br/>
 
                 <div class="form-group">
-                  <label class="required control-label" for="date">Дата</label>
+                  <label class="required control-label" for="date_time">Дата и время</label>
                   <input autocomplete="off"
 
                          data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true}'
                          data-hex-validator-mask
                          class="form-control"
                          value="21.11.2015 00:30"
+                         name="date_time" id="date_time" type="text"/>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Введите дату рождения</span>
+                    <span class="error-date label label-danger">Неверный формат даты</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="required control-label" for="date">Дата</label>
+                  <input autocomplete="off"
+                         data-hex-widget-date
+                         data-hex-validator-mask
+                         class="form-control"
+                         value=""
                          name="date" id="date" type="text"/>
 
                   <div class="errors">
@@ -236,7 +250,7 @@
 
                   <div class="tab-content" data-hex-multy-items>
                     <div role="tabpanel" class="tab-pane" data-hex-multy-item="$"
-                         data-hex-bind='{"id":"slot_@index","data-hex-multy-item":"@index"}' >
+                         data-hex-bind='{"id":"slot_@index","data-hex-multy-item":"@index"}'>
                       <div class="row">
                         <br>
 
@@ -264,30 +278,36 @@
                               >
                                 Непроизводственный</label>
                             </div>
-                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"production"}}'>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"production"}}'>
                               <div class="form-group">
                                 <label class="control-label">Производственный</label>
-                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][prodcomment]"}'></textarea>
+                                <textarea required class="form-control"
+                                          data-hex-bind='{"name":"items[@index][prodcomment]"}'></textarea>
 
                                 <div class="errors">
                                   <span class="error-required label label-danger">Заполните поле</span>
                                 </div>
                               </div>
                             </div>
-                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"linear"}}'>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"linear"}}'>
                               <div class="form-group">
                                 <label class="control-label">Линейный</label>
-                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][linecomment]"}'></textarea>
+                                <textarea required class="form-control"
+                                          data-hex-bind='{"name":"items[@index][linecomment]"}'></textarea>
 
                                 <div class="errors">
                                   <span class="error-required label label-danger">Заполните поле</span>
                                 </div>
                               </div>
                             </div>
-                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"nonmanufacturing"}}'>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"nonmanufacturing"}}'>
                               <div class="form-group">
                                 <label class="control-label">Непроизводственный</label>
-                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][noncomment]"}'></textarea>
+                                <textarea required class="form-control"
+                                          data-hex-bind='{"name":"items[@index][noncomment]"}'></textarea>
 
                                 <div class="errors">
                                   <span class="error-required label label-danger">Заполните поле</span>

@@ -356,7 +356,7 @@ var hexForm = (function (window, document) {
   function HexFormSingle(f) {
     var self = this;
     self.controls = {};
-
+    self.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
     var form = f;
     var formId = form.attr('id');
     var handlers = {};
@@ -586,7 +586,7 @@ var hexForm = (function (window, document) {
             },
             error: function (jqXHR, textStatus) {
               self.loaderHide();
-              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(textStatus));
+              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.errorText));
             }
           });
         }
