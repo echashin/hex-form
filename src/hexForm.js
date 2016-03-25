@@ -617,6 +617,7 @@ var hexForm = (function (window, document) {
       var searchValue = data.value;
       var control = self.controls[data.control];
       if (control === undefined) {
+        console.log(self.controls);
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
