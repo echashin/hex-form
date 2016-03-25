@@ -1,6 +1,6 @@
 /* global moment:true*/
 
-var HexWidget = (function (window, document) {
+var HexWidget = (function () {
   'use strict';
   function isEmpty(v) {
     if (v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0)) {
@@ -168,7 +168,6 @@ var HexWidget = (function (window, document) {
     var mode = 'local';
 
     function init(conf) {
-      console.log('select2 init');
       if (conf.control !== undefined) {
         control = conf.control;
       }
@@ -493,6 +492,6 @@ var HexWidget = (function (window, document) {
 
 
   return Widget;
-})(window, document);
+})();
 
 

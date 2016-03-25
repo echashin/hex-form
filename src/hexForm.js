@@ -4,6 +4,7 @@ var hexForm = (function (window, document) {
   'use strict';
   var hexForms = {};
 
+
   function Control(config) {
     var self = this;
     self.type = undefined;
@@ -44,6 +45,8 @@ var hexForm = (function (window, document) {
         inputs[inp].prop('disabled', true);
       }
       self.disabled = true;
+      self.valid = true;
+      self.validate();
     };
 
     self.addReadonly = function () {
@@ -291,7 +294,6 @@ var hexForm = (function (window, document) {
             }
           }
           return false;
-
         }
         case 'checkbox':
         {
@@ -392,7 +394,6 @@ var hexForm = (function (window, document) {
     };
 
     var removeControls = function (container) {
-
       $.each(container.find('input[type!="submit"],select,textarea'), function (i, field) {
         var input = $(field);
         var controlName = input.attr('name');
@@ -404,7 +405,6 @@ var hexForm = (function (window, document) {
 
     var addControls = function (container) {
       $.each(container.find('input[type!="submit"],select,textarea'), function (i, field) {
-
         var input = $(field);
         if (input.parents('[data-hex-multy-item="$"]').size() === 0) {
           var controlName = input.attr('name');
@@ -584,8 +584,9 @@ var hexForm = (function (window, document) {
                 self.loaderHide();
               }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus) {
               self.loaderHide();
+              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(textStatus));
             }
           });
         }
@@ -607,12 +608,135 @@ var hexForm = (function (window, document) {
       return getValues();
     };
 
+    function hexDisabled(panel) {
+      if (panel.parents('[data-hex-multy-item="$"]').size() > 0) {
+        return false;
+      }
+      var data = panel.data('hexDisabled');
+
+      var searchValue = data.value;
+      var control = self.controls[data.control];
+
+      function onChange() {
+        if (control.getValue() !== searchValue) {
+          panel.hide();
+          panel.find('input[type!="submit"],select,textarea').trigger('disable');
+        } else {
+          panel.show();
+          panel.find('input[type!="submit"],select,textarea').trigger('enable');
+        }
+      }
+
+      control.addEvent('change', onChange);
+      control.trigger('change');
+    }
+
+    function convertDataName(name) {
+      return name.replace('-', '').toUpperCase();
+    }
+
+    function hexBind(block, params) {
+      var nodes = [];
+      nodes.push(block);
+      block.find('[data-hex-bind]').each(function () {
+        nodes.push($(this));
+      });
+      function expr (ex) {
+        var chars = ex.split('');
+        var nn = [], op = [], index = 0, oplast = true;
+        nn[index] = '';
+        // Parse the expression
+        for (var c = 0; c < chars.length; c++) {
+
+          if (isNaN(parseInt(chars[c])) && chars[c] !== '.' && !oplast) {
+            op[index] = chars[c];
+            index++;
+            nn[index] = '';
+            oplast = true;
+          } else {
+            nn[index] += chars[c];
+            oplast = false;
+          }
+        }
+
+        // Calculate the expression
+        ex = parseFloat(nn[0]);
+        for (var o = 0; o < op.length; o++) {
+          var num = parseFloat(nn[o + 1]);
+          switch (op[o]) {
+            case '+':
+              ex = ex + num;
+              break;
+            case '-':
+              ex = ex - num;
+              break;
+            case '*':
+              ex = ex * num;
+              break;
+            case '/':
+              ex = ex / num;
+              break;
+          }
+        }
+
+        return ex;
+      }
+
+      function appendParams(template) {
+        if (typeof template === 'object') {
+          for (var i in template) {
+            template[i] = appendParams(template[i]);
+          }
+        } else {
+          for (var p in params) {
+            template = template.replace(new RegExp(p, 'g'), params[p]);
+          }
+          if (/\%/.test(template)) {
+            template = template.replace(/\%(.*?)\%/g, function (value) {
+              return expr(value.replace(/\%/g, ''));
+            });
+          }
+        }
+        return template;
+      }
+
+      for (var n in nodes) {
+        var bParams = nodes[n].data('hexBind');
+        for (var attr in bParams) {
+          var tpl = appendParams(bParams[attr]);
+
+          if (attr !== 'html') {
+            if (/^data/.test(attr)) {
+              var dataParamName = attr.replace(/^data-/, '');
+              dataParamName = dataParamName.replace(/(\-[a-z])/g, convertDataName);
+              nodes[n].data(dataParamName, tpl);
+            }
+            if (attr === 'name') {
+              var oldName = nodes[n].attr('name');
+              if (oldName !== undefined && self.controls[oldName] !== undefined) {
+                var oldControl = self.controls[oldName];
+                oldControl.name = tpl;
+                self.controls[tpl] = oldControl;
+                delete self.controls[oldName];
+              }
+            }
+            if (typeof tpl === 'object') {
+              nodes[n].attr(attr, JSON.stringify(tpl));
+            } else {
+              nodes[n].attr(attr, tpl);
+            }
+          } else {
+            nodes[n].html(tpl);
+          }
+
+        }
+      }
+    }
 
     function multy(block) {
       var multyConf = block.data('hex-multy');
 
       var tabs, baseTab;
-
       var allowNull = false;
       if (multyConf.allow_empty !== undefined && multyConf.allow_empty === true) {
         allowNull = true;
@@ -621,6 +745,7 @@ var hexForm = (function (window, document) {
       if (block.find('[data-hex-multy-tabs]').size() > 0) {
         tabs = block.find('[data-hex-multy-tabs]');
         baseTab = tabs.find('[data-hex-multy-tab="$"]').clone(false);
+
         tabs.find('[data-hex-multy-tab="$"]').remove();
       }
 
@@ -628,41 +753,9 @@ var hexForm = (function (window, document) {
       var firstBlock = block.find('[data-hex-multy-item="$"]');
       var baseBlock = firstBlock.clone(false);
       firstBlock.remove();
-      baseBlock.find('input[type!="submit"],select,textarea').each(function () {
-        $(this).val('');
-      });
 
       function updateItemIndex(item, newIndex) {
-        if (item.attr('data-hex-multy-item') !== undefined) {
-          item.attr('data-hex-multy-item', newIndex);
-        }
-        if (item.attr('data-hex-multy-tab') !== undefined) {
-          item.attr('data-hex-multy-tab', newIndex);
-          var tabA = item.find('a');
-          tabA.attr('href', tabA.attr('href').replace(/\d+/g, newIndex));
-          tabA.attr('aria-controls', tabA.attr('aria-controls').replace(/\d+/g, newIndex));
-          if (tabA.find('[data-hex-multy-tab-label]').size() > 0) {
-            var tabHtml = tabA.find('[data-hex-multy-tab-label]').html();
-            tabHtml = tabHtml.replace(/\d+/g, newIndex + 1);
-            tabA.find('[data-hex-multy-tab-label]').html(tabHtml);
-          }
-
-
-        }
-
-        if (item.attr('id') !== undefined) {
-          var itemId = item.attr('id');
-          item.attr('id', itemId.replace(/\d+/, newIndex));
-        }
-        item.find('input[type!="submit"],select,textarea').each(function () {
-          var name = $(this).attr('name');
-          if (name !== undefined) {
-            name = name.replace(/\[\d+\]/g, function () {
-              return '[' + newIndex + ']';
-            });
-            $(this).attr('name', name);
-          }
-        });
+        hexBind(item, {'@index': newIndex});
       }
 
       function multyCheck() {
@@ -691,7 +784,6 @@ var hexForm = (function (window, document) {
                 element.attr(aName, attr[aName]);
               }
             });
-
           }
           if (attrConf.remove !== undefined) {
             for (var a in attrConf.remove) {
@@ -705,62 +797,61 @@ var hexForm = (function (window, document) {
         if (tabs !== undefined) {
           var clonedTab = baseTab.clone(false);
           updateItemIndex(clonedTab, newIndex);
-          tabs.append(clonedTab);
+          if (block.find('[data-hex-multy-tab]:last').size() > 0) {
+            clonedTab.insertAfter(block.find('[data-hex-multy-tab]:last'));
+          } else {
+            tabs.prepend(clonedTab);
+          }
         }
 
         addControls(clonedFieldset);
         if (tabs !== undefined) {
           $('a[href="#' + clonedFieldset.attr('id') + '"]').trigger('click');
         }
+        if (clonedFieldset.find('[data-hex-disabled]').size() > 0) {
+          clonedFieldset.find('[data-hex-disabled]').each(function () {
+            hexDisabled($(this));
+          });
+        }
       });
 
       block.on('click', '[data-hex-multy-remove]', function () {
-        var item = $(this).closest('[data-hex-multy-item]');
-        var removedIndex = parseInt(item.attr('data-hex-multy-item'));
-        var items = block.find('[data-hex-multy-item]');
-        removeControls(item);
-        item.remove();
-        items.each(function () {
-          if ($(this).attr('data-hex-multy-item') > removedIndex) {
-            updateItemIndex($(this), $(this).attr('data-hex-multy-item') - 1);
-          }
-        });
-        if (tabs !== undefined) {
-          tabs.find('[data-hex-multy-tab="' + removedIndex + '"]').remove();
-          tabs.find('[data-hex-multy-tab]').each(function () {
-            if ($(this).attr('data-hex-multy-tab') > removedIndex) {
-              updateItemIndex($(this), $(this).attr('data-hex-multy-tab') - 1);
+          var item = $(this).closest('[data-hex-multy-item]');
+          var removedIndex = item.data('hexMultyItem');
+          var items = block.find('[data-hex-multy-item]');
+          removeControls(item);
+          item.fadeOut(500, function () {
+            item.remove();
+            items.each(function () {
+              if ($(this).data('hexMultyItem') > removedIndex) {
+                updateItemIndex($(this), $(this).data('hexMultyItem') - 1);
+              }
+            });
+            if (tabs !== undefined) {
+              tabs.find('[data-hex-multy-tab="' + removedIndex + '"]').remove();
+              tabs.find('[data-hex-multy-tab]').each(function () {
+                if ($(this).data('hexMultyTab') > removedIndex) {
+                  updateItemIndex($(this), $(this).data('hexMultyTab') - 1);
+                }
+              });
+
+
+              if (tabs.find('[data-hex-multy-tab=' + removedIndex + ']').size() > 0) {
+                tabs.find('[data-hex-multy-tab=' + removedIndex + ']').find('a[role="tab"]').trigger('click');
+              } else {
+                if (tabs.find('[data-hex-multy-tab]:nth-child(' + (removedIndex) + ')').size() > 0) {
+                  tabs.find('[data-hex-multy-tab]:nth-child(' + (removedIndex ) + ')').find('a[role="tab"]').trigger('click');
+                }
+              }
             }
+            multyCheck();
           });
-
-          tabs.find('a[role="tab"]:first').trigger('click');
         }
-
-        multyCheck();
-      });
+      );
 
       multyCheck();
     }
 
-
-    function hexDisabled(panel) {
-      var data = panel.data('hexDisabled');
-      var searchValue = data.value;
-      var control = self.controls[data.control];
-
-      function onChange() {
-        if (control.getValue() !== searchValue) {
-          panel.hide();
-          panel.find('input[type!="submit"],select,textarea').trigger('disable');
-        } else {
-          panel.show();
-          panel.find('input[type!="submit"],select,textarea').trigger('enable');
-        }
-      }
-
-      control.addEvent('change', onChange);
-      control.trigger('change');
-    }
 
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');

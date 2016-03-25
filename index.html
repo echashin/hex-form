@@ -38,7 +38,8 @@
   <div class="row">
     <div class="col-xs-12">
 
-      <form novalidate id='test' class="hex-form" action="http://bimlibsvn.lc/_demo/backend/data/form.php" method="POST" enctype="multipart/form-data">
+      <form novalidate id='test' class="hex-form" action="http://bimlibsvn.lc/_demo/backend/data/form.php" method="POST"
+            enctype="multipart/form-data">
         <ul class="nav nav-tabs nav-justified" role="tablist">
           <li role="presentation" class="active"><a href="#tab-email" aria-controls="tab-email" role="tab"
                                                     data-toggle="tab"><span
@@ -144,7 +145,6 @@
               </div>
 
 
-
             </div>
 
           </div>
@@ -223,17 +223,80 @@
                 <div data-hex-multy='{"allow_empty":true}'>
 
                   <ul class="nav nav-tabs" role="tablist" data-hex-multy-tabs>
-                    <li role="presentation" data-hex-multy-tab="$"><a href="#slot_0" aria-controls="slot_0" role="tab" data-toggle="tab"> <span
-                      class="error glyphicon glyphicon-exclamation-sign"></span> <span data-hex-multy-tab-label>Слот 0</span></a>
+                    <li role="presentation" data-hex-bind='{"data-hex-multy-tab":"@index"}' data-hex-multy-tab="$"><a
+                      data-hex-bind='{"href":"#slot_@index","aria-controls":"#slot_@index"}' href="#slot_0"
+                      aria-controls="slot_0" role="tab" data-toggle="tab"> <span
+                      class="error glyphicon glyphicon-exclamation-sign"></span> <span
+                      data-hex-bind='{"html":"Слот %@index+1%"}'></span></a>
                     </li>
                     <li role="presentation">
-                      <span data-hex-multy-add  class="btn btn-success">+ Добавить</span>
+                      <span data-hex-multy-add class="btn btn-success">+ Добавить</span>
                     </li>
                   </ul>
 
                   <div class="tab-content" data-hex-multy-items>
-                    <div role="tabpanel" class="tab-pane" data-hex-multy-item="$" id="slot_0">
+                    <div role="tabpanel" class="tab-pane" data-hex-multy-item="$"
+                         data-hex-bind='{"id":"slot_@index","data-hex-multy-item":"@index"}' >
                       <div class="row">
+                        <br>
+
+                        <div class="col-xs-12">
+                          <div class="form-group">
+                            <div class="btn-group btn-group-justified">
+                              <label
+                                data-hex-bind='{"for":"items_@index_production"}'
+                                class="btn btn-default"><input type="radio"
+                                                               data-hex-bind='{"name":"items[@index][type]","id":"items_@index_production"}'
+                                                               value="production" checked>
+                                Производственный</label>
+                              <label class="btn btn-default"
+                                     data-hex-bind='{"for":"items_@index_line"}'
+                              ><input type="radio"
+                                      data-hex-bind='{"name":"items[@index][type]","id":"items_@index_line"}'
+                                      value="linear"
+                              >
+                                Линейный</label>
+                              <label
+                                data-hex-bind='{"for":"items_@index_unprod"}'
+                                class="btn btn-default"><input type="radio"
+                                                               data-hex-bind='{"name":"items[@index][type]","id":"items_@index_unprod"}'
+                                                               value="nonmanufacturing"
+                              >
+                                Непроизводственный</label>
+                            </div>
+                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"production"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Производственный</label>
+                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][prodcomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"linear"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Линейный</label>
+                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][linecomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"nonmanufacturing"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Непроизводственный</label>
+                                <textarea required class="form-control" data-hex-bind='{"name":"items[@index][noncomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <div class="col-xs-4">
                           <div class="form-group">
                             <label class="control-label required">Название</label>
@@ -254,10 +317,13 @@
                         <div class="col-xs-4">
                           <div class="form-group">
                             <label class="control-label">Пользователь</label>
-                            <select data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}' style="width: 100%"
-                                    name="items[0][user][]" class="form-control" multiple>
+                            <select
+                              data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}'
+                              style="width: 100%"
+                              name="items[0][user][]" class="form-control" multiple>
 
                             </select>
+
                             <div class="errors">
                               <span class="error-required label label-danger">Выберите пользователей</span>
                             </div>
@@ -292,48 +358,6 @@
 
 
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                <div class="form-group">
-                  <div class="btn-group btn-group-justified">
-                    <label class="btn btn-default" for="project_type_prod"><input type="radio" name="code_type_facility" value="production"
-                                                                                  id="project_type_prod"
-                                                                                  checked> Производственный</label>
-                    <label class="btn btn-default" for="project_type_line"><input type="radio" name="code_type_facility" value="linear"
-                                                                                  id="project_type_line"> Линейный</label>
-                    <label class="btn btn-default" for="project_type_unprod"><input type="radio" name="code_type_facility" value="nonmanufacturing"
-                                                                                    id="project_type_unprod"> Непроизводственный</label>
-                  </div>
-                  <div data-hex-disabled='{"control":"code_type_facility","value":"production"}'>
-                    <div class="form-group" >
-                      <label class="control-label">Производственный</label>
-                      <textarea required class="form-control" id="commentp" name="commentp"></textarea>
-                      <div class="errors">
-                        <span class="error-required label label-danger">Заполните поле</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div data-hex-disabled='{"control":"code_type_facility","value":"linear"}'>
-                    <div class="form-group">
-                      <label class="control-label">Линейный</label>
-                      <textarea required class="form-control" id="commentl" name="commentl"></textarea>
-                      <div class="errors">
-                        <span class="error-required label label-danger">Заполните поле</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div data-hex-disabled='{"control":"code_type_facility","value":"nonmanufacturing"}'>
-                    <div class="form-group">
-                      <label class="control-label">Непроизводственный</label>
-                      <textarea required class="form-control" id="commentn" name="commentn"></textarea>
-                      <div class="errors">
-                        <span class="error-required label label-danger">Заполните поле</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-                <div class="errors">
-                  <span class="error-required label label-danger">Заполните поле</span>
-                </div>
 
 
                 <div class="form-group">
@@ -380,44 +404,55 @@
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>
-                  <select data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}' style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control" multiple="multiple">
+                  <select data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}'
+                          style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control"
+                          multiple="multiple">
                     <option value="5" selected="selected">Talley Richmond</option>
                   </select>
+
                   <div class="errors">
                     <span class="error-required label label-danger">Выберите пользователей</span>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="user_ajax">Пользователи AJAX зависимый</label>
-                  <select required  data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php","parent":{"selector":"#user_ajax"}}' style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control" multiple="multiple">
+                  <select required
+                          data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php","parent":{"selector":"#user_ajax"}}'
+                          style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control"
+                          multiple="multiple">
 
                   </select>
+
                   <div class="errors">
                     <span class="error-required label label-danger">Выберите пользователей</span>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="user_simple">Пользователи</label>
-                  <select required  data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]" class="form-control" multiple="multiple">
+                  <select required data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]"
+                          class="form-control" multiple="multiple">
                     <option value="190">Buckley Riddle</option>
                     <option value="191">Suarez Tran</option>
                     <option value="192">Morales Preston</option>
                     <option value="193">Sykes Collins</option>
                     <option value="194">Luella Beck</option>
                   </select>
+
                   <div class="errors">
                     <span class="error-required label label-danger">Выберите пользователей</span>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="user_simple2">Пользователи 2</label>
-                  <select style="width: 100%" id="user_simple2" name="user_simple2[]" class="form-control" multiple="multiple">
+                  <select style="width: 100%" id="user_simple2" name="user_simple2[]" class="form-control"
+                          multiple="multiple">
                     <option value="190">Buckley Riddle</option>
                     <option value="191">Suarez Tran</option>
                     <option value="192">Morales Preston</option>
                     <option value="193">Sykes Collins</option>
                     <option value="194">Luella Beck</option>
                   </select>
+
                   <div class="errors">
                     <span class="error-required label label-danger">Выберите пользователей</span>
                   </div>
