@@ -618,6 +618,8 @@ var hexForm = (function (window, document) {
       var control = self.controls[data.control];
       if (control === undefined) {
         console.log(panel);
+        console.log(data);
+
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
