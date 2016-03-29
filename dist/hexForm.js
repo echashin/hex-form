@@ -611,6 +611,7 @@ var hexForm = (function (window, document) {
           });
         }
       }else{
+        form.find('.alerts div').remove();
         form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.invalidText));
       }
       return false;
