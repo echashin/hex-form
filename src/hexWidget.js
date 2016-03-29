@@ -157,7 +157,7 @@ var HexWidget = (function () {
             value += defaultSettings.locale.separator + picker.endDate.format(defaultSettings.locale.format);
           }
           input.val(value);
-          //input.trigger('blur');
+          input.trigger('keyup');
         });
 
       }
