@@ -334,6 +334,9 @@ var hexForm = (function (window, document) {
       }
       self.formGroup = inputs[0].closest('div.form-group');
       errors = self.formGroup.find('.errors');
+      if (errors.size() === 0) {
+        throw new Error('Errors block not found near control "' + self.name + '" ');
+      }
 
       if (self.formGroup.parents('[role="tabpanel"]').size() > 0) {
         self.formGroup.parents('[role="tabpanel"]').each(function () {
