@@ -29,8 +29,12 @@ var hexForm = (function (window, document) {
     self.readonly = false;
 
     self.setValid = function () {
-      self.formGroup.removeClass('has-error');
-      errors.find('span').removeClass('active');
+      if (self.formGroup !== undefined) {
+        self.formGroup.removeClass('has-error');
+      }
+      if (errors !== undefined) {
+        errors.find('span').removeClass('active');
+      }
     };
 
     self.enable = function () {
@@ -75,7 +79,7 @@ var hexForm = (function (window, document) {
 
     var validateFunc = function () {
       var errorsCount = 0;
-      if(errors !== undefined){
+      if (errors !== undefined) {
         errors.find('span').removeClass('active');
       }
 
@@ -87,7 +91,7 @@ var hexForm = (function (window, document) {
             var isValid = validator.isValid(value);
             if (isValid === false || isValid === 'false') {
               errorsCount++;
-              if(errors !== undefined) {
+              if (errors !== undefined) {
                 errors.find('span.error-' + validator.getClassName()).addClass('active');
               }
               break;
@@ -98,12 +102,12 @@ var hexForm = (function (window, document) {
 
       if (errorsCount > 0) {
         self.valid = false;
-        if(self.formGroup !== undefined) {
+        if (self.formGroup !== undefined) {
           self.formGroup.addClass('has-error');
         }
       }
       else {
-        if(self.formGroup !== undefined) {
+        if (self.formGroup !== undefined) {
           self.formGroup.removeClass('has-error');
         }
         self.valid = true;
@@ -342,13 +346,17 @@ var hexForm = (function (window, document) {
         }
       }
       self.formGroup = inputs[0].closest('div.form-group');
-      errors = self.formGroup.find('.errors');
-      if (errors.size() === 0) {
-        throw new Error('Errors block not found near control "' + self.name + '" ');
+      if (self.formGroup.size() === 0) {
+        self.formGroup = undefined;
+      }else {
+        errors = self.formGroup.find('.errors');
+        if (errors.size() === 0) {
+          errors = undefined;
+        }
       }
 
-      if (self.formGroup.parents('[role="tabpanel"]').size() > 0) {
-        self.formGroup.parents('[role="tabpanel"]').each(function () {
+      if (inputs[0].parents('[role="tabpanel"]').size() > 0) {
+        inputs[0].parents('[role="tabpanel"]').each(function () {
           var tabPanel = $(this);
           var tabId = tabPanel.attr('id');
           self.panels.push(tabId);
@@ -357,7 +365,6 @@ var hexForm = (function (window, document) {
             self.tabs.push(tabEl);
           }
         });
-
       }
 
       self.setValid();
@@ -369,6 +376,7 @@ var hexForm = (function (window, document) {
     var self = this;
     self.controls = {};
     self.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
+    self.invalidText = 'Форма содержит ошибки';
     var form = f;
     var formId = form.attr('id');
     var handlers = {};
@@ -602,6 +610,8 @@ var hexForm = (function (window, document) {
             }
           });
         }
+      }else{
+        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.invalidText));
       }
       return false;
     };
