@@ -75,10 +75,10 @@ var hexForm = (function (window, document) {
 
     var validateFunc = function () {
       var errorsCount = 0;
-      if(errors === undefined){
-        throw new Error('Errors block not found near control "' + self.name + '" ');
+      if(errors !== undefined){
+        errors.find('span').removeClass('active');
       }
-      errors.find('span').removeClass('active');
+
       if (!self.disabled) {
         for (var vIndex in validators) {
           if (validators.hasOwnProperty(vIndex)) {
@@ -87,7 +87,9 @@ var hexForm = (function (window, document) {
             var isValid = validator.isValid(value);
             if (isValid === false || isValid === 'false') {
               errorsCount++;
-              errors.find('span.error-' + validator.getClassName()).addClass('active');
+              if(errors !== undefined) {
+                errors.find('span.error-' + validator.getClassName()).addClass('active');
+              }
               break;
             }
           }
@@ -96,10 +98,14 @@ var hexForm = (function (window, document) {
 
       if (errorsCount > 0) {
         self.valid = false;
-        self.formGroup.addClass('has-error');
+        if(self.formGroup !== undefined) {
+          self.formGroup.addClass('has-error');
+        }
       }
       else {
-        self.formGroup.removeClass('has-error');
+        if(self.formGroup !== undefined) {
+          self.formGroup.removeClass('has-error');
+        }
         self.valid = true;
       }
 
