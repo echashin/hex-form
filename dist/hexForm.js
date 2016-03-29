@@ -75,6 +75,9 @@ var hexForm = (function (window, document) {
 
     var validateFunc = function () {
       var errorsCount = 0;
+      if(errors === undefined){
+        throw new Error('Errors block not found near control "' + self.name + '" ');
+      }
       errors.find('span').removeClass('active');
       if (!self.disabled) {
         for (var vIndex in validators) {
