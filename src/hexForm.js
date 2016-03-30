@@ -643,17 +643,20 @@ var hexForm = (function (window, document) {
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
-        var controlValue = control.getValue();
+        var v = control.getValue();
         var expSuccess = false;
-
-        if (typeof controlValue === 'string') {
-          if (controlValue === searchValue) {
-            expSuccess = true;
+        if (v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0)) {
+          expSuccess = false;
+        } else {
+          if (typeof v === 'string') {
+            if (v === searchValue) {
+              expSuccess = true;
+            }
           }
-        }
-        if (typeof controlValue === 'object') {
-          if (controlValue.indexOf(searchValue) >= 0) {
-            expSuccess = true;
+          if (typeof v === 'object') {
+            if (v.indexOf(searchValue) >= 0) {
+              expSuccess = true;
+            }
           }
         }
 
