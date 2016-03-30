@@ -348,7 +348,7 @@ var hexForm = (function (window, document) {
       self.formGroup = inputs[0].closest('div.form-group');
       if (self.formGroup.size() === 0) {
         self.formGroup = undefined;
-      }else {
+      } else {
         errors = self.formGroup.find('.errors');
         if (errors.size() === 0) {
           errors = undefined;
@@ -610,7 +610,7 @@ var hexForm = (function (window, document) {
             }
           });
         }
-      }else{
+      } else {
         form.find('.alerts div').remove();
         form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.invalidText));
       }
@@ -643,7 +643,18 @@ var hexForm = (function (window, document) {
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
-        if (control.getValue() !== searchValue) {
+        var controlValue = control.getValue();
+        var expSuccess = true;
+        if (typeof controlValue === 'string') {
+          if (controlValue !== searchValue) {
+            expSuccess = false;
+          }
+        } else {
+          if (controlValue.indexOf(searchValue) < 0) {
+            expSuccess = false;
+          }
+        }
+        if (!expSuccess) {
           panel.hide();
           panel.find('input[type!="submit"],select,textarea').trigger('disable');
         } else {
