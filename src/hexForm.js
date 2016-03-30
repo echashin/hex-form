@@ -644,16 +644,19 @@ var hexForm = (function (window, document) {
       }
       function onChange() {
         var controlValue = control.getValue();
-        var expSuccess = true;
+        var expSuccess = false;
+
         if (typeof controlValue === 'string') {
-          if (controlValue !== searchValue) {
-            expSuccess = false;
-          }
-        } else {
-          if (controlValue.indexOf(searchValue) < 0) {
-            expSuccess = false;
+          if (controlValue === searchValue) {
+            expSuccess = true;
           }
         }
+        if (typeof controlValue === 'object') {
+          if (controlValue.indexOf(searchValue) >= 0) {
+            expSuccess = true;
+          }
+        }
+
         if (!expSuccess) {
           panel.hide();
           panel.find('input[type!="submit"],select,textarea').trigger('disable');
