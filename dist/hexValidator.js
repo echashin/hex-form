@@ -365,5 +365,3 @@ var HexValidator = (function () {
 
   return Validator;
 })();
-
-

@@ -1,4 +1,4 @@
-/* global moment:true*/
+/* global moment:true, dragula:true, Flow:true*/
 
 var HexWidget = (function () {
   'use strict';
@@ -157,7 +157,7 @@ var HexWidget = (function () {
             value += defaultSettings.locale.separator + picker.endDate.format(defaultSettings.locale.format);
           }
           input.val(value);
-          input.trigger('keyup');
+          input.trigger('change');
         });
 
       }
@@ -289,59 +289,98 @@ var HexWidget = (function () {
     init(config);
   }
 
-
   /*
    function FileUpload(config) {
-   var input, control;
-   var tempValue = [];
+   var input, control, url, flow;
+   var allowedTypes;
    var thumbs;
    var limit;
+   var single = false;
    var button;
    var disabled = false;
-   var controlValue = [];
+   var thumbSample;
+   var files = [];
 
    function disable() {
    disabled = true;
-   button.attr('disabled', 'disabled').find('input').attr('disabled', 'disabled');
+
    }
 
    function enable() {
    disabled = false;
-   button.removeAttr('disabled').find('input').removeAttr('disabled');
+
    }
 
    function change() {
-   var tpl = '';
-   $.each(tempValue, function (index, value) {
-   tpl += '<li class="list-group-item clearfix">';
-   if (value.thumbnailUrl !== undefined) {
-   tpl += '<a target="_blank" href="' + value.url + '" class="thumbnail"><img width="50" src="' + value.thumbnailUrl + '"></a>';
+
+
    }
-   tpl += value.name;
-   tpl += '<button aria-label="Close" class="close" type="button"><span aria-hidden="true">×</span></button></li>';
-   });
-   thumbs.html(tpl);
-   if (limit !== undefined) {
-   if (tempValue.length >= limit) {
-   disable();
+
+   function addFile(file, name) {
+   var newThumb = thumbSample.clone();
+   control.form.hexBind(newThumb, {'@name': name, '@thumb': '<i class="upload-loader"></i>', '@link': ''});
+   if (input.closest('.form-group').find('[data-hex-thumb]').size() === 0) {
+   input.closest('.form-group').find('.upload-dropzone').prepend(newThumb);
    } else {
-   enable();
+   newThumb.insertAfter(input.closest('.form-group').find('[data-hex-thumb]').last());
+   }
+   files.push({'file': file, 'html': newThumb});
+   }
+
+   function markError(file, message) {
+   for (var i in files) {
+   if (files[i].file === file) {
+   control.form.hexBind(files[i].html, {'@thumb_preview': '<div class="upload-error">' + message + '</div>'});
+   var delHtml = files[i].html;
+   flow.removeFile(files[i].file);
+   files.splice(i, 1);
+   var tm = setTimeout(function () {
+   delHtml.fadeOut(function () {
+   delHtml.remove();
+   });
+   }, 3000);
+   break;
+   }
    }
    }
 
-   controlValue = [];
-   $.each(tempValue, function (index, file) {
-   if (file.id !== undefined) {
-   controlValue.push(file);
+   function removeFile(html) {
+   for (var i in files) {
+   if (files[i].html === html) {
+   if (files[i].file !== undefined) {
+   flow.removeFile(files[i].file);
    }
+   files.splice(i, 1);
+
+   }
+   break;
+   }
+   html.fadeOut(function () {
+   html.remove();
    });
-   control.setValue(controlValue);
    }
+
 
    function init(conf) {
    if (conf.control !== undefined) {
    control = conf.control;
    }
+   if (conf.types !== undefined) {
+   allowedTypes = [];
+   var reg = /$[\.]/;
+   for (var t in conf.types) {
+   var type = conf.types[t];
+   if (!reg.test(type)) {
+   type = '.' + type;
+   }
+   allowedTypes.push(type);
+   }
+
+   }
+   if (conf.single === true) {
+   single = true;
+   }
+
    if (conf.limit !== undefined) {
    limit = parseInt(conf.limit);
    if (isNaN(limit)) {
@@ -353,86 +392,84 @@ var HexWidget = (function () {
    delete conf.limit;
    }
 
-   if (conf.value !== undefined) {
-   $.each(conf.value, function (index, file) {
-   tempValue.push(file);
-   controlValue.push(file);
-   });
-
-   change();
-   }
-
    if (conf.input !== undefined) {
    input = conf.input;
-   button = input.closest('.btn');
-   if (config.params === undefined) {
-   config.formData = {};
+   }
+   if (conf.url !== undefined) {
+   url = conf.url;
    } else {
-   config.formData = config.params;
-   delete config.params;
+   throw new Error('doesnt set url paremetr on ' + control.name);
    }
 
-   var defaultSettings = {
-   dataType: 'json',
-   paramName: 'files[]',
-   dropZone: input.closest('.drop-zone'),
-   autoUpload: false,
-   acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+   var flowParams = {
+   target: url,
+   singleFile: single
    };
 
-   $.extend(defaultSettings, config);
+   flow = new Flow(flowParams);
 
-
-   thumbs = input.closest('.form-group').find('.hex-file-thumbs');
-
-   thumbs.on('click', '.close', function () {
-   var index = thumbs.find('li').index($(this).closest('li'));
-   tempValue.splice(index, 1);
-   change();
-   });
-
-
-   var uploader = input.fileupload(defaultSettings);
-
-   uploader.bind('fileuploaddone', function (e, data) {
-   var fIndex = 0;
-   $.each(data.files, function (index, file) {
-   fIndex = tempValue.indexOf(file);
-   });
-   $.each(data.result.files, function (index, file) {
-   tempValue[fIndex] = file;
-   });
-   change();
-   });
-   uploader.bind('fileuploadprocessfail', function () {
-   swal('Ошибка!', 'Не удалось загрузить файл', 'error');
-   });
-   uploader.bind('fileuploadprocessalways', function (e, data) {
-   var currentFile = data.files[data.index];
-   if (data.files.error && currentFile.error) {
-   swal('Ошибка!', currentFile.error, 'error');
+   if (input.closest('.form-group').find('[data-hex-thumb]').size() > 0) {
+   input.closest('.form-group').find('[data-hex-thumb]').each(function () {
+   var data = $(this).data('hexThumb');
+   if (data === '') {
+   thumbSample = $(this).clone(false);
+   $(this).remove();
    } else {
-   tempValue.push(currentFile);
-   change();
-   data.process().done(function () {
-   data.submit();
-   });
+   files.push({'html': $(this)});
    }
    });
-
-   uploader.bind('fileuploadadd', function () {
-   if (limit !== undefined && limit < tempValue.length) {
-   disable();
-   swal('Ошибка!', 'Не более ' + limit + ' файлов', 'error');
+   }
+   input.closest('.form-group').on('click', '[data-hex-remove]', function (event) {
+   event.preventDefault();
+   var thumb = $(this).closest('.upload-thumb');
+   removeFile(thumb);
    return false;
-   }
    });
-
+   if (single) {
+   dragula([input.closest('.form-group').find('.upload-dropzone')[0]], {
+   'mirrorContainer': input.closest('.form-group').find('.upload-dropzone')[0],
+   direction: 'horizontal'
+   });
    }
+
+   if (flow.support) {
+   var browseParams = {};
+   if (allowedTypes !== undefined) {
+   browseParams.accept = allowedTypes.join(',');
+   }
+
+   flow.assignBrowse(input.closest('.form-group').find('.upload-btn')[0], false, single, browseParams);
+   flow.assignDrop(input.closest('.form-group').find('.upload-dropzone')[0]);
+   flow.on('fileAdded', function (file, event) {
+   var valid = true;
+   if (allowedTypes !== undefined) {
+   if (allowedTypes.indexOf('.' + file.getType()) < 0) {
+   valid = false;
+   }
+   }
+   if (valid) {
+   addFile(file, file.name);
+   } else {
+   alert('"' + file.name + '" - неверный тип файла. Разрешены файлы типа: ' + allowedTypes.join(', '));
+   }
+   return valid;
+   });
+   flow.on('fileSuccess', function (file, message) {
+   //console.log(file, message);
+   });
+   flow.on('fileError', function (file, message) {
+   markError(file, message);
+   });
+   flow.on('filesSubmitted', function (file) {
+   flow.upload();
+   });
+   }
+
    }
 
    init(config);
-   }*/
+   }
+   */
 
   function Phone(config) {
     var input;
@@ -496,5 +533,3 @@ var HexWidget = (function () {
 
   return Widget;
 })();
-
-

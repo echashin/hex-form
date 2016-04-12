@@ -1,67 +1,75 @@
-.hex-form{
+.hex-form {
   position: relative;
 }
-.hex-form .loader{
+
+.hex-form .loader {
   display: none;
   width: 100%;
   height: 100%;
   position: absolute;
-  top:0;
+  top: 0;
   left: 0;
-  background: url("loader.gif") no-repeat center center rgba(255,255,255,0.4);
+  background: url("loader.gif") no-repeat center center rgba(255, 255, 255, 0.4);
 }
 
-.hex-form .errors span{
+.hex-form .errors span {
   display: none;
   margin-right: 10px;
 }
-.hex-form .errors span.active{
+
+.hex-form .errors span.active {
   display: inline;
 }
 
 /*widgets*/
 /*password-strength*/
-.hex-form .password-strength{
+.hex-form .password-strength {
   width: auto;
   height: 1px;
   display: block;
   margin: 2px 0 5px 0;
 }
-.hex-form .password-strength div{
+
+.hex-form .password-strength div {
   transition: all 0.5s ease;
   height: 1px;
   width: 0;
 }
-.hex-form .password-strength .s-0{
+
+.hex-form .password-strength .s-0 {
   width: 0;
 }
-.hex-form .password-strength .s-1{
+
+.hex-form .password-strength .s-1 {
   width: 20%;
   background-color: #8C2825;
 }
-.hex-form .password-strength .s-2{
+
+.hex-form .password-strength .s-2 {
   width: 40%;
   background-color: #D9534F;
 }
 
-.hex-form .password-strength .s-3{
+.hex-form .password-strength .s-3 {
   width: 60%;
-  background-color:#f0ad4e;
+  background-color: #f0ad4e;
 }
 
-.hex-form .password-strength .s-4{
+.hex-form .password-strength .s-4 {
   width: 80%;
   background-color: #5bc0de;
 }
-.hex-form .password-strength .s-5{
+
+.hex-form .password-strength .s-5 {
   width: 100%;
   background-color: #5cb85c;
 }
 
-.hex-form input.password{
+.hex-form input.password {
   padding-right: 32px;
 }
-.hex-form .password-show{
+
+.hex-form .password-show {
   background-color: transparent;
   border: medium none;
   color: #999;
@@ -74,7 +82,8 @@
   width: 32px;
   z-index: 4;
 }
-.hex-form .password-show i{
+
+.hex-form .password-show i {
   display: block;
   width: 100%;
   height: 100%;
@@ -82,39 +91,44 @@
   font-size: 14px;
   line-height: 30px !important;
 }
-.hex-form .password-show .off{
-  display: none;
-}
-.hex-form .password-show.active .on{
+
+.hex-form .password-show .off {
   display: none;
 }
 
-.hex-form .password-show.active .off{
+.hex-form .password-show.active .on {
+  display: none;
+}
+
+.hex-form .password-show.active .off {
   display: inline;
 }
 
-.hex-form .password-show:hover{
+.hex-form .password-show:hover {
   color: black;
 }
-.hex-form label.required::before{
+
+.hex-form label.required::before {
   content: '*';
   color: #D9534F;
 }
 
-.hex-form .nav .error{
+.hex-form .nav .error {
   color: #D9534F;
   display: none;
 }
-.hex-form .nav .has-error .error{
+
+.hex-form .nav .has-error .error {
   display: inline;
 }
-.hex-form .fileinput-button{
+
+.hex-form .fileinput-button {
   display: inline-block;
   overflow: hidden;
   position: relative;
 }
 
-.hex-form .fileinput-button input{
+.hex-form .fileinput-button input {
   cursor: pointer;
   direction: ltr;
   font-size: 200px;
@@ -125,15 +139,157 @@
   top: 0;
 }
 
-.hex-form .hex-file-thumbs .thumbnail{
+.hex-form .hex-file-thumbs .thumbnail {
   float: left;
   width: 50px;
   height: 50px;
-  margin:0 24px 0 0;
+  margin: 0 24px 0 0;
 }
-.hex-form .drop-zone{
-  border: dashed 1px #528CE0;
-  padding: 10px;
-  border-radius: 3px;
 
+.hex-form .upload-dropzone {
+  border: dashed 1px #528CE0;
+  padding: 10px 10px 0 10px;
+  border-radius: 3px;
+  display: table;
+  width: 100%;
+}
+
+.hex-form .upload-dropzone::after {
+  clear: both;
+}
+
+.hex-form .upload-btn {
+  display: block;
+  width: 100px;
+  height: 100px;
+  float: left;
+  margin-bottom: 10px;
+  white-space: normal !important;
+}
+
+.hex-form thumb {
+  display: block;
+  width: 100px;
+  height: 100px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  border: solid 1px #ccc;
+  padding: 18px 0;
+}
+.hex-form thumb.thumb-error{
+  border: solid 1px #D9534F;
+}
+
+.hex-form thumb span{
+  padding:0 8px;
+  display: block;
+  width: 100%;
+  height: 16px;
+  font-size: 10px;
+  line-height: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  background-color: white;
+  border-bottom: solid 1px #ccc;
+  border-top: solid 1px white;
+  color: #666;
+}
+
+.hex-form thumb span::before{
+  content: "";
+  display: block;
+  height: 1px;
+  position: absolute;
+  background-color: white;
+  top: -1px;
+  left: 0;
+  width: 98px;
+}
+.hex-form thumb span:hover{
+  width: auto;
+  position: absolute;
+  z-index: 100;
+  border-radius: 0 0px 2px 2px;
+  border-right: solid 1px #ccc;
+  border-top: solid 1px #ccc;
+  overflow: visible;
+  min-width: 99px;
+}
+
+
+
+.hex-form .upload-preview{
+  width: 100%;
+  height: 60px;
+  overflow: hidden;
+  display: block;
+  background-color: white;
+  position: relative;
+  z-index: 200;
+}
+
+.hex-form .upload-preview:hover{
+
+}
+.hex-form .upload-error{
+  background-color: #D9534F;
+  color: white;
+  font-size: 9px;
+  padding: 5px;
+  margin: 0 5px;
+}
+
+.hex-form .upload-preview img{
+  display: block;
+  margin: 0 auto;
+  max-height:100%;
+  height: 100%;
+}
+.hex-form thumb .upload-remove{
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: #ccc;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  line-height: 8px;
+}
+.hex-form thumb .upload-loader{
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 0 auto;
+  background: url("upload.gif") no-repeat center center;
+}
+.hex-form thumb .upload-remove::after{
+  content: "×";
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  font-size: 10px;
+}
+.hex-form thumb:hover>.upload-remove:hover{
+  background-color:#D9534F;
+}
+
+.hex-form [draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
 }

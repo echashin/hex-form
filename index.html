@@ -13,8 +13,10 @@
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
   <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css"/>
   <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css"/>
+
   <link rel="stylesheet" href="bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css"/>
-  <link rel="stylesheet" href="bower_components/bootstrap-sweetalert/lib/sweet-alert.css"/>
+  <link rel="stylesheet" href="bower_components/dragula.js/dist/dragula.min.css"/>
+
   <!-- endbuild -->
 
   <!-- build:css hex-form.min.css -->
@@ -40,6 +42,7 @@
 
       <form novalidate id='test' class="hex-form" action="http://bimlibsvn.lc/_demo/backend/data/form.php" method="POST"
             enctype="multipart/form-data">
+        <br>
         <ul class="nav nav-tabs nav-justified" role="tablist">
           <li role="presentation" class="active"><a href="#tab-email" aria-controls="tab-email" role="tab"
                                                     data-toggle="tab"><span
@@ -378,37 +381,35 @@
 
 
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <br><br>
 
-
+                <div class="form-group">
+                  <div class="upload-dropzone">
+                    <thumb data-hex-thumb  ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><div class="upload-preview" data-hex-bind='{"html":"@thumb_preview"}'></div><span data-hex-bind='{"html":"@name"}'></span></thumb>
+                    <thumb data-hex-thumb='{"id":1,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/1.jpg"></a><span>bla_bla_blala_bla_bla.jpg</span></thumb>
+                    <thumb data-hex-thumb='{"id":2,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/2.jpg"></a></thumb>
+                    <thumb data-hex-thumb='{"id":3,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/3.jpg"></a></thumb>
+                    <thumb data-hex-thumb='{"id":4,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/4.jpg"></a></thumb>
+                    <button type="button" class="btn btn-success upload-btn">загрузить файл</button>
+                  </div>
+                  <input data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","pdf","mp4"],"single":true}' id="uploadedimages" type="hidden" name="uploadedimages">
+                  <div class="errors">
+                    <span class="error-required label label-danger">Загрузите изображения</span>
+                    <span class="error-file-type label label-danger">Не верный формат файла</span>
+                  </div>
+                </div>
+                <br>
+                <hr>
                 <div class="form-group">
                   <input data-hex-widget-filesimple id="file" type="file" name="image">
-
                   <div class="errors">
                     <span class="error-required label label-danger">Загрузите изображения</span>
                     <span class="error-file-type label label-danger">Не верный формат файла</span>
                   </div>
                 </div>
 
-                <!--
-                <div class="form-group">
-                  <div class="drop-zone">
-                  <span class="btn btn-success fileinput-button">
-                      <i class="glyphicon glyphicon-plus"></i>
-                      <span>Выбрать файлы...</span>
-                      <input required
-                             data-hex-widget-fileupload='{"url":"/server/index.php","limit":1,"params":{"item_id":2}}'
-                             id="fileupload22" type="file" name="images"
-                      >
-                  </span>
-                  </div>
-                  <br/>
-                  <ul class="list-group hex-file-thumbs"></ul>
-                  <div class="errors">
-                    <span class="error-required label label-danger">Загрузите изображения</span>
-                    <span class="error-file-type label label-danger">Не верный формат файла</span>
-                  </div>
-                </div>
-                -->
+
+
 
                 <div class="form-group">
                   <label class="control-label">Согласен с правилами
@@ -501,7 +502,9 @@
 <script src="bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
 <script src="bower_components/select2/dist/js/select2.full.min.js"></script>
-<script src="bower_components/bootstrap-sweetalert/lib/sweet-alert.min.js"></script>
+
+<script src="bower_components/flow.js/dist/flow.js"></script>
+<script src="bower_components/dragula.js/dist/dragula.min.js"></script>
 
 <script src="bower_components/bootstrap/js/tab.js"></script>
 

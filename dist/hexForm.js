@@ -11,8 +11,7 @@ var hexForm = (function (window, document) {
     self.valid = true;
     self.name = undefined;
     var inputs = [];
-    var form = config.form;
-
+    self.form = config.form;
     var errors, timerId;
 
     self.formGroup = undefined;
@@ -117,9 +116,9 @@ var hexForm = (function (window, document) {
       if (self.panels.length > 0) {
         var controlsValid = true;
         if (self.valid === true) {
-          for (var c in form.controls) {
-            if (form.controls.hasOwnProperty(c)) {
-              var otherControl = form.controls[c];
+          for (var c in self.form.controls) {
+            if (self.form.controls.hasOwnProperty(c)) {
+              var otherControl = self.form.controls[c];
               if (otherControl.valid === false) {
                 for (var o in otherControl.panels) {
                   var otherPanel = otherControl.panels[o];
@@ -335,7 +334,7 @@ var hexForm = (function (window, document) {
         }
       }
       if (conf.form !== undefined) {
-        form = conf.form;
+        self.form = conf.form;
       }
       self.name = conf.name;
       if (conf.inputs !== undefined) {
@@ -677,7 +676,7 @@ var hexForm = (function (window, document) {
       return name.replace('-', '').toUpperCase();
     }
 
-    function hexBind(block, params) {
+    self.hexBind = function (block, params) {
       var nodes = [];
       nodes.push(block);
       block.find('[data-hex-bind]').each(function () {
@@ -689,7 +688,6 @@ var hexForm = (function (window, document) {
         nn[index] = '';
         // Parse the expression
         for (var c = 0; c < chars.length; c++) {
-
           if (isNaN(parseInt(chars[c])) && chars[c] !== '.' && !oplast) {
             op[index] = chars[c];
             index++;
@@ -746,34 +744,34 @@ var hexForm = (function (window, document) {
         var bParams = nodes[n].data('hexBind');
         for (var attr in bParams) {
           var tpl = appendParams(bParams[attr]);
-
-          if (attr !== 'html') {
-            if (/^data/.test(attr)) {
-              var dataParamName = attr.replace(/^data-/, '');
-              dataParamName = dataParamName.replace(/(\-[a-z])/g, convertDataName);
-              nodes[n].data(dataParamName, tpl);
-            }
-            if (attr === 'name') {
-              var oldName = nodes[n].attr('name');
-              if (oldName !== undefined && self.controls[oldName] !== undefined) {
-                var oldControl = self.controls[oldName];
-                oldControl.name = tpl;
-                self.controls[tpl] = oldControl;
-                delete self.controls[oldName];
+          if (tpl !== bParams[attr]) {
+            if (attr !== 'html') {
+              if (/^data/.test(attr)) {
+                var dataParamName = attr.replace(/^data-/, '');
+                dataParamName = dataParamName.replace(/(\-[a-z])/g, convertDataName);
+                nodes[n].data(dataParamName, tpl);
               }
-            }
-            if (typeof tpl === 'object') {
-              nodes[n].attr(attr, JSON.stringify(tpl));
+              if (attr === 'name') {
+                var oldName = nodes[n].attr('name');
+                if (oldName !== undefined && self.controls[oldName] !== undefined) {
+                  var oldControl = self.controls[oldName];
+                  oldControl.name = tpl;
+                  self.controls[tpl] = oldControl;
+                  delete self.controls[oldName];
+                }
+              }
+              if (typeof tpl === 'object') {
+                nodes[n].attr(attr, JSON.stringify(tpl));
+              } else {
+                nodes[n].attr(attr, tpl);
+              }
             } else {
-              nodes[n].attr(attr, tpl);
+              nodes[n].html(tpl);
             }
-          } else {
-            nodes[n].html(tpl);
           }
-
         }
       }
-    }
+    };
 
     function multy(block) {
       var multyConf = block.data('hex-multy');
@@ -797,7 +795,7 @@ var hexForm = (function (window, document) {
       firstBlock.remove();
 
       function updateItemIndex(item, newIndex) {
-        hexBind(item, {'@index': newIndex});
+        self.hexBind(item, {'@index': newIndex});
       }
 
       function multyCheck() {
