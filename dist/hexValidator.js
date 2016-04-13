@@ -69,6 +69,7 @@ var HexValidator = (function () {
       if (value === '' || value === undefined || value === false) {
         return true;
       }
+
       var mask = input.inputmask('option', 'mask');
       return Inputmask.isValid(input.val(), {alias: mask});
     };

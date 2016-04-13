@@ -371,13 +371,12 @@ var hexForm = (function (window, document) {
     initControl(config);
   }
 
-  function HexFormSingle(f) {
+  function HexFormSingle(formId) {
     var self = this;
     self.controls = {};
     self.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
     self.invalidText = 'Форма содержит ошибки';
-    var form = f;
-    var formId = form.attr('id');
+    var form = $('#' + formId);
     var handlers = {};
 
     var FormEvent = function (type) {
@@ -581,26 +580,29 @@ var hexForm = (function (window, document) {
             processData: false,
             contentType: false,
             success: function (res) {
-              if (res.success === true) {
-                clearErrors();
-                if (res.reload !== undefined) {
-                  if (res.reload === true) {
-                    window.location.href = window.location.href;
+              var dontBreakAfter = self.fire('afterSubmit', res);
+              if (dontBreakAfter) {
+                if (res.success === true) {
+                  clearErrors();
+                  if (res.reload !== undefined) {
+                    if (res.reload === true) {
+                      window.location.href = window.location.href;
+                    } else {
+                      window.location.href = res.reload;
+                    }
                   } else {
-                    window.location.href = res.reload;
+                    self.loaderHide();
                   }
                 } else {
                   self.loaderHide();
                 }
-              } else {
-                self.loaderHide();
-              }
-              if (res.alerts !== undefined) {
-                for (var m in res.alerts) {
-                  var message = res.alerts[m];
-                  form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                if (res.alerts !== undefined) {
+                  for (var m in res.alerts) {
+                    var message = res.alerts[m];
+                    form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                  }
+                  self.loaderHide();
                 }
-                self.loaderHide();
               }
             },
             error: function (jqXHR, textStatus) {
@@ -932,11 +934,11 @@ var hexForm = (function (window, document) {
         if (formId === undefined) {
           throw new Error('Form dont have id attr');
         }
-        hexForms[formId] = new HexFormSingle($(this));
+        hexForms[formId] = new HexFormSingle(formId);
       });
     } else {
       if (hexForms[id] === undefined) {
-        hexForms[id] = new HexFormSingle($('#' + id));
+        hexForms[id] = new HexFormSingle(id);
       }
       return hexForms[id];
     }

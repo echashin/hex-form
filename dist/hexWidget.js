@@ -115,20 +115,26 @@ var HexWidget = (function () {
   }
 
   function DateWidget(config) {
-    var input;
+    var input, control;
 
     function init(conf) {
       if (conf.input !== undefined) {
         input = conf.input;
+        delete conf.input;
+        control = conf.control;
+        delete conf.control;
         var localeData = moment.localeData();
         var localeFormat = localeData.longDateFormat('L');
         if (conf.timePicker !== undefined && conf.timePicker === true) {
           localeFormat += ' ' + localeData.longDateFormat('LT');
         }
+
+
         var defaultSettings = {
           'autoUpdateInput': false,
           'linkedCalendars': false,
           'singleDatePicker': true,
+
           'locale': {
             'format': localeFormat,
             'separator': ' - ',
@@ -142,6 +148,11 @@ var HexWidget = (function () {
             'firstDay': localeData.firstDayOfWeek()
           }
         };
+
+
+
+
+
         $.extend(defaultSettings, conf);
 
 
@@ -150,7 +161,9 @@ var HexWidget = (function () {
           mask += defaultSettings.locale.separator + mask;
         }
         input.inputmask(mask);
+
         input.daterangepicker(defaultSettings);
+
         input.on('apply.daterangepicker', function (ev, picker) {
           var value = picker.startDate.format(defaultSettings.locale.format);
           if (defaultSettings.singleDatePicker === false) {
@@ -159,6 +172,31 @@ var HexWidget = (function () {
           input.val(value);
           input.trigger('change');
         });
+
+        if (conf.parent !== undefined) {
+          var pId = conf.parent;
+          $(pId).on('change', function () {
+            var parentVal = $(pId).val();
+            if (isEmpty(parentVal)) {
+              control.disable();
+              input.val('').trigger('change');
+            } else {
+              defaultSettings.minDate = parentVal;
+              input.daterangepicker(defaultSettings);
+              input.on('apply.daterangepicker', function (ev, picker) {
+                var value = picker.startDate.format(defaultSettings.locale.format);
+                if (defaultSettings.singleDatePicker === false) {
+                  value += defaultSettings.locale.separator + picker.endDate.format(defaultSettings.locale.format);
+                }
+                input.val(value);
+                input.trigger('change');
+              });
+              control.enable();
+              input.data(defaultSettings);
+            }
+          });
+        }
+
 
       }
     }
