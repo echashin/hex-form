@@ -391,7 +391,9 @@ var hexForm = (function (window, document) {
       if (handlers[eventName] === undefined) {
         handlers[eventName] = [];
       }
-      handlers[eventName].push(fn);
+      if (handlers[eventName].indexOf(fn) < 0) {
+        handlers[eventName].push(fn);
+      }
     };
 
     self.off = function (eventName, fn) {
@@ -411,6 +413,10 @@ var hexForm = (function (window, document) {
       } else {
         return true;
       }
+    };
+
+    self.getHandlers = function(){
+      return handlers;
     };
 
     var removeControls = function (container) {
@@ -584,27 +590,29 @@ var hexForm = (function (window, document) {
             success: function (res) {
               var dontBreakAfter = self.fire('afterSubmit', res);
               if (dontBreakAfter) {
-                if (res.success === true) {
-                  clearErrors();
-                  if (res.reload !== undefined) {
-                    if (res.reload === true) {
-                      window.location.href = window.location.href;
+                window.setTimeout(function () {
+                  if (res.success === true) {
+                    clearErrors();
+                    if (res.reload !== undefined) {
+                      if (res.reload === true) {
+                        window.location.href = window.location.href;
+                      } else {
+                        window.location.href = res.reload;
+                      }
                     } else {
-                      window.location.href = res.reload;
+                      self.loaderHide();
                     }
                   } else {
                     self.loaderHide();
                   }
-                } else {
-                  self.loaderHide();
-                }
-                if (res.alerts !== undefined) {
-                  for (var m in res.alerts) {
-                    var message = res.alerts[m];
-                    form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                  if (res.alerts !== undefined) {
+                    for (var m in res.alerts) {
+                      var message = res.alerts[m];
+                      form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                    }
+                    self.loaderHide();
                   }
-                  self.loaderHide();
-                }
+                }, 1);
               }
             },
             error: function (jqXHR, textStatus) {
@@ -919,8 +927,6 @@ var hexForm = (function (window, document) {
           hexDisabled($(this));
         });
       }
-
-
     };
 
     init();
