@@ -401,14 +401,16 @@ var hexForm = (function (window, document) {
     };
 
     self.fire = function (eventName, params) {
-      var formEvent = new FormEvent(eventName);
       if (handlers[eventName] !== undefined) {
+        var formEvent = new FormEvent(eventName);
         for (var fnIndex in handlers[eventName]) {
           var func = handlers[eventName][fnIndex];
           func(params, formEvent);
         }
+        return !formEvent.stoped;
+      } else {
+        return true;
       }
-      return !formEvent.stoped;
     };
 
     var removeControls = function (container) {
