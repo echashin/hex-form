@@ -1,377 +1,9 @@
-/*global HexWidget:true,HexValidator:true */
-
-var hexForm = (function (window, document) {
+var hex = (function (h) {
   'use strict';
+
   var hexForms = {};
 
-
-  function Control(config) {
-    var self = this;
-    self.type = undefined;
-    self.valid = true;
-    self.name = undefined;
-    var inputs = [];
-    self.form = config.form;
-    var errors, timerId;
-
-    self.formGroup = undefined;
-
-
-    self.panels = [];
-    self.tabs = [];
-
-    var validators = [];
-    var widgets = {};
-    var events = {};
-    var controlValue;
-    self.disabled = false;
-    self.readonly = false;
-
-    self.setValid = function () {
-      if (self.formGroup !== undefined) {
-        self.formGroup.removeClass('has-error');
-      }
-      if (errors !== undefined) {
-        errors.find('span').removeClass('active');
-      }
-    };
-
-    self.enable = function () {
-      for (var inp in inputs) {
-        inputs[inp].prop('disabled', false);
-      }
-      self.disabled = false;
-    };
-
-    self.disable = function () {
-      for (var inp in inputs) {
-        inputs[inp].prop('disabled', true);
-      }
-      self.disabled = true;
-      self.valid = true;
-      self.validate();
-    };
-
-    self.addReadonly = function () {
-      for (var inp in inputs) {
-        inputs[inp].prop('readonly', true);
-      }
-      self.readonly = true;
-    };
-
-    self.removeReadonly = function () {
-      for (var inp in inputs) {
-        inputs[inp].prop('readonly', false);
-      }
-      self.readonly = false;
-    };
-
-    function sortByProperty(prop) {
-      return function (a, b) {
-        if (typeof a[prop] === 'number') {
-          return (a[prop] - b[prop]);
-        } else {
-          return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
-        }
-      };
-    }
-
-    var validateFunc = function () {
-      var errorsCount = 0;
-      if (errors !== undefined) {
-        errors.find('span').removeClass('active');
-      }
-
-      if (!self.disabled) {
-        for (var vIndex in validators) {
-          if (validators.hasOwnProperty(vIndex)) {
-            var validator = validators[vIndex];
-            var value = self.getValue();
-            var isValid = validator.isValid(value);
-            if (isValid === false || isValid === 'false') {
-              errorsCount++;
-              if (errors !== undefined) {
-                errors.find('span.error-' + validator.getClassName()).addClass('active');
-              }
-              break;
-            }
-          }
-        }
-      }
-
-      if (errorsCount > 0) {
-        self.valid = false;
-        if (self.formGroup !== undefined) {
-          self.formGroup.addClass('has-error');
-        }
-      }
-      else {
-        if (self.formGroup !== undefined) {
-          self.formGroup.removeClass('has-error');
-        }
-        self.valid = true;
-      }
-
-
-      if (self.panels.length > 0) {
-        var controlsValid = true;
-        if (self.valid === true) {
-          for (var c in self.form.controls) {
-            if (self.form.controls.hasOwnProperty(c)) {
-              var otherControl = self.form.controls[c];
-              if (otherControl.valid === false) {
-                for (var o in otherControl.panels) {
-                  var otherPanel = otherControl.panels[o];
-                  for (var s in self.panels) {
-                    if (otherPanel === self.panels[s]) {
-                      controlsValid = false;
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          controlsValid = false;
-        }
-
-        if (controlsValid === true) {
-          $.each(self.tabs, function (tKey, tab) {
-            tab.removeClass('has-error');
-          });
-        } else {
-          $.each(self.tabs, function (tKey, tab) {
-            tab.addClass('has-error');
-          });
-        }
-      }
-
-
-      return self.valid;
-    };
-
-    self.validate = function (event) {
-      if (event !== undefined) {
-        if (event.type === 'blur') {
-          return validateFunc();
-        } else {
-          if (timerId !== undefined) {
-            clearTimeout(timerId);
-          }
-          timerId = setTimeout(validateFunc, 500);
-        }
-      } else {
-        return validateFunc();
-      }
-    };
-
-    self.trigger = function (event) {
-      for (var i = 0; i < inputs.length; i++) {
-        inputs[i].trigger(event);
-      }
-    };
-
-    self.addEvent = function (eventName, func) {
-      for (var i = 0; i < inputs.length; i++) {
-        inputs[i].bind(eventName, func);
-      }
-    };
-
-    var getAttributes = function (input) {
-      var map = {};
-      var attributes = input[0].attributes;
-      var aLength = attributes.length;
-      for (var a = 0; a < aLength; a++) {
-        map[attributes[a].name.toLowerCase()] = attributes[a].value;
-      }
-      return map;
-    };
-
-    var addValidator = function (vType, conf, input) {
-      var vConfig = {
-        'input': input,
-        'type': vType
-      };
-      if (conf !== undefined && conf !== '') {
-        $.extend(vConfig, jQuery.parseJSON(conf));
-      }
-      var validator = new HexValidator(vConfig);
-      var validatorEvents = validator.getEvents();
-      for (var eventName in validatorEvents) {
-        if (validatorEvents.hasOwnProperty(eventName)) {
-          events[validatorEvents[eventName]] = true;
-        }
-      }
-      validators.push(validator);
-    };
-
-    var addWidget = function (wType, conf, input) {
-      var widgetConfig = {
-        'input': input,
-        'type': wType,
-        'control': self
-      };
-      if (conf !== undefined && conf !== '') {
-        $.extend(widgetConfig, jQuery.parseJSON(conf));
-      }
-      widgets[wType] = new HexWidget(widgetConfig);
-    };
-
-    self.addInput = function (input) {
-      inputs.push(input);
-      //Подключение валидаторов и виджетов
-      var attributes = getAttributes(input);
-      for (var aName in attributes) {
-        if (attributes.hasOwnProperty(aName)) {
-          if (aName === 'required') {
-            addValidator('required', attributes[aName], input);
-          } else {
-            var vMatch = aName.match(/^data-hex-validator-(.*)$/i);
-            if (vMatch !== null && vMatch[1] !== undefined) {
-              addValidator(vMatch[1], attributes[aName], input);
-            }
-          }
-
-          var wMatch = aName.match(/^data-hex-widget-(.*)$/i);
-          if (wMatch !== null) {
-            if (wMatch[1] !== undefined) {
-              addWidget(wMatch[1], attributes[aName], input);
-            }
-          }
-        }
-      }
-
-      for (var eventName in events) {
-        if (events.hasOwnProperty(eventName)) {
-          input.bind(eventName, self.validate);
-        }
-      }
-      validators.sort(sortByProperty('weight'));
-      if (input.prop('disabled')) {
-        self.disable();
-      }
-      if (input.prop('readonly')) {
-        self.addReadonly();
-      }
-
-      input.bind('disable', function () {
-        self.disable();
-      });
-      input.bind('enable', function () {
-        self.enable();
-      });
-    };
-
-    self.getValue = function () {
-      switch (self.type) {
-        case 'text':
-        default:
-        {
-          if (widgets.date !== undefined) {
-            var picker = inputs[0].data('daterangepicker');
-            if (picker === undefined) {
-              return inputs[0].val();
-            } else {
-              if (inputs[0].val() === '') {
-                return false;
-              } else {
-                var value = '';
-                var format = 'YYYY-MM-DD';
-                if (picker.timePicker === true) {
-                  format += ' HH:mm';
-                }
-                value += picker.startDate.format(format);
-                if (picker.singleDatePicker === false) {
-                  var endDate = picker.endDate.format(format);
-                  value += ' - ' + endDate;
-                }
-                return value;
-              }
-
-            }
-          } else if (widgets.fileupload !== undefined || widgets.filesimple !== undefined) {
-            return controlValue;
-          } else {
-            return inputs[0].val();
-          }
-        }
-        case 'radio':
-        {
-          for (var i in inputs) {
-            if (inputs.hasOwnProperty(i)) {
-              if (inputs[i].is(':checked') === true) {
-                return inputs[i].val();
-              }
-            }
-          }
-          return false;
-        }
-        case 'checkbox':
-        {
-          if (inputs[0].is(':checked') === true) {
-            return self.trueValue;
-          } else {
-            return self.falseValue;
-          }
-        }
-      }
-    };
-
-
-    self.setValue = function (val) {
-      controlValue = val;
-    };
-
-
-    var initControl = function (conf) {
-
-      if (conf.type !== undefined) {
-        self.type = conf.type;
-        if (conf.type === 'checkbox') {
-          self.trueValue = true;
-          self.falseValue = false;
-        }
-      }
-      if (conf.form !== undefined) {
-        self.form = conf.form;
-      }
-      self.name = conf.name;
-      if (conf.inputs !== undefined) {
-        for (var i in conf.inputs) {
-          if (conf.inputs.hasOwnProperty(i)) {
-            self.addInput(conf.inputs[i]);
-          }
-        }
-      }
-      self.formGroup = inputs[0].closest('div.form-group');
-      if (self.formGroup.size() === 0) {
-        self.formGroup = undefined;
-      } else {
-        errors = self.formGroup.find('.errors');
-        if (errors.size() === 0) {
-          errors = undefined;
-        }
-      }
-
-      if (inputs[0].parents('[role="tabpanel"]').size() > 0) {
-        inputs[0].parents('[role="tabpanel"]').each(function () {
-          var tabPanel = $(this);
-          var tabId = tabPanel.attr('id');
-          self.panels.push(tabId);
-          var tabEl = $('.nav a[href="#' + tabId + '"]');
-          if (tabEl.size() > 0) {
-            self.tabs.push(tabEl);
-          }
-        });
-      }
-
-      self.setValid();
-    };
-    initControl(config);
-  }
-
-  function HexFormSingle(formId) {
+  function FormCreate(formId) {
     var self = this;
     self.controls = {};
     self.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
@@ -415,7 +47,7 @@ var hexForm = (function (window, document) {
       }
     };
 
-    self.getHandlers = function(){
+    self.getHandlers = function () {
       return handlers;
     };
 
@@ -439,7 +71,12 @@ var hexForm = (function (window, document) {
             case 'select':
             case 'textarea':
             {
-              self.controls[controlName] = new Control({type: tagName, inputs: [input], form: self, name: controlName});
+              self.controls[controlName] = new h.Control({
+                type: tagName,
+                inputs: [input],
+                form: self,
+                name: controlName
+              });
               break;
             }
             case 'input':
@@ -448,7 +85,7 @@ var hexForm = (function (window, document) {
               switch (type) {
                 default:
                 {
-                  self.controls[controlName] = new Control({
+                  self.controls[controlName] = new h.Control({
                     type: type,
                     inputs: [input],
                     form: self,
@@ -458,7 +95,12 @@ var hexForm = (function (window, document) {
                 }
                 case 'checkbox':
                 {
-                  var checkboxControl = new Control({type: 'checkbox', inputs: [input], form: self, name: controlName});
+                  var checkboxControl = new h.Control({
+                    type: 'checkbox',
+                    inputs: [input],
+                    form: self,
+                    name: controlName
+                  });
                   if (input.attr('value') !== undefined) {
                     checkboxControl.trueValue = input.attr('value');
                   }
@@ -476,7 +118,7 @@ var hexForm = (function (window, document) {
                 case 'radio':
                 {
                   if (self.controls[controlName] === undefined) {
-                    self.controls[controlName] = new Control({
+                    self.controls[controlName] = new h.Control({
                       type: 'radio',
                       inputs: [input],
                       form: self,
@@ -615,7 +257,7 @@ var hexForm = (function (window, document) {
                 }, 1);
               }
             },
-            error: function (jqXHR, textStatus) {
+            error: function () {
               self.loaderHide();
               form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.errorText));
             }
@@ -756,31 +398,30 @@ var hexForm = (function (window, document) {
         var bParams = nodes[n].data('hexBind');
         for (var attr in bParams) {
           var tpl = appendParams(bParams[attr]);
-          if (tpl !== bParams[attr]) {
-            if (attr !== 'html') {
-              if (/^data/.test(attr)) {
-                var dataParamName = attr.replace(/^data-/, '');
-                dataParamName = dataParamName.replace(/(\-[a-z])/g, convertDataName);
-                nodes[n].data(dataParamName, tpl);
-              }
-              if (attr === 'name') {
-                var oldName = nodes[n].attr('name');
-                if (oldName !== undefined && self.controls[oldName] !== undefined) {
-                  var oldControl = self.controls[oldName];
-                  oldControl.name = tpl;
-                  self.controls[tpl] = oldControl;
-                  delete self.controls[oldName];
-                }
-              }
-              if (typeof tpl === 'object') {
-                nodes[n].attr(attr, JSON.stringify(tpl));
-              } else {
-                nodes[n].attr(attr, tpl);
-              }
-            } else {
-              nodes[n].html(tpl);
+          if (attr !== 'html') {
+            if (/^data/.test(attr)) {
+              var dataParamName = attr.replace(/^data-/, '');
+              dataParamName = dataParamName.replace(/(\-[a-z])/g, convertDataName);
+              nodes[n].data(dataParamName, tpl);
             }
+            if (attr === 'name') {
+              var oldName = nodes[n].attr('name');
+              if (oldName !== undefined && self.controls[oldName] !== undefined) {
+                var oldControl = self.controls[oldName];
+                oldControl.name = tpl;
+                self.controls[tpl] = oldControl;
+                delete self.controls[oldName];
+              }
+            }
+            if (typeof tpl === 'object') {
+              nodes[n].attr(attr, JSON.stringify(tpl));
+            } else {
+              nodes[n].attr(attr, tpl);
+            }
+          } else {
+            nodes[n].html(tpl);
           }
+
         }
       }
     };
@@ -915,7 +556,6 @@ var hexForm = (function (window, document) {
       }
       addControls(form);
 
-
       if (form.find('[data-hex-multy]').size() > 0) {
         form.find('[data-hex-multy]').each(function () {
           multy($(this));
@@ -933,8 +573,7 @@ var hexForm = (function (window, document) {
     return self;
   }
 
-
-  function hexFormInit(id) {
+  h.form = function (id) {
     if (id === undefined) {
       var forms = $('form.hex-form');
       forms.each(function () {
@@ -942,17 +581,21 @@ var hexForm = (function (window, document) {
         if (formId === undefined) {
           throw new Error('Form dont have id attr');
         }
-        hexForms[formId] = new HexFormSingle(formId);
+        hexForms[formId] = new FormCreate(formId);
       });
     } else {
       if (hexForms[id] === undefined) {
-        hexForms[id] = new HexFormSingle(id);
+        hexForms[id] = new FormCreate(id);
       }
       return hexForms[id];
     }
     return hexForms;
-  }
+  };
 
-  return hexFormInit;
-})(window, document);
+  $(document).ready(function () {
+    h.form();
+  });
+
+  return h;
+}(hex));
 
