@@ -40,7 +40,7 @@
   <div class="row">
     <div class="col-xs-12">
 
-      <form novalidate id='test' class="hex-form" action="http://bimlibsvn.lc/_demo/backend/data/form.php" method="POST"
+      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST"
             enctype="multipart/form-data">
         <br>
         <ul class="nav nav-tabs nav-justified" role="tablist">
@@ -429,7 +429,7 @@
                           <div class="form-group">
                             <label class="control-label">Пользователь</label>
                             <select
-                              data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}'
+                              data-hex-widget-select2='{"url":"/server/select2.php"}'
                               style="width: 100%"
                               name="items[0][user][]" class="form-control" multiple>
 
@@ -473,19 +473,42 @@
 
                 <div class="form-group">
                   <div class="upload-dropzone">
-                    <thumb data-hex-thumb  ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><div class="upload-preview" data-hex-bind='{"html":"@thumb_preview"}'></div><span data-hex-bind='{"html":"@name"}'></span></thumb>
-                    <thumb data-hex-thumb='{"id":1,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/1.jpg"></a><span>bla_bla_blala_bla_bla.jpg</span></thumb>
-                    <thumb data-hex-thumb='{"id":2,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/2.jpg"></a></thumb>
-                    <thumb data-hex-thumb='{"id":3,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/3.jpg"></a></thumb>
-                    <thumb data-hex-thumb='{"id":4,"name":"file.jpg"}' ><a title="удалить файл" data-hex-remove class="upload-remove" href="#"></a><a class="upload-preview"><img src="/src/img/thumbs/4.jpg"></a></thumb>
-                    <button type="button" class="btn btn-success upload-btn">загрузить файл</button>
+                    <thumb><remove title="Удалить файл"></remove><div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div><p></p><i title=""></i></thumb>
                   </div>
-                  <input hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","pdf","mp4"],"single":true}' id="uploadedimages" type="hidden" name="uploadedimages">
+                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+                  <input data-hex-files='[{"id":1,"name":"filename1.jpg","thumb":"/src/img/thumbs/1.jpg","url":"/src/img/1.jpg"},{"id":2,"name":"filename2.jpg","thumb":"/src/img/thumbs/2.jpg","url":"/src/img/2.jpg"},{"id":3,"name":"filename3.jpg","thumb":"/src/img/thumbs/3.jpg","url":"/src/img/3.jpg"},{"id":4,"name":"filename4.jpg","thumb":"/src/img/thumbs/4.jpg","url":"/src/img/4.jpg"}]'
+                         data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":false}'
+                         data-hex-validator-fileupload
+                         required
+                         id="uploadedimages"
+                         type="hidden"
+                         name="uploadedimages[]">
                   <div class="errors">
                     <span class="error-required label label-danger">Загрузите изображения</span>
                     <span class="error-file-type label label-danger">Не верный формат файла</span>
+                    <span class="error-fileupload label label-danger">Дождитесь загрузки всех файлов</span>
                   </div>
                 </div>
+
+                <div class="form-group">
+                  <div class="upload-dropzone">
+                    <thumb class="single"><remove title="Удалить файл"></remove><div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div><p></p><i title=""></i></thumb>
+                  </div>
+                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+                  <input
+                         data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":true}'
+                         data-hex-validator-fileupload
+                         required
+                         id="avatar"
+                         type="hidden"
+                         name="avatar">
+                  <div class="errors">
+                    <span class="error-required label label-danger">Загрузите изображения</span>
+                    <span class="error-file-type label label-danger">Не верный формат файла</span>
+                    <span class="error-fileupload label label-danger">Дождитесь загрузки всех файлов</span>
+                  </div>
+                </div>
+
                 <br>
                 <hr>
                 <div class="form-group">
@@ -495,10 +518,6 @@
                     <span class="error-file-type label label-danger">Не верный формат файла</span>
                   </div>
                 </div>
-
-
-
-
                 <div class="form-group">
                   <label class="control-label">Согласен с правилами
                     <input type="checkbox" id="agree" name="agree" value="8"></label>
@@ -513,7 +532,7 @@
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>
-                  <select data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php"}'
+                  <select data-hex-widget-select2='{"url":"/server/select2.php"}'
                           style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control"
                           multiple="multiple">
                     <option value="5" selected="selected">Talley Richmond</option>
@@ -526,7 +545,7 @@
                 <div class="form-group">
                   <label class="control-label" for="user_ajax">Пользователи AJAX зависимый</label>
                   <select required
-                          data-hex-widget-select2='{"url":"http://bimlibsvn.lc/_demo/backend/data/select2.php","parent":{"selector":"#user_ajax"}}'
+                          data-hex-widget-select2='{"url":"/server/select2.php","parent":{"selector":"#user_ajax"}}'
                           style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control"
                           multiple="multiple">
 
@@ -590,6 +609,7 @@
 <script src="bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
 <script src="bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="bower_components/select2/dist/js/i18n/ru.js"></script>
 
 <script src="bower_components/flow.js/dist/flow.js"></script>
 <script src="bower_components/dragula.js/dist/dragula.min.js"></script>
@@ -612,6 +632,8 @@
 <script src="src/widgets/phone.js"></script>
 <script src="src/widgets/select2.js"></script>
 <script src="src/widgets/filesimple.js"></script>
+<script src="src/widgets/fileupload.js"></script>
+
 
 <script src="src/validators/required.js"></script>
 <script src="src/validators/email.js"></script>
@@ -621,6 +643,8 @@
 <script src="src/validators/mask.js"></script>
 <script src="src/validators/phone.js"></script>
 <script src="src/validators/date.js"></script>
+<script src="src/validators/fileupload.js"></script>
+
 
 
 

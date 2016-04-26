@@ -30,6 +30,10 @@ var hex = (function (h) {
       }
     };
 
+    self.getWidgets = function () {
+      return widgets;
+    };
+
     self.getInputs = function () {
       return inputs;
     };
@@ -225,19 +229,19 @@ var hex = (function (h) {
       var attributes = getAttributes(input);
       for (var aName in attributes) {
         if (attributes.hasOwnProperty(aName)) {
+          var wMatch = aName.match(/^data-hex-widget-(.*)$/i);
+          if (wMatch !== null) {
+            if (wMatch[1] !== undefined) {
+              addWidget(wMatch[1], attributes[aName]);
+            }
+          }
+
           if (aName === 'required') {
             addValidator('required', attributes[aName]);
           } else {
             var vMatch = aName.match(/^data-hex-validator-(.*)$/i);
             if (vMatch !== null && vMatch[1] !== undefined) {
               addValidator(vMatch[1], attributes[aName]);
-            }
-          }
-
-          var wMatch = aName.match(/^data-hex-widget-(.*)$/i);
-          if (wMatch !== null) {
-            if (wMatch[1] !== undefined) {
-              addWidget(wMatch[1], attributes[aName]);
             }
           }
         }

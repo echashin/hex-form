@@ -1,3 +1,6 @@
+body{
+  background-color: #eee;
+}
 .hex-form {
   position: relative;
 }
@@ -150,27 +153,24 @@
   border: dashed 1px #528CE0;
   padding: 10px 10px 0 10px;
   border-radius: 3px;
+  height: 100px;
   display: table;
   width: 100%;
+}
+.hex-form .upload-dropzone.drag {
+  border: dashed 3px #5cb85c;
+}
+.hex-form .upload-dropzone.drag *{
+  opacity: 0.3;
 }
 
 .hex-form .upload-dropzone::after {
   clear: both;
 }
 
-.hex-form .upload-btn {
-  display: block;
-  width: 100px;
-  height: 100px;
-  float: left;
-  margin-bottom: 10px;
-  white-space: normal !important;
-}
-
 .hex-form thumb {
   display: block;
   width: 100px;
-  height: 100px;
   float: left;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -179,14 +179,25 @@
   -moz-border-radius: 2px;
   border-radius: 2px;
   border: solid 1px #ccc;
-  padding: 18px 0;
+  cursor: move;
+  z-index: 10;
+  padding-top: 12px;
+  background-color: white;
 }
-.hex-form thumb.thumb-error{
+.hex-form thumb.single {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 10px auto;
+  float: none;
+  cursor: default;
+}
+
+.hex-form thumb.thumb-error {
   border: solid 1px #D9534F;
 }
 
-.hex-form thumb span{
-  padding:0 8px;
+.hex-form thumb i {
+  padding: 0 8px;
   display: block;
   width: 100%;
   height: 16px;
@@ -195,94 +206,108 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  background-color: white;
-  border-bottom: solid 1px #ccc;
-  border-top: solid 1px white;
   color: #666;
 }
 
-.hex-form thumb span::before{
-  content: "";
-  display: block;
-  height: 1px;
-  position: absolute;
-  background-color: white;
-  top: -1px;
-  left: 0;
-  width: 98px;
-}
-.hex-form thumb span:hover{
-  width: auto;
-  position: absolute;
-  z-index: 100;
-  border-radius: 0 0px 2px 2px;
-  border-right: solid 1px #ccc;
-  border-top: solid 1px #ccc;
-  overflow: visible;
-  min-width: 99px;
-}
-
-
-
-.hex-form .upload-preview{
+.hex-form .upload-preview {
   width: 100%;
-  height: 60px;
   overflow: hidden;
   display: block;
-  background-color: white;
-  position: relative;
-  z-index: 200;
+  padding: 6px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
-.hex-form .upload-preview:hover{
+.hex-form a.upload-preview:hover img {
+  opacity: 0.3;
+}
+
+.hex-form a.upload-preview:hover::after {
+  content: 'Скачать файл';
+  width: 100%;
+  position: absolute;
+  height: auto;
+  font-size: 10px;
+  line-height: 20px;
+  left: 0;
+  top: 50%;
+  margin-top: -10px;
+  text-align: center;
+  font-family: Verdana;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.hex-form .upload-preview:hover {
 
 }
-.hex-form .upload-error{
+
+.hex-form .upload-error {
   background-color: #D9534F;
   color: white;
   font-size: 9px;
   padding: 5px;
-  margin: 0 5px;
+  margin: 0;
+  width: 100%;
+  display: block;
+  position: absolute;
+  left: 0;
+  top:5px;
+}
+.hex-form thumb.single .upload-error{
+  font-size: 14px;
 }
 
-.hex-form .upload-preview img{
+.hex-form .upload-preview img {
   display: block;
   margin: 0 auto;
-  max-height:100%;
-  height: 100%;
+  width: 100%;
 }
-.hex-form thumb .upload-remove{
+
+.hex-form thumb remove {
   display: block;
   width: 12px;
   height: 12px;
-  background-color: #ccc;
+  background-color: transparent;
   position: absolute;
   top: 1px;
   right: 1px;
-  color: white;
   text-decoration: none;
   text-align: center;
   line-height: 8px;
+  cursor: pointer;
+  z-index: 20;
+  color: black;
 }
-.hex-form thumb .upload-loader{
+.hex-form thumb remove::after {
+  content: "×";
+  font-family: Verdana, Arial;
+  color: inherit;
+  text-decoration: none;
+  text-align: center;
+  font-size: 10px;
+}
+
+.hex-form thumb.loading{
+  background-image: url("upload.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+
+.hex-form thumb:hover > remove:hover {
+  background-color: #D9534F;
+  color: white;
+}
+
+.hex-form thumb .upload-loader {
   display: block;
   width: 100%;
   height: 60px;
   margin: 0 auto;
   background: url("upload.gif") no-repeat center center;
-}
-.hex-form thumb .upload-remove::after{
-  content: "×";
-  color: white;
-  text-decoration: none;
-  text-align: center;
-  font-size: 10px;
-}
-.hex-form thumb:hover>.upload-remove:hover{
-  background-color:#D9534F;
 }
 
 .hex-form [draggable] {
@@ -293,3 +318,32 @@
   -khtml-user-drag: element;
   -webkit-user-drag: element;
 }
+.hex-form thumb p{
+  display: block;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  height: 1px;
+  background-color: #D9534F;
+  z-index: 201;
+  width: 0;
+  transition: all 0.5s ease;
+}
+.hex-form thumb .frame{
+  display: block;
+  padding-top: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+  position: relative;
+}
+
+.hex-form .upfile-error {
+  border-color: #D9534F;
+}
+.hex-form .upfile-new {
+  border-color: #5cb85c;
+}
+

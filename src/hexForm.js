@@ -162,6 +162,7 @@ var hex = (function (h) {
           for (var i in self.controls) {
             if (self.controls.hasOwnProperty(i)) {
               self.controls[i].trigger('change');
+              self.controls[i].setValid();
             }
           }
         }, 1);
