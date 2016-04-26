@@ -229,6 +229,7 @@
     return temp.toLowerCase();
 
   };
+
   window.hex = h;
 }(window));
 
