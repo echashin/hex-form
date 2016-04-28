@@ -82,8 +82,6 @@ var hex = (function (h) {
         onChange();
       });
 
-
-      //input.change(onChange);
       var parentMaxChange = function () {
         maxDate = $(parentMax).val();
         if (h.utils.isEmpty(maxDate)) {
@@ -133,7 +131,6 @@ var hex = (function (h) {
           }
         }
       };
-
 
 
       if (parentMin !== false) {
