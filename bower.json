@@ -2,8 +2,8 @@
   "name": "hex-form",
   "private": false,
   "main": [
-    "dist/hex-form.min.js",
-    "dist/hex-form.min.css"
+    "dist/hex-form.js",
+    "dist/hex-form.css"
   ],
   "ignore": [
     "node_modules",
