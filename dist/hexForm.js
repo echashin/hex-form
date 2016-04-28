@@ -4,14 +4,13 @@ var hex = (function (h) {
   var hexForms = {};
 
   function HexForm(formId) {
-    var hexForm = this;
-
-    hexForm.controls = [];
-    hexForm.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
-    hexForm.invalidText = 'Форма содержит ошибки';
+    var hf = this;
+    hf.controls = [];
+    hf.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
+    hf.invalidText = 'Форма содержит ошибки';
     var form = $('#' + formId);
     var handlers = {};
-    hexForm.mainBlock = undefined;
+    hf.mainBlock = undefined;
 
     var FormEvent = function (type) {
       this.type = type;
@@ -22,15 +21,15 @@ var hex = (function (h) {
     };
 
     function removeBlock(blockId) {
-      var block = hexForm.mainBlock.findBlockById(blockId);
+      var block = hf.mainBlock.findBlockById(blockId);
       if (block === false) {
         return false;
       }
       for (var c in block.controls) {
         var control = block.controls[c];
-        var formControl = hexForm.findControlByName(control.name);
+        var formControl = hf.findControlByName(control.name);
         if (formControl !== false) {
-          hexForm.controls.splice(hexForm.controls.indexOf(formControl), 1);
+          hf.controls.splice(hf.controls.indexOf(formControl), 1);
         }
       }
       block.controls = [];
@@ -42,19 +41,19 @@ var hex = (function (h) {
           }
         }
       }
-      hexForm.mainBlock.isValid(false);
+      hf.mainBlock.isValid(false);
     }
 
-    hexForm.findControlByName = function (cName) {
-      for (var i in hexForm.controls) {
-        if (hexForm.controls[i].name === cName) {
-          return hexForm.controls[i];
+    hf.findControlByName = function (cName) {
+      for (var i in hf.controls) {
+        if (hf.controls[i].name === cName) {
+          return hf.controls[i];
         }
       }
       return false;
     };
 
-    hexForm.on = function (eventName, fn) {
+    hf.on = function (eventName, fn) {
       if (handlers[eventName] === undefined) {
         handlers[eventName] = [];
       }
@@ -63,13 +62,13 @@ var hex = (function (h) {
       }
     };
 
-    hexForm.off = function (eventName, fn) {
+    hf.off = function (eventName, fn) {
       if (handlers[eventName] !== undefined) {
         handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
       }
     };
 
-    hexForm.fire = function (eventName, params) {
+    hf.fire = function (eventName, params) {
       if (handlers[eventName] !== undefined) {
         var formEvent = new FormEvent(eventName);
         for (var fnIndex in handlers[eventName]) {
@@ -82,18 +81,18 @@ var hex = (function (h) {
       }
     };
 
-    hexForm.getHandlers = function () {
+    hf.getHandlers = function () {
       return handlers;
     };
 
 
     var getValues = function () {
       var values = {};
-      for (var i in hexForm.controls) {
-        if (hexForm.controls.hasOwnProperty(i)) {
-          if (hexForm.controls[i].disabled === false) {
-            var name = hexForm.controls[i].name;
-            var value = hexForm.controls[i].getValue();
+      for (var i in hf.controls) {
+        if (hf.controls.hasOwnProperty(i)) {
+          if (hf.controls[i].disabled === false) {
+            var name = hf.controls[i].name;
+            var value = hf.controls[i].getValue();
             if (value === null || ($.isArray(value) && value.length === 0)) {
               value = '';
             } else {
@@ -107,12 +106,12 @@ var hex = (function (h) {
 
 
     var reset = function (event) {
-      var dontBreakReset = hexForm.fire('beforeReset', {values: hexForm.getValues()});
+      var dontBreakReset = hf.fire('beforeReset', {values: hf.getValues()});
       if (dontBreakReset) {
         window.setTimeout(function () {
-          for (var i in hexForm.controls) {
-            if (hexForm.controls.hasOwnProperty(i)) {
-              hexForm.controls[i].reset();
+          for (var i in hf.controls) {
+            if (hf.controls.hasOwnProperty(i)) {
+              hf.controls[i].reset();
             }
           }
           form.find('.has-error').removeClass('has-error');
@@ -121,7 +120,7 @@ var hex = (function (h) {
       } else {
         event.preventDefault();
       }
-      hexForm.fire('afterReset', {});
+      hf.fire('afterReset', {});
     };
     var clearErrors = function () {
       form.find('.has-error').removeClass('has-error');
@@ -131,14 +130,14 @@ var hex = (function (h) {
     var submit = function (event) {
       event.preventDefault();
       event.stopPropagation();
-      var formValid = hexForm.mainBlock.isValid();
+      var formValid = hf.mainBlock.isValid();
 
       if (formValid === true) {
         clearErrors();
         var data = getValues();
-        var dontBreakBefore = hexForm.fire('beforeSubmit', {values: data});
+        var dontBreakBefore = hf.fire('beforeSubmit', {values: data});
         if (dontBreakBefore) {
-          hexForm.loaderShow();
+          hf.loaderShow();
           var url = form.attr('action');
           /*Отправка на разные URL аттрибут data-action*/
           var submitBtn = form.find('button[type=submit]:focus');
@@ -152,8 +151,8 @@ var hex = (function (h) {
           if (form.attr('method') !== undefined) {
             method = form.attr('method');
           }
-          var formData = new FormData();
 
+          var formData = new FormData();
           $.each(data, function (k, v) {
             if ($.isArray(v) || $.isPlainObject(v)) {
 
@@ -175,7 +174,7 @@ var hex = (function (h) {
             processData: false,
             contentType: false,
             success: function (res) {
-              var dontBreakAfter = hexForm.fire('afterSubmit', res);
+              var dontBreakAfter = hf.fire('afterSubmit', res);
               if (dontBreakAfter) {
                 window.setTimeout(function () {
                   if (res.success === true) {
@@ -187,45 +186,45 @@ var hex = (function (h) {
                         window.location.href = res.reload;
                       }
                     } else {
-                      hexForm.loaderHide();
+                      hf.loaderHide();
                     }
                   } else {
-                    hexForm.loaderHide();
+                    hf.loaderHide();
                   }
                   if (res.alerts !== undefined) {
                     for (var m in res.alerts) {
                       var message = res.alerts[m];
                       form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
                     }
-                    hexForm.loaderHide();
+                    hf.loaderHide();
                   }
                 }, 1);
               }
             },
             error: function () {
-              hexForm.loaderHide();
-              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hexForm.errorText));
+              hf.loaderHide();
+              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.errorText));
             }
           });
         }
       } else {
         form.find('.alerts div').remove();
-        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hexForm.invalidText));
+        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.invalidText));
       }
       return false;
     };
 
-    hexForm.loaderShow = function () {
+    hf.loaderShow = function () {
       form.find('.loader').show();
     };
-    hexForm.loaderHide = function () {
+    hf.loaderHide = function () {
       form.find('.loader').hide();
     };
 
-    hexForm.submit = function () {
+    hf.submit = function () {
       submit();
     };
-    hexForm.getValues = function () {
+    hf.getValues = function () {
       return getValues();
     };
 
@@ -236,12 +235,12 @@ var hex = (function (h) {
 
 
       var currentBlockId = panel.closest('[data-hex-block]').attr('id');
-      var currentBlock = hexForm.mainBlock.findBlockById(currentBlockId);
+      var currentBlock = hf.mainBlock.findBlockById(currentBlockId);
 
       var data = panel.data('hexDisabled');
 
       var searchValue = data.value;
-      var control = hexForm.findControlByName(data.control);
+      var control = hf.findControlByName(data.control);
       if (control === undefined) {
         throw new Error('Control "' + data.control + '" not found');
       }
@@ -281,7 +280,7 @@ var hex = (function (h) {
       return name.replace('-', '').toUpperCase();
     }
 
-    hexForm.hexBind = function (block, params) {
+    hf.hexBind = function (block, params) {
       var nodes = [];
       nodes.push(block);
       block.find('[data-hex-bind]').each(function () {
@@ -357,7 +356,7 @@ var hex = (function (h) {
             }
             if (attr === 'name') {
               var oldName = nodes[n].attr('name');
-              var fControl = hexForm.findControlByName(oldName);
+              var fControl = hf.findControlByName(oldName);
               if (fControl !== false) {
                 fControl.name = tpl;
               }
@@ -365,7 +364,7 @@ var hex = (function (h) {
 
             if (attr === 'id' && n <= 0) {
               console.log('-----------change block.id start-------------');
-              var currentBlock = hexForm.mainBlock.findBlockById(nodes[n].attr('id'));
+              var currentBlock = hf.mainBlock.findBlockById(nodes[n].attr('id'));
               console.log(tpl);
               if (currentBlock !== false) {
                 currentBlock.id = tpl;
@@ -410,7 +409,7 @@ var hex = (function (h) {
       firstBlock.remove();
 
       function updateItemIndex(item, newIndex) {
-        hexForm.hexBind(item, {'@index': newIndex});
+        hf.hexBind(item, {'@index': newIndex});
       }
 
       function multyCheck() {
@@ -451,7 +450,7 @@ var hex = (function (h) {
 
 
         var pId = block.find('[data-hex-multy-items]').closest('[data-hex-block]').attr('id');
-        var parentBlock = hexForm.mainBlock.findBlockById(pId);
+        var parentBlock = hf.mainBlock.findBlockById(pId);
         //Добавляем табы в DOM
         if (tabs !== undefined) {
           var clonedTab = baseTab.clone(false);
@@ -511,7 +510,7 @@ var hex = (function (h) {
               }
             }
             multyCheck();
-            console.log(hexForm);
+            console.log(hf);
           });
 
         }
@@ -530,9 +529,7 @@ var hex = (function (h) {
         form.append('<div class="loader"></div>');
       }
 
-
-      hexForm.mainBlock = new h.Block(form, hexForm);
-
+      hf.mainBlock = new h.Block(form, hf);
       if (form.find('[data-hex-multy]').size() > 0) {
         form.find('[data-hex-multy]').each(function () {
           multy($(this));
@@ -547,7 +544,7 @@ var hex = (function (h) {
     };
 
     init();
-    return hexForm;
+    return hf;
   }
 
   h.form = function (id) {
