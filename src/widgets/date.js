@@ -84,66 +84,74 @@ var hex = (function (h) {
 
 
       //input.change(onChange);
+      var parentMaxChange = function () {
+        maxDate = $(parentMax).val();
+        if (h.utils.isEmpty(maxDate)) {
+          control.disable();
+          input.val('').trigger('change');
+        } else {
+          defaultSettings.maxDate = maxDate;
+          input.daterangepicker(defaultSettings);
+          input.on('apply.daterangepicker', function () {
+            onChange();
+          });
+
+          control.enable();
+          if (h.utils.isEmpty(input.val())) {
+
+            if (!h.utils.isEmpty(minDate)) {
+              input.data('daterangepicker').setStartDate(minDate);
+              input.data('daterangepicker').setEndDate(minDate);
+            } else {
+              input.data('daterangepicker').setStartDate(maxDate);
+              input.data('daterangepicker').setEndDate(maxDate);
+            }
+          }
+          onChange();
+        }
+      };
+
+      var parentMinChange = function () {
+        minDate = $(parentMin).val();
+        if (h.utils.isEmpty(minDate)) {
+          control.disable();
+          input.val('').trigger('change');
+        } else {
+          defaultSettings.minDate = minDate;
+          input.daterangepicker(defaultSettings);
+          input.on('apply.daterangepicker', function () {
+            onChange();
+          });
+          control.enable();
+          if (h.utils.isEmpty(input.val())) {
+            input.data('daterangepicker').setStartDate(minDate);
+            input.data('daterangepicker').setEndDate(minDate);
+          }
+          onChange();
+          if (parentMax !== false) {
+            parentMaxChange();
+          }
+        }
+      };
+
 
 
       if (parentMin !== false) {
         $(parentMin).on('change', function () {
-          minDate = $(parentMin).val();
-          if (h.utils.isEmpty(minDate)) {
-            control.disable();
-            input.val('').trigger('change');
-          } else {
-            defaultSettings.minDate = minDate;
-            input.daterangepicker(defaultSettings);
-            input.on('apply.daterangepicker', function () {
-              onChange();
-            });
-            control.enable();
-            if (h.utils.isEmpty(input.val())) {
-              input.data('daterangepicker').setStartDate(minDate);
-              input.data('daterangepicker').setEndDate(minDate);
-            }
-            onChange();
-            if (parentMax !== false) {
-              $(parentMax).trigger('change');
-            }
-          }
+          parentMinChange();
         });
       }
 
       if (parentMax !== false) {
         $(parentMax).on('change', function () {
-          maxDate = $(parentMax).val();
-          if (h.utils.isEmpty(maxDate)) {
-            control.disable();
-            input.val('').trigger('change');
-          } else {
-            defaultSettings.maxDate = maxDate;
-            input.daterangepicker(defaultSettings);
-            input.on('apply.daterangepicker', function () {
-              onChange();
-            });
-
-            control.enable();
-            if (h.utils.isEmpty(input.val())) {
-
-              if (!h.utils.isEmpty(minDate)) {
-                input.data('daterangepicker').setStartDate(minDate);
-                input.data('daterangepicker').setEndDate(minDate);
-              } else {
-                input.data('daterangepicker').setStartDate(maxDate);
-                input.data('daterangepicker').setEndDate(maxDate);
-              }
-            }
-            onChange();
-          }
+          parentMaxChange();
         });
       }
       if (parentMax !== false) {
-        $(parentMax).trigger('change');
+        parentMaxChange();
       }
       if (parentMin !== false) {
-        $(parentMin).trigger('change');
+        parentMinChange();
       }
 
 
