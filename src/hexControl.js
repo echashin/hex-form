@@ -120,8 +120,9 @@ var hex = (function (h) {
         self.valid = true;
         self.hideErrors();
       }
-
-      self.block.form.mainBlock.isValid(false);
+      if (self.block.form.mainBlock !== undefined) {
+        self.block.form.mainBlock.isValid(false);
+      }
       return self.valid;
     };
 
