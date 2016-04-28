@@ -3,13 +3,15 @@ var hex = (function (h) {
 
   var hexForms = {};
 
-  function FormCreate(formId) {
-    var self = this;
-    self.controls = {};
-    self.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
-    self.invalidText = 'Форма содержит ошибки';
+  function HexForm(formId) {
+    var hexForm = this;
+
+    hexForm.controls = [];
+    hexForm.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
+    hexForm.invalidText = 'Форма содержит ошибки';
     var form = $('#' + formId);
     var handlers = {};
+    hexForm.mainBlock = undefined;
 
     var FormEvent = function (type) {
       this.type = type;
@@ -19,7 +21,40 @@ var hex = (function (h) {
       };
     };
 
-    self.on = function (eventName, fn) {
+    function removeBlock(blockId) {
+      var block = hexForm.mainBlock.findBlockById(blockId);
+      if (block === false) {
+        return false;
+      }
+      for (var c in block.controls) {
+        var control = block.controls[c];
+        var formControl = hexForm.findControlByName(control.name);
+        if (formControl !== false) {
+          hexForm.controls.splice(hexForm.controls.indexOf(formControl), 1);
+        }
+      }
+      block.controls = [];
+      block.element.remove();
+      if (block.parent !== undefined) {
+        for (var b in block.parent.childBlocks) {
+          if (block.parent.childBlocks[b] === block) {
+            block.parent.childBlocks.splice(b, 1);
+          }
+        }
+      }
+      hexForm.mainBlock.isValid(false);
+    }
+
+    hexForm.findControlByName = function (cName) {
+      for (var i in hexForm.controls) {
+        if (hexForm.controls[i].name === cName) {
+          return hexForm.controls[i];
+        }
+      }
+      return false;
+    };
+
+    hexForm.on = function (eventName, fn) {
       if (handlers[eventName] === undefined) {
         handlers[eventName] = [];
       }
@@ -28,13 +63,13 @@ var hex = (function (h) {
       }
     };
 
-    self.off = function (eventName, fn) {
+    hexForm.off = function (eventName, fn) {
       if (handlers[eventName] !== undefined) {
         handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
       }
     };
 
-    self.fire = function (eventName, params) {
+    hexForm.fire = function (eventName, params) {
       if (handlers[eventName] !== undefined) {
         var formEvent = new FormEvent(eventName);
         for (var fnIndex in handlers[eventName]) {
@@ -47,102 +82,18 @@ var hex = (function (h) {
       }
     };
 
-    self.getHandlers = function () {
+    hexForm.getHandlers = function () {
       return handlers;
     };
 
-    var removeControls = function (container) {
-      $.each(container.find('input[type!="submit"],select,textarea'), function (i, field) {
-        var input = $(field);
-        var controlName = input.attr('name');
-        if (self.controls[controlName] !== undefined) {
-          delete self.controls[controlName];
-        }
-      });
-    };
 
-    var addControls = function (container) {
-      $.each(container.find('input[type!="submit"],select,textarea'), function (i, field) {
-        var input = $(field);
-        if (input.parents('[data-hex-multy-item="$"]').size() === 0) {
-          var controlName = input.attr('name');
-          var tagName = input.prop('tagName').toLowerCase();
-          switch (tagName) {
-            case 'select':
-            case 'textarea':
-            {
-              self.controls[controlName] = new h.Control({
-                type: tagName,
-                inputs: [input],
-                form: self,
-                name: controlName
-              });
-              break;
-            }
-            case 'input':
-            {
-              var type = input.attr('type').toLowerCase();
-              switch (type) {
-                default:
-                {
-                  self.controls[controlName] = new h.Control({
-                    type: type,
-                    inputs: [input],
-                    form: self,
-                    name: controlName
-                  });
-                  break;
-                }
-                case 'checkbox':
-                {
-                  var checkboxControl = new h.Control({
-                    type: 'checkbox',
-                    inputs: [input],
-                    form: self,
-                    name: controlName
-                  });
-                  if (input.attr('value') !== undefined) {
-                    checkboxControl.trueValue = input.attr('value');
-                  }
-                  if (input.attr('data-hex-true-value') !== undefined) {
-                    checkboxControl.trueValue = input.attr('data-hex-true-value');
-                  }
-
-                  if (input.attr('data-hex-false-value') !== undefined) {
-                    checkboxControl.falseValue = input.attr('data-hex-false-value');
-                  }
-
-                  self.controls[controlName] = checkboxControl;
-                  break;
-                }
-                case 'radio':
-                {
-                  if (self.controls[controlName] === undefined) {
-                    self.controls[controlName] = new h.Control({
-                      type: 'radio',
-                      inputs: [input],
-                      form: self,
-                      name: controlName
-                    });
-                  } else {
-                    self.controls[controlName].addInput(input);
-                  }
-                  break;
-                }
-              }
-              break;
-            }
-          }
-        }
-      });
-    };
     var getValues = function () {
       var values = {};
-      for (var i in self.controls) {
-        if (self.controls.hasOwnProperty(i)) {
-          if (self.controls[i].disabled === false) {
-            var name = self.controls[i].name;
-            var value = self.controls[i].getValue();
+      for (var i in hexForm.controls) {
+        if (hexForm.controls.hasOwnProperty(i)) {
+          if (hexForm.controls[i].disabled === false) {
+            var name = hexForm.controls[i].name;
+            var value = hexForm.controls[i].getValue();
             if (value === null || ($.isArray(value) && value.length === 0)) {
               value = '';
             } else {
@@ -156,20 +107,21 @@ var hex = (function (h) {
 
 
     var reset = function (event) {
-      var dontBreakReset = self.fire('beforeReset', {values: self.getValues()});
+      var dontBreakReset = hexForm.fire('beforeReset', {values: hexForm.getValues()});
       if (dontBreakReset) {
         window.setTimeout(function () {
-          for (var i in self.controls) {
-            if (self.controls.hasOwnProperty(i)) {
-              self.controls[i].trigger('change');
-              self.controls[i].setValid();
+          for (var i in hexForm.controls) {
+            if (hexForm.controls.hasOwnProperty(i)) {
+              hexForm.controls[i].reset();
             }
           }
+          form.find('.has-error').removeClass('has-error');
+          form.find('.alerts .alert').remove();
         }, 1);
       } else {
         event.preventDefault();
       }
-      self.fire('afterReset', {});
+      hexForm.fire('afterReset', {});
     };
     var clearErrors = function () {
       form.find('.has-error').removeClass('has-error');
@@ -179,22 +131,14 @@ var hex = (function (h) {
     var submit = function (event) {
       event.preventDefault();
       event.stopPropagation();
+      var formValid = hexForm.mainBlock.isValid();
 
-      var valid = true;
-      for (var i in self.controls) {
-        if (self.controls.hasOwnProperty(i)) {
-          if (self.controls[i].validate(undefined) === false) {
-            valid = false;
-          }
-        }
-      }
-
-      if (valid === true) {
+      if (formValid === true) {
         clearErrors();
         var data = getValues();
-        var dontBreakBefore = self.fire('beforeSubmit', {values: data});
+        var dontBreakBefore = hexForm.fire('beforeSubmit', {values: data});
         if (dontBreakBefore) {
-          self.loaderShow();
+          hexForm.loaderShow();
           var url = form.attr('action');
           /*Отправка на разные URL аттрибут data-action*/
           var submitBtn = form.find('button[type=submit]:focus');
@@ -231,7 +175,7 @@ var hex = (function (h) {
             processData: false,
             contentType: false,
             success: function (res) {
-              var dontBreakAfter = self.fire('afterSubmit', res);
+              var dontBreakAfter = hexForm.fire('afterSubmit', res);
               if (dontBreakAfter) {
                 window.setTimeout(function () {
                   if (res.success === true) {
@@ -243,45 +187,45 @@ var hex = (function (h) {
                         window.location.href = res.reload;
                       }
                     } else {
-                      self.loaderHide();
+                      hexForm.loaderHide();
                     }
                   } else {
-                    self.loaderHide();
+                    hexForm.loaderHide();
                   }
                   if (res.alerts !== undefined) {
                     for (var m in res.alerts) {
                       var message = res.alerts[m];
                       form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
                     }
-                    self.loaderHide();
+                    hexForm.loaderHide();
                   }
                 }, 1);
               }
             },
             error: function () {
-              self.loaderHide();
-              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.errorText));
+              hexForm.loaderHide();
+              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hexForm.errorText));
             }
           });
         }
       } else {
         form.find('.alerts div').remove();
-        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(self.invalidText));
+        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hexForm.invalidText));
       }
       return false;
     };
 
-    self.loaderShow = function () {
+    hexForm.loaderShow = function () {
       form.find('.loader').show();
     };
-    self.loaderHide = function () {
+    hexForm.loaderHide = function () {
       form.find('.loader').hide();
     };
 
-    self.submit = function () {
+    hexForm.submit = function () {
       submit();
     };
-    self.getValues = function () {
+    hexForm.getValues = function () {
       return getValues();
     };
 
@@ -289,14 +233,20 @@ var hex = (function (h) {
       if (panel.parents('[data-hex-multy-item="$"]').size() > 0) {
         return false;
       }
+
+
+      var currentBlockId = panel.closest('[data-hex-block]').attr('id');
+      var currentBlock = hexForm.mainBlock.findBlockById(currentBlockId);
+
       var data = panel.data('hexDisabled');
 
       var searchValue = data.value;
-      var control = self.controls[data.control];
+      var control = hexForm.findControlByName(data.control);
       if (control === undefined) {
         throw new Error('Control "' + data.control + '" not found');
       }
       function onChange() {
+        currentBlock.isValid(false);
         var v = control.getValue();
         var expSuccess = false;
         if (v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0)) {
@@ -331,7 +281,7 @@ var hex = (function (h) {
       return name.replace('-', '').toUpperCase();
     }
 
-    self.hexBind = function (block, params) {
+    hexForm.hexBind = function (block, params) {
       var nodes = [];
       nodes.push(block);
       block.find('[data-hex-bind]').each(function () {
@@ -407,12 +357,23 @@ var hex = (function (h) {
             }
             if (attr === 'name') {
               var oldName = nodes[n].attr('name');
-              if (oldName !== undefined && self.controls[oldName] !== undefined) {
-                var oldControl = self.controls[oldName];
-                oldControl.name = tpl;
-                self.controls[tpl] = oldControl;
-                delete self.controls[oldName];
+              var fControl = hexForm.findControlByName(oldName);
+              if (fControl !== false) {
+                fControl.name = tpl;
               }
+            }
+
+            if (attr === 'id' && n <= 0) {
+              console.log('-----------change block.id start-------------');
+              var currentBlock = hexForm.mainBlock.findBlockById(nodes[n].attr('id'));
+              console.log(tpl);
+              if (currentBlock !== false) {
+                currentBlock.id = tpl;
+              } else {
+                console.log('block not found id:' + nodes[n].attr('id'));
+              }
+              console.log(currentBlock);
+              console.log('=========change block.id=========');
             }
             if (typeof tpl === 'object') {
               nodes[n].attr(attr, JSON.stringify(tpl));
@@ -422,8 +383,8 @@ var hex = (function (h) {
           } else {
             nodes[n].html(tpl);
           }
-
         }
+
       }
     };
 
@@ -449,7 +410,7 @@ var hex = (function (h) {
       firstBlock.remove();
 
       function updateItemIndex(item, newIndex) {
-        self.hexBind(item, {'@index': newIndex});
+        hexForm.hexBind(item, {'@index': newIndex});
       }
 
       function multyCheck() {
@@ -465,9 +426,11 @@ var hex = (function (h) {
 
 
       block.on('click', '[data-hex-multy-add]', function () {
-        var items = $(this).closest('[data-hex-multy]').find('[data-hex-multy-item]');
+        var items = block.find('[data-hex-multy-item]');
         var newIndex = items.size();
         var clonedFieldset = baseBlock.clone(false);
+
+
         clonedFieldset.find('[data-hex-multy-hide]').remove();
         clonedFieldset.find('[data-hex-multy-attr]').each(function () {
           var element = $(this);
@@ -486,22 +449,33 @@ var hex = (function (h) {
           }
         });
 
-        updateItemIndex(clonedFieldset, newIndex);
-        clonedFieldset.appendTo(block.find('[data-hex-multy-items]'));
+
+        var pId = block.find('[data-hex-multy-items]').closest('[data-hex-block]').attr('id');
+        var parentBlock = hexForm.mainBlock.findBlockById(pId);
+        //Добавляем табы в DOM
         if (tabs !== undefined) {
           var clonedTab = baseTab.clone(false);
-          updateItemIndex(clonedTab, newIndex);
           if (block.find('[data-hex-multy-tab]:last').size() > 0) {
             clonedTab.insertAfter(block.find('[data-hex-multy-tab]:last'));
           } else {
             tabs.prepend(clonedTab);
           }
+          updateItemIndex(clonedTab, newIndex);
         }
 
-        addControls(clonedFieldset);
+        //Обновляем данные в клонированном блоке
+        updateItemIndex(clonedFieldset, newIndex);
+        //Добавляем блок в DOM
+        clonedFieldset.appendTo(block.find('[data-hex-multy-items]'));
+
+        //Прицепляем блок к дереву блоков
+        parentBlock.addBlock(clonedFieldset);
+
+
         if (tabs !== undefined) {
           $('a[href="#' + clonedFieldset.attr('id') + '"]').trigger('click');
         }
+        //Запускаем hexDisabled
         if (clonedFieldset.find('[data-hex-disabled]').size() > 0) {
           clonedFieldset.find('[data-hex-disabled]').each(function () {
             hexDisabled($(this));
@@ -513,10 +487,9 @@ var hex = (function (h) {
       block.on('click', '[data-hex-multy-remove]', function () {
           var item = $(this).closest('[data-hex-multy-item]');
           var removedIndex = item.data('hexMultyItem');
-          var items = block.find('[data-hex-multy-item]');
-          removeControls(item);
           item.fadeOut(500, function () {
-            item.remove();
+            removeBlock(item.attr('id'));
+            var items = block.find('[data-hex-multy-item]');
             items.each(function () {
               if ($(this).data('hexMultyItem') > removedIndex) {
                 updateItemIndex($(this), $(this).data('hexMultyItem') - 1);
@@ -529,8 +502,6 @@ var hex = (function (h) {
                   updateItemIndex($(this), $(this).data('hexMultyTab') - 1);
                 }
               });
-
-
               if (tabs.find('[data-hex-multy-tab=' + removedIndex + ']').size() > 0) {
                 tabs.find('[data-hex-multy-tab=' + removedIndex + ']').find('a[role="tab"]').trigger('click');
               } else {
@@ -540,7 +511,9 @@ var hex = (function (h) {
               }
             }
             multyCheck();
+            console.log(hexForm);
           });
+
         }
       );
 
@@ -550,12 +523,15 @@ var hex = (function (h) {
 
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
+      form.attr('data-hex-block', '');
       $(document).on('submit', '#' + formId, submit);
       $(document).on('reset', '#' + formId, reset);
       if (form.find('.loader').size() === 0) {
         form.append('<div class="loader"></div>');
       }
-      addControls(form);
+
+
+      hexForm.mainBlock = new h.Block(form, hexForm);
 
       if (form.find('[data-hex-multy]').size() > 0) {
         form.find('[data-hex-multy]').each(function () {
@@ -571,7 +547,7 @@ var hex = (function (h) {
     };
 
     init();
-    return self;
+    return hexForm;
   }
 
   h.form = function (id) {
@@ -581,12 +557,13 @@ var hex = (function (h) {
         var formId = $(this).attr('id');
         if (formId === undefined) {
           throw new Error('Form dont have id attr');
+        } else {
+          hexForms[formId] = new HexForm(formId);
         }
-        hexForms[formId] = new FormCreate(formId);
       });
     } else {
       if (hexForms[id] === undefined) {
-        hexForms[id] = new FormCreate(id);
+        hexForms[id] = new HexForm(id);
       }
       return hexForms[id];
     }

@@ -6,13 +6,12 @@ var hex = (function (h) {
     self.valid = true;
     self.name = undefined;
     var inputs = [];
-    self.form = config.form;
-    var errors, timerId;
+    self.block = undefined;
+    var errorsBlock;
+    var errors = [];
 
+    var defaultValue;
     self.formGroup = undefined;
-
-    self.panels = [];
-    self.tabs = [];
 
     var validators = [];
     var widgets = {};
@@ -21,14 +20,33 @@ var hex = (function (h) {
     self.disabled = false;
     self.readonly = false;
 
-    self.setValid = function () {
+    self.hideErrors = function () {
+      errors = [];
       if (self.formGroup !== undefined) {
         self.formGroup.removeClass('has-error');
       }
-      if (errors !== undefined) {
-        errors.find('span').removeClass('active');
+      if (errorsBlock !== undefined) {
+        errorsBlock.find('span').removeClass('active');
       }
     };
+
+    self.showErrors = function () {
+      if (errorsBlock !== undefined) {
+        for (var e in errors) {
+          errorsBlock.find('span.error-' + errors[e]).addClass('active');
+        }
+      }
+      if (self.formGroup !== undefined) {
+        self.formGroup.addClass('has-error');
+      }
+    };
+
+    self.reset = function () {
+      //self.setValue(defaultValue);
+      self.trigger('change');
+      self.hideErrors();
+    };
+
 
     self.getWidgets = function () {
       return widgets;
@@ -51,7 +69,6 @@ var hex = (function (h) {
       }
       self.disabled = true;
       self.valid = true;
-      self.validate();
     };
 
     self.addReadonly = function () {
@@ -78,95 +95,39 @@ var hex = (function (h) {
       };
     }
 
-    var validateFunc = function () {
-      var errorsCount = 0;
-      if (errors !== undefined) {
-        errors.find('span').removeClass('active');
+    var validateFunc = function (update) {
+      if (update === false) {
+        return self.valid;
       }
-
+      self.hideErrors();
       if (!self.disabled) {
-        for (var vIndex in validators) {
-          if (validators.hasOwnProperty(vIndex)) {
-            var validator = validators[vIndex];
-            var value = self.getValue();
-            var isValid = validator.isValid(value);
+        for (var v in validators) {
+          if (validators.hasOwnProperty(v)) {
+            var validator = validators[v];
+            var isValid = validator.isValid(self.getValue());
             if (isValid === false || isValid === 'false') {
-              errorsCount++;
-              if (errors !== undefined) {
-                errors.find('span.error-' + validator.getClassName()).addClass('active');
-              }
+              errors.push(validator.getClassName());
               break;
             }
           }
         }
       }
-
-      if (errorsCount > 0) {
+      if (errors.length > 0) {
         self.valid = false;
-        if (self.formGroup !== undefined) {
-          self.formGroup.addClass('has-error');
-        }
+        self.showErrors();
       }
       else {
-        if (self.formGroup !== undefined) {
-          self.formGroup.removeClass('has-error');
-        }
         self.valid = true;
+        self.hideErrors();
       }
-
-
-      if (self.panels.length > 0) {
-        var controlsValid = true;
-        if (self.valid === true) {
-          for (var c in self.form.controls) {
-            if (self.form.controls.hasOwnProperty(c)) {
-              var otherControl = self.form.controls[c];
-              if (otherControl.valid === false) {
-                for (var o in otherControl.panels) {
-                  var otherPanel = otherControl.panels[o];
-                  for (var s in self.panels) {
-                    if (otherPanel === self.panels[s]) {
-                      controlsValid = false;
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          controlsValid = false;
-        }
-
-        if (controlsValid === true) {
-          $.each(self.tabs, function (tKey, tab) {
-            tab.removeClass('has-error');
-          });
-        } else {
-          $.each(self.tabs, function (tKey, tab) {
-            tab.addClass('has-error');
-          });
-        }
-      }
-
-
+      self.block.form.mainBlock.isValid(false);
       return self.valid;
     };
 
-    self.validate = function (event) {
-      if (event !== undefined) {
-        if (event.type === 'blur') {
-          return validateFunc();
-        } else {
-          if (timerId !== undefined) {
-            clearTimeout(timerId);
-          }
-          timerId = setTimeout(validateFunc, 500);
-        }
-      } else {
-        return validateFunc();
-      }
+    self.isValid = function (update) {
+      return validateFunc(update);
     };
+
 
     self.trigger = function (event) {
       for (var i = 0; i < inputs.length; i++) {
@@ -223,7 +184,7 @@ var hex = (function (h) {
       }
     };
 
-    self.addInput = function (input) {
+    function addInput(input) {
       inputs.push(input);
       //Подключение валидаторов и виджетов
       var attributes = getAttributes(input);
@@ -249,7 +210,7 @@ var hex = (function (h) {
 
       for (var eventName in events) {
         if (events.hasOwnProperty(eventName)) {
-          input.bind(eventName, self.validate);
+          input.bind(eventName, validateFunc);
         }
       }
       validators.sort(sortByProperty('weight'));
@@ -266,7 +227,8 @@ var hex = (function (h) {
       input.bind('enable', function () {
         self.enable();
       });
-    };
+      defaultValue = self.getValue();
+    }
 
     self.getValue = function () {
       switch (self.type) {
@@ -336,42 +298,28 @@ var hex = (function (h) {
         if (conf.type === 'checkbox') {
           self.trueValue = true;
           self.falseValue = false;
+          if (conf.trueValue !== undefined) {
+            self.trueValue = conf.trueValue;
+          }
+          if (conf.falseValue !== undefined) {
+            self.falseValue = conf.falseValue;
+          }
         }
       }
-      if (conf.form !== undefined) {
-        self.form = conf.form;
+      if (conf.block !== undefined) {
+        self.block = conf.block;
       }
       self.name = conf.name;
+      self.formGroup = conf.formGroup;
+      errorsBlock = conf.errorsBlock;
       if (conf.inputs !== undefined) {
         for (var i in conf.inputs) {
           if (conf.inputs.hasOwnProperty(i)) {
-            self.addInput(conf.inputs[i]);
+            addInput(conf.inputs[i]);
           }
         }
       }
-      self.formGroup = inputs[0].closest('div.form-group');
-      if (self.formGroup.size() === 0) {
-        self.formGroup = undefined;
-      } else {
-        errors = self.formGroup.find('.errors');
-        if (errors.size() === 0) {
-          errors = undefined;
-        }
-      }
-
-      if (inputs[0].parents('[role="tabpanel"]').size() > 0) {
-        inputs[0].parents('[role="tabpanel"]').each(function () {
-          var tabPanel = $(this);
-          var tabId = tabPanel.attr('id');
-          self.panels.push(tabId);
-          var tabEl = $('.nav a[href="#' + tabId + '"]');
-          if (tabEl.size() > 0) {
-            self.tabs.push(tabEl);
-          }
-        });
-      }
-
-      self.setValid();
+      self.hideErrors();
     };
     initControl(config);
   };

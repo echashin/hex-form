@@ -2,7 +2,7 @@ var hex = (function (h) {
   'use strict';
   h.validators.required = function (control, config) {
     var self = this;
-    var events = ['blur', 'change'];
+    var events = ['blur', 'change', 'keyup'];
     self.weight = 0;
     var name = 'required';
 

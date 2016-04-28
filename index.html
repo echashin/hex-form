@@ -64,7 +64,7 @@
         </ul>
         <div class="tab-content">
 
-          <div role="tabpanel" class="tab-pane active" id="tab-email">
+          <div data-hex-block role="tabpanel" class="tab-pane active" id="tab-email">
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 <br/><br/>
@@ -151,7 +151,7 @@
             </div>
 
           </div>
-          <div role="tabpanel" class="tab-pane" id="tab-date">
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-date">
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 <br/><br/>
@@ -295,7 +295,7 @@
             </div>
 
           </div>
-          <div role="tabpanel" class="tab-pane" id="tab-phone">
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-phone">
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 <br/><br/>
@@ -321,7 +321,7 @@
               </div>
             </div>
           </div>
-          <div role="tabpanel" class="tab-pane" id="tab-multiple">
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-multiple">
             <div class="row">
               <div class="col-xs-12">
                 <br/><br/>
@@ -340,7 +340,8 @@
                   </ul>
 
                   <div class="tab-content" data-hex-multy-items>
-                    <div role="tabpanel" class="tab-pane" data-hex-multy-item="$"
+                    <div data-hex-block role="tabpanel" class="tab-pane" data-hex-multy-item="$"
+                         id="slot_$index"
                          data-hex-bind='{"id":"slot_@index","data-hex-multy-item":"@index"}'>
                       <div class="row">
                         <br>
@@ -351,6 +352,7 @@
                               <label
                                 data-hex-bind='{"for":"items_@index_production"}'
                                 class="btn btn-default"><input type="radio"
+                                                               name="items[$][type]"
                                                                data-hex-bind='{"name":"items[@index][type]","id":"items_@index_production"}'
                                                                value="production" checked>
                                 Производственный</label>
@@ -364,6 +366,7 @@
                               <label
                                 data-hex-bind='{"for":"items_@index_unprod"}'
                                 class="btn btn-default"><input type="radio"
+                                                               name="items[$][type]"
                                                                data-hex-bind='{"name":"items[@index][type]","id":"items_@index_unprod"}'
                                                                value="nonmanufacturing"
                               >
@@ -374,6 +377,7 @@
                               <div class="form-group">
                                 <label class="control-label">Производственный</label>
                                 <textarea required class="form-control"
+                                          name="items[$][prodcomment]"
                                           data-hex-bind='{"name":"items[@index][prodcomment]"}'></textarea>
 
                                 <div class="errors">
@@ -386,6 +390,7 @@
                               <div class="form-group">
                                 <label class="control-label">Линейный</label>
                                 <textarea required class="form-control"
+                                          name="items[$][linecomment]"
                                           data-hex-bind='{"name":"items[@index][linecomment]"}'></textarea>
 
                                 <div class="errors">
@@ -398,6 +403,7 @@
                               <div class="form-group">
                                 <label class="control-label">Непроизводственный</label>
                                 <textarea required class="form-control"
+                                          name="items[$][noncomment]"
                                           data-hex-bind='{"name":"items[@index][noncomment]"}'></textarea>
 
                                 <div class="errors">
@@ -416,7 +422,8 @@
                               type="text"
                               data-test="asd"
                               class="form-control"
-                              name="items[0][label]"
+                              data-hex-bind='{"name":"items[@index][label]"}'
+                              name="items[$][label]"
                               value="sss">
 
                             <div data-hex-multy-hide>***</div>
@@ -431,7 +438,8 @@
                             <select
                               data-hex-widget-select2='{"url":"/server/select2.php"}'
                               style="width: 100%"
-                              name="items[0][user][]" class="form-control" multiple>
+                              data-hex-bind='{"name":"items[@index][user][]"}'
+                              name="items[$][user][]" class="form-control" multiple>
 
                             </select>
 
@@ -444,7 +452,8 @@
                           <div class="form-group">
                             <label class="control-label">Вес</label>
                             <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control"
-                                   name="items[0][weight]" value="12">
+                                   data-hex-bind='{"name":"items[@index][weight]"}'
+                                   name="items[$][weight]" value="12">
                           </div>
                         </div>
                       </div>
@@ -462,8 +471,7 @@
             </div>
 
           </div>
-
-          <div role="tabpanel" class="tab-pane" id="tab-other">
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-other">
 
             <div class="row">
 
@@ -591,10 +599,17 @@
         </div>
 
         <input type="hidden" name="hiddenName" value="hiddenValue"/>
-
         <div class="alerts"></div>
-        <button class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная регистрация
-        </button>
+        <div class="row">
+          <div class="col-xs-6">
+              <button class="btn btn-lg btn-default btn-block" type="reset">Сброс формы</button>
+          </div>
+          <div class="col-xs-6">
+            <button class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная регистрация
+            </button>
+          </div>
+        </div>
+
       </form>
     </div>
   </div>
@@ -623,7 +638,8 @@
 
 <!-- build:js hex-form.min.js -->
 <script src="src/hex.js"></script>
-<script src="src/hexForm.js"></script>
+
+<script src="src/hexBlock.js"></script>
 <script src="src/hexControl.js"></script>
 <script src="src/widgets/passwordShow.js"></script>
 <script src="src/widgets/passwordStrength.js"></script>
@@ -645,7 +661,7 @@
 <script src="src/validators/date.js"></script>
 <script src="src/validators/fileupload.js"></script>
 
-
+<script src="src/hexForm.js"></script>
 
 
 

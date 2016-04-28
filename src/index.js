@@ -4,9 +4,13 @@ $(document).ready(function () {
   //hex.form();
   //hexForm();
   /*
-  hexForm('test').on('afterSubmit', function (event, data) {
-    console.log(event, data);
-  });
+  hex.form('test').on('beforeReset', function (event, data){
+    console.log('beforeReset');
+  });*/
+  /*
+
   */
+  //hex.form('test'));
+
 
 });
