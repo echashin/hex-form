@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hex</title>
+
+
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="vendor.css">
+
+  <link rel="stylesheet" href="hex-form.css">
+
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+</head>
+<body>
+<!--[if lt IE 10]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+  your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+
+      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST"
+            enctype="multipart/form-data">
+        <br>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+          <li role="presentation" class="active"><a href="#tab-email" aria-controls="tab-email" role="tab"
+                                                    data-toggle="tab"><span
+            class="error glyphicon glyphicon-exclamation-sign"></span> Email,Пароль</a></li>
+          <li role="presentation"><a href="#tab-date" aria-controls="tab-date" role="tab" data-toggle="tab">
+            <span class="error glyphicon glyphicon-exclamation-sign"></span>
+            Дата,время</a>
+          </li>
+          <li role="presentation"><a href="#tab-phone" aria-controls="tab-phone" role="tab"
+                                     data-toggle="tab"> <span class="error glyphicon glyphicon-exclamation-sign"></span>
+            Телефоны</a>
+          </li>
+          <li role="presentation"><a href="#tab-other" aria-controls="tab-other" role="tab" data-toggle="tab"> <span
+            class="error glyphicon glyphicon-exclamation-sign"></span> Другое</a>
+          </li>
+          <li role="presentation"><a href="#tab-multiple" aria-controls="tab-multiple" role="tab" data-toggle="tab">
+            <span class="error glyphicon glyphicon-exclamation-sign"></span> Мультиполе</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+
+          <div data-hex-block role="tabpanel" class="tab-pane active" id="tab-email">
+            <div class="row">
+              <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <br/><br/>
+
+                <div class="form-group">
+                  <label class="required control-label" for="email2">Email</label>
+                  <input name="email"
+                         id="email2"
+                         required
+                         data-hex-validator-email
+
+                         class="form-control"
+                         type="text"
+                         value="example@gmail.com">
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Введите Email</span>
+                    <span class="error-email label label-danger">Введите правильный Email</span>
+                    <span class="error-unique label label-danger">Этот Email уже используется</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="required control-label" for="password">Пароль</label>
+
+                  <div style="position: relative">
+                    <input
+                      data-hex-widget-password-strength
+                      data-hex-widget-password-show
+                      required
+                      data-hex-validator-string-length='{"min":6,"max":12}'
+                      class="form-control password"
+                      type="password"
+                      name="password"
+                      id="password"
+                      value="108256E$S?"
+                    />
+                    <button tabindex="-1" type='button' class="password-show">
+                      <i class="glyphicon glyphicon-eye-open on"></i>
+                      <i class="glyphicon glyphicon-eye-close off"></i>
+                    </button>
+                  </div>
+                  <div class="password-strength">
+                    <div></div>
+                  </div>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Введите пароль</span>
+                      <span
+                        class="error-string-length-min label label-danger">Минимальная длина пароля 6 символов</span>
+                      <span
+                        class="error-string-length-max label label-danger">Максимальная длина пароля 12 символов</span>
+                  </div>
+
+                </div>
+
+                <div class="form-group">
+                  <label class="required control-label" for="confirmPassword">Подтверждение пароля</label>
+
+                  <div style="position: relative">
+                    <input data-hex-widget-password-show
+                           required
+                           data-hex-validator-password-confirm='{"password":"#password"}'
+                           class="form-control password"
+                           name="confirmPassword"
+                           id="confirmPassword"
+                           value="108256E$S?"
+                           type="password"/>
+                    <button tabindex="-1" type='button' class="password-show">
+                      <i class="glyphicon glyphicon-eye-open on"></i>
+                      <i class="glyphicon glyphicon-eye-close off"></i>
+                    </button>
+                  </div>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Подтвердите пароль</span>
+                    <span class="error-password-confirm label label-danger">Пароли не совпадают</span>
+                  </div>
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-date">
+            <div class="row">
+              <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <br/><br/>
+
+                <div class="well">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="min_date">Минимум</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true}'
+                               data-hex-validator-mask
+                               class="form-control"
+                               required
+                               name="min_date" id="min_date" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-mask label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="max_date">Максимум</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true}'
+                               data-hex-validator-mask
+                               class="form-control"
+                               value="01.05.2015 00:40"
+                               name="max_date" id="max_date" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-date label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="required control-label" for="date">Дата</label>
+                    <input autocomplete="off"
+                           data-hex-widget-date='{"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                           data-hex-validator-mask
+                           class="form-control"
+                           value=""
+
+                           name="date" id="date" type="text"/>
+
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату рождения</span>
+                      <span class="error-date label label-danger">Неверный формат даты</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="required control-label" for="date_between">Дата диапазон</label>
+                    <input autocomplete="off"
+                           required
+                           data-hex-validator-date
+                           data-hex-widget-date='{"singleDatePicker":false,"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                           class="form-control"
+                           name="date_between" id="date_between" type="text"/>
+
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату</span>
+                      <span class="error-date label label-danger">Неверный формат даты</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="well">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="min_date2">Минимум</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date
+                               data-hex-validator-mask
+                               class="form-control"
+                               name="min_date2" id="min_date2" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-date label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="date2">Дата</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date='{"parentMin":"#min_date2"}'
+                               data-hex-validator-mask
+                               class="form-control"
+                               name="date2" id="date2" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-date label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="well">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="max_date3">Максимум</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date
+                               data-hex-validator-mask
+                               class="form-control"
+                               name="max_date3" id="max_date3" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-date label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label class="control-label" for="date3">Дата</label>
+                        <input autocomplete="off"
+                               data-hex-widget-date='{"parentMin":"#max_date3"}'
+                               data-hex-validator-mask
+                               class="form-control"
+                               name="date3" id="date3" type="text"/>
+
+                        <div class="errors">
+                          <span class="error-required label label-danger">Введите дату рождения</span>
+                          <span class="error-date label label-danger">Неверный формат даты</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-phone">
+            <div class="row">
+              <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <br/><br/>
+
+                <div class="form-group">
+                  <label class="required control-label" for="phone">Телефон мобильный (Россия)</label>
+                  <input
+                    autocomplete="off"
+                    data-hex-validator-phone
+                    required
+                    data-hex-widget-phone
+                    class="form-control"
+                    name="phone"
+                    id="phone"
+                    value="+7(909)141-17-68"
+                    type="text"/>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Введите телефон</span>
+                    <span class="error-phone label label-danger">Неверный формат телефона</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-multiple">
+            <div class="row">
+              <div class="col-xs-12">
+                <br/><br/>
+                <h4>Товары</h4>
+                <div data-hex-multy='{"allow_empty":true}'>
+                  <ul class="nav nav-tabs" role="tablist" data-hex-multy-tabs>
+                    <li role="presentation" data-hex-bind='{"data-hex-multy-tab":"@index"}' data-hex-multy-tab="$"><a
+                      data-hex-bind='{"href":"#slot_@index","aria-controls":"#slot_@index"}' href="#slot_0"
+                      aria-controls="slot_0" role="tab" data-toggle="tab"> <span
+                      class="error glyphicon glyphicon-exclamation-sign"></span> <span
+                      data-hex-bind='{"html":"Слот %@index+1%"}'></span></a>
+                    </li>
+                    <li role="presentation">
+                      <span data-hex-multy-add class="btn btn-success">+ Добавить</span>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content" data-hex-multy-items>
+                    <div data-hex-block role="tabpanel" class="tab-pane" data-hex-multy-item="$"
+                         id="slot_$index"
+                         data-hex-bind='{"id":"slot_@index","data-hex-multy-item":"@index"}'>
+                      <div class="row">
+                        <br>
+
+                        <div class="col-xs-12">
+                          <div class="form-group">
+                            <div class="btn-group btn-group-justified">
+                              <label
+                                data-hex-bind='{"for":"items_@index_production"}'
+                                class="btn btn-default"><input type="radio"
+                                                               name="items[$][type]"
+                                                               data-hex-bind='{"name":"items[@index][type]","id":"items_@index_production"}'
+                                                               value="production" checked>
+                                Производственный</label>
+                              <label class="btn btn-default"
+                                     data-hex-bind='{"for":"items_@index_line"}'
+                              ><input type="radio"
+                                      data-hex-bind='{"name":"items[@index][type]","id":"items_@index_line"}'
+                                      value="linear"
+                              >
+                                Линейный</label>
+                              <label
+                                data-hex-bind='{"for":"items_@index_unprod"}'
+                                class="btn btn-default"><input type="radio"
+                                                               name="items[$][type]"
+                                                               data-hex-bind='{"name":"items[@index][type]","id":"items_@index_unprod"}'
+                                                               value="nonmanufacturing"
+                              >
+                                Непроизводственный</label>
+                            </div>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"production"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Производственный</label>
+                                <textarea required class="form-control"
+                                          name="items[$][prodcomment]"
+                                          data-hex-bind='{"name":"items[@index][prodcomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"linear"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Линейный</label>
+                                <textarea required class="form-control"
+                                          name="items[$][linecomment]"
+                                          data-hex-bind='{"name":"items[@index][linecomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              data-hex-bind='{"data-hex-disabled":{"control":"items[@index][type]","value":"nonmanufacturing"}}'>
+                              <div class="form-group">
+                                <label class="control-label">Непроизводственный</label>
+                                <textarea required class="form-control"
+                                          name="items[$][noncomment]"
+                                          data-hex-bind='{"name":"items[@index][noncomment]"}'></textarea>
+
+                                <div class="errors">
+                                  <span class="error-required label label-danger">Заполните поле</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-4">
+                          <div class="form-group">
+                            <label class="control-label required">Название</label>
+                            <input
+                              data-hex-multy-attr='{"add":[{"data-hex-validator-required":""}],"remove":["data-test"]}'
+                              type="text"
+                              data-test="asd"
+                              class="form-control"
+                              data-hex-bind='{"name":"items[@index][label]"}'
+                              name="items[$][label]"
+                              value="sss">
+
+                            <div data-hex-multy-hide>***</div>
+                            <div class="errors">
+                              <span class="error-required label label-danger">Введите название</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-4">
+                          <div class="form-group">
+                            <label class="control-label">Пользователь</label>
+                            <select
+                              data-hex-widget-select2='{"url":"/server/select2.php"}'
+                              style="width: 100%"
+                              data-hex-bind='{"name":"items[@index][user][]"}'
+                              name="items[$][user][]" class="form-control" multiple>
+
+                            </select>
+
+                            <div class="errors">
+                              <span class="error-required label label-danger">Выберите пользователей</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-4">
+                          <div class="form-group">
+                            <label class="control-label">Вес</label>
+                            <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control"
+                                   data-hex-bind='{"name":"items[@index][weight]"}'
+                                   name="items[$][weight]" value="12">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-6" style="text-align: right">
+                          <button data-hex-multy-remove class="btn btn-danger" type="button">Удалить</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab-other">
+
+            <div class="row">
+
+
+              <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <br><br>
+
+                <div class="form-group">
+                  <div class="upload-dropzone">
+                    <thumb><remove title="Удалить файл"></remove><div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div><p></p><i title=""></i></thumb>
+                  </div>
+                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+                  <input data-hex-files='[{"id":1,"name":"filename1.jpg","thumb":"/src/img/thumbs/1.jpg","url":"/src/img/1.jpg"},{"id":2,"name":"filename2.jpg","thumb":"/src/img/thumbs/2.jpg","url":"/src/img/2.jpg"},{"id":3,"name":"filename3.jpg","thumb":"/src/img/thumbs/3.jpg","url":"/src/img/3.jpg"},{"id":4,"name":"filename4.jpg","thumb":"/src/img/thumbs/4.jpg","url":"/src/img/4.jpg"}]'
+                         data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":false}'
+                         data-hex-validator-fileupload
+                         required
+                         id="uploadedimages"
+                         type="hidden"
+                         name="uploadedimages[]">
+                  <div class="errors">
+                    <span class="error-required label label-danger">Загрузите изображения</span>
+                    <span class="error-file-type label label-danger">Не верный формат файла</span>
+                    <span class="error-fileupload label label-danger">Дождитесь загрузки всех файлов</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="upload-dropzone">
+                    <thumb class="single"><remove title="Удалить файл"></remove><div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div><p></p><i title=""></i></thumb>
+                  </div>
+                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+                  <input
+                         data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":true}'
+                         data-hex-validator-fileupload
+                         required
+                         id="avatar"
+                         type="hidden"
+                         name="avatar">
+                  <div class="errors">
+                    <span class="error-required label label-danger">Загрузите изображения</span>
+                    <span class="error-file-type label label-danger">Не верный формат файла</span>
+                    <span class="error-fileupload label label-danger">Дождитесь загрузки всех файлов</span>
+                  </div>
+                </div>
+
+                <br>
+                <hr>
+                <div class="form-group">
+                  <input data-hex-widget-filesimple id="file" type="file" name="image">
+                  <div class="errors">
+                    <span class="error-required label label-danger">Загрузите изображения</span>
+                    <span class="error-file-type label label-danger">Не верный формат файла</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Согласен с правилами
+                    <input type="checkbox" id="agree" name="agree" value="8"></label>
+                </div>
+                <div class="form-group">
+                  <label class="control-label"><input type="radio" name="sex" value="F"/> Ж</label>
+                  <label class="control-label"><input type="radio" name="sex" value="M"/> М</label>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Комментарий</label>
+                  <textarea class="form-control" id="comment" name="comment"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>
+                  <select data-hex-widget-select2='{"url":"/server/select2.php"}'
+                          style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control"
+                          multiple="multiple">
+                    <option value="5" selected="selected">Talley Richmond</option>
+                  </select>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_ajax">Пользователи AJAX зависимый</label>
+                  <select required
+                          data-hex-widget-select2='{"url":"/server/select2.php","parent":{"selector":"#user_ajax"}}'
+                          style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control"
+                          multiple="multiple">
+
+                  </select>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_simple">Пользователи</label>
+                  <select required data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]"
+                          class="form-control" multiple="multiple">
+                    <option value="190">Buckley Riddle</option>
+                    <option value="191">Suarez Tran</option>
+                    <option value="192">Morales Preston</option>
+                    <option value="193">Sykes Collins</option>
+                    <option value="194">Luella Beck</option>
+                  </select>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="user_simple2">Пользователи 2</label>
+                  <select style="width: 100%" id="user_simple2" name="user_simple2[]" class="form-control"
+                          multiple="multiple">
+                    <option value="190">Buckley Riddle</option>
+                    <option value="191">Suarez Tran</option>
+                    <option value="192">Morales Preston</option>
+                    <option value="193">Sykes Collins</option>
+                    <option value="194">Luella Beck</option>
+                  </select>
+
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="hiddenName" value="hiddenValue"/>
+        <div class="alerts"></div>
+        <div class="row">
+          <div class="col-xs-6">
+              <button class="btn btn-lg btn-default btn-block" type="reset">Сброс формы</button>
+          </div>
+          <div class="col-xs-6">
+            <button class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная регистрация
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="vendor.js"></script>
+
+
+<script src="src/index.js"></script>
+
+<script src="hex-form.js"></script>
+
+</body>
+</html>
