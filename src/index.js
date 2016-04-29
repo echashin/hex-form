@@ -1,3 +1,4 @@
+/* global hex:true*/
 'use strict';
 $(document).ready(function () {
   //moment.locale('ru');
@@ -10,7 +11,14 @@ $(document).ready(function () {
   /*
 
   */
-  //hex.form('test'));
+  hex.form('test');
+  hex.form('test');
+  hex.form('test');
+  /*
+  hex.form('test').on('afterSubmit',function(data,event){
+    console.log(data);
+  });
+  */
 
 
 });

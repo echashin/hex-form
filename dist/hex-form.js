@@ -2543,7 +2543,9 @@ var hex = (function (h) {
         if (formId === undefined) {
           throw new Error('Form dont have id attr');
         } else {
-          hexForms[formId] = new HexForm(formId);
+          if (hexForms[formId] === undefined) {
+            hexForms[formId] = new HexForm(formId);
+          }
         }
       });
     } else {
@@ -2556,6 +2558,7 @@ var hex = (function (h) {
   };
 
   $(document).ready(function () {
+
     h.form();
   });
 
