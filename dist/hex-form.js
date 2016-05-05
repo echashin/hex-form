@@ -1,4 +1,4 @@
-(function (window) {
+var hex = (function () {
   'use strict';
   var h = {'widgets': {}, 'validators': {}, 'utils': {}};
 
@@ -230,12 +230,14 @@
 
   };
 
-  window.hex = h;
-}(window));
+  return h;
+
+}());
 
 
 var hex = (function (h) {
   'use strict';
+  console.log(window);
   h.Block = function (element, form, parentBlock) {
     var block = this;
     block.element = undefined;
@@ -447,7 +449,7 @@ var hex = (function (h) {
 
   };
   return h;
-}(hex));
+}(hex || {}));
 
 
 var hex = (function (h) {
@@ -2175,6 +2177,9 @@ var hex = (function (h) {
                       }
                     } else {
                       hf.loaderHide();
+                      if (res.newtab !== undefined) {
+                        $(window).open(res.newtab, '_self');
+                      }
                     }
                   } else {
                     hf.loaderHide();
@@ -2351,9 +2356,9 @@ var hex = (function (h) {
             }
 
             if (attr === 'id' && n <= 0) {
-              console.log('-----------change block.id start-------------');
+
               var currentBlock = hf.mainBlock.findBlockById(nodes[n].attr('id'));
-              console.log(tpl);
+
               if (currentBlock !== false) {
                 currentBlock.id = tpl;
               } else {

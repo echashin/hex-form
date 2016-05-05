@@ -187,6 +187,9 @@ var hex = (function (h) {
                       }
                     } else {
                       hf.loaderHide();
+                      if (res.newtab !== undefined) {
+                        $(window).open(res.newtab, '_self');
+                      }
                     }
                   } else {
                     hf.loaderHide();
@@ -363,9 +366,9 @@ var hex = (function (h) {
             }
 
             if (attr === 'id' && n <= 0) {
-              console.log('-----------change block.id start-------------');
+
               var currentBlock = hf.mainBlock.findBlockById(nodes[n].attr('id'));
-              console.log(tpl);
+
               if (currentBlock !== false) {
                 currentBlock.id = tpl;
               } else {

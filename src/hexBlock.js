@@ -1,5 +1,6 @@
 var hex = (function (h) {
   'use strict';
+  console.log(window);
   h.Block = function (element, form, parentBlock) {
     var block = this;
     block.element = undefined;
@@ -211,5 +212,5 @@ var hex = (function (h) {
 
   };
   return h;
-}(hex));
+}(hex || {}));
 

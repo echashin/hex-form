@@ -1,4 +1,4 @@
-(function (window) {
+var hex = (function () {
   'use strict';
   var h = {'widgets': {}, 'validators': {}, 'utils': {}};
 
@@ -230,6 +230,7 @@
 
   };
 
-  window.hex = h;
-}(window));
+  return h;
+
+}());
 
