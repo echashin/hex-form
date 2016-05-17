@@ -54,6 +54,7 @@ var hex = (function (h) {
               input.val('').trigger('change');
             } else {
               control.enable();
+              input.val('').trigger('change');
             }
           });
           delete config.parent;

@@ -526,8 +526,9 @@ var hex = (function (h) {
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.attr('data-hex-block', '');
-      $(document).on('submit', '#' + formId, submit);
-      $(document).on('reset', '#' + formId, reset);
+      form.on('submit', submit);
+      form.on('reset', reset);
+
       if (form.find('.loader').size() === 0) {
         form.append('<div class="loader"></div>');
       }
@@ -571,6 +572,7 @@ var hex = (function (h) {
     }
     return hexForms;
   };
+
 
   $(document).ready(function () {
 

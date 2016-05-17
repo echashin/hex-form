@@ -201,7 +201,6 @@ var hex = (function (h) {
         tab = $('[href="#' + block.id + '"]');
       }
       if (block.id === undefined) {
-        console.log(element);
         throw new Error('[data-hex-block] must have id attr');
       }
       findChildrenBlocks();

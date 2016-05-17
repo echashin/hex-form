@@ -325,9 +325,10 @@
               <div class="col-xs-12">
                 <br/><br/>
                 <h4>Товары</h4>
-                <div data-hex-multy='{"allow_empty":true}'>
+                <div data-hex-repeat="slot">
                   <ul class="nav nav-tabs" role="tablist" data-hex-multy-tabs>
-                    <li role="presentation" data-hex-bind='{"data-hex-multy-tab":"@index"}' data-hex-multy-tab="$"><a
+                    <li role="presentation" data-hex-repeat="slot">
+                      <a
                       data-hex-bind='{"href":"#slot_@index","aria-controls":"#slot_@index"}' href="#slot_0"
                       aria-controls="slot_0" role="tab" data-toggle="tab"> <span
                       class="error glyphicon glyphicon-exclamation-sign"></span> <span
@@ -410,6 +411,93 @@
                                 </div>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-12">
+
+                          <div data-hex-multy>
+                            <div data-hex-multy-items>
+                              <div data-hex-multy-item="$" data-hex-block
+                                   data-hex-bind='{"data-hex-multy-item":"@index","id":"images_@index_block"}'>
+                                <div class="row">
+                                  <div class="col-9">
+                                    <div class="form-group">
+                                      <label class="control-label">Изображение</label>
+                                      <input required
+                                             accept="image/jpeg,image/png,image/gif" data-hex-widget-filesimple type="file"
+                                             data-hex-bind='{"name":"images[@index][file]"}'
+                                      >
+
+                                      <div class="errors">
+                                        <span class="error-required label label-danger">Загрузите картинку</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-2">
+                                    <div class="form-group">
+                                      <label class="control-label">Вес</label>
+                                      <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text"
+                                             class="form-control"
+                                             data-hex-bind='{"name":"images[@index][order_by]"}'
+                                      >
+
+                                      <div class="errors">
+                                        <span class="error-required label label-danger">Заполните поле</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-2" style="text-align: right;">
+                                    <br>
+                                    <button data-hex-multy-remove type="button" class="btn btn-danger btn-sm"><i
+                                      class="icon-cross"></i></button>
+                                  </div>
+
+                                </div>
+                                <hr>
+                              </div>
+
+                              <div data-hex-multy-item="0" data-hex-block id="images_0_block"
+                                   data-hex-bind='{"data-hex-multy-item":"@index","id":"images_@index_block"}'>
+                                <div class="row">
+                                  <div class="col-9">
+                                    <div class="form-group">
+                                      <label class="control-label">Файл</label>
+                                      <input required
+                                             accept="image/jpeg,image/png,image/gif" data-hex-widget-filesimple type="file"
+                                             data-hex-bind='{"name":"images[@index][file]"}'
+                                             name="images[0][file]">
+
+                                      <div class="errors">
+                                        <span class="error-required label label-danger">Загрузите картинку</span>
+                                      </div>
+
+                                    </div>
+                                  </div>
+                                  <div class="col-2">
+                                    <div class="form-group">
+                                      <label class="control-label">Вес</label>
+                                      <input required data-hex-widget-mask='{"mask":"9{+}"}' type="text" class="form-control"
+                                             data-hex-bind='{"name":"images[@index][order_by]"}'
+                                             name="images[0][order_by]"
+                                             value="1"
+                                      >
+
+                                      <div class="errors">
+                                        <span class="error-required label label-danger">Заполните поле</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-2" style="text-align: right;">
+                                    <br>
+                                    <button data-hex-multy-remove type="button" class="btn btn-danger btn-sm">
+                                      <i class="icon-cross"></i></button>
+                                  </div>
+                                </div>
+                                <hr>
+                              </div>
+                            </div>
+                            <br/>
+                            <button data-hex-multy-add class="btn btn-primary" type="button">+ Добавить изображение</button>
                           </div>
                         </div>
 
