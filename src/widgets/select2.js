@@ -35,8 +35,7 @@ var hex = (function (h) {
                 more: (params.page * data.limit) < data.total
               }
             };
-          },
-          cache: false
+          }
         };
         delete config.url;
 

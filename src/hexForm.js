@@ -374,8 +374,6 @@ var hex = (function (h) {
               } else {
                 console.log('block not found id:' + nodes[n].attr('id'));
               }
-              console.log(currentBlock);
-              console.log('=========change block.id=========');
             }
             if (typeof tpl === 'object') {
               nodes[n].attr(attr, JSON.stringify(tpl));
@@ -513,7 +511,6 @@ var hex = (function (h) {
               }
             }
             multyCheck();
-            console.log(hf);
           });
 
         }
