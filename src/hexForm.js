@@ -12,6 +12,21 @@ var hex = (function (h) {
     var handlers = {};
     hf.mainBlock = undefined;
 
+    /*
+    var params = {};
+
+    Object.defineProperty(self, 'params', {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        return params;
+      },
+      set: function (newValue) {
+        params = newValue;
+      }
+    });
+    */
+
     var FormEvent = function (type) {
       this.type = type;
       this.stoped = false;

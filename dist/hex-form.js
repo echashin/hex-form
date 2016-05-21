@@ -11,6 +11,9 @@ var hex = (function () {
   h.utils.isEmpty = function (v) {
     return !!(v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0));
   };
+
+
+
   h.utils.md5 = function (string) {
 
     function rotateLeft(lValue, iShiftBits) {
@@ -237,7 +240,7 @@ var hex = (function () {
 
 var hex = (function (h) {
   'use strict';
-  console.log(window);
+
   h.Block = function (element, form, parentBlock) {
     var block = this;
     block.element = undefined;
@@ -252,6 +255,10 @@ var hex = (function (h) {
     block.id = undefined;
     block.valid = true;
     block.form = undefined;
+
+
+
+
 
     block.hideErrors = function () {
       if (tab !== undefined) {
@@ -1095,8 +1102,14 @@ var hex = (function (h) {
       var defaultSettings = {
         theme: 'bootstrap',
         allowClear: true,
-        placeholder: placeholder
+        placeholder: placeholder,
+        minimumResultsForSearch: 10
       };
+
+
+      if (input.attr('multiple') !== undefined) {
+        defaultSettings.closeOnSelect = false;
+      }
 
       if (config.url !== undefined) {
         mode = 'ajax';
@@ -1120,9 +1133,11 @@ var hex = (function (h) {
                 more: (params.page * data.limit) < data.total
               }
             };
-          }
+          },
+          cache: true
         };
         delete config.url;
+
 
         if (config.parent !== undefined) {
           var pId = config.parent.selector;
@@ -1168,6 +1183,7 @@ var hex = (function (h) {
         input.trigger('change');
       }
     }
+
     init();
   };
 
@@ -2000,6 +2016,21 @@ var hex = (function (h) {
     var form = $('#' + formId);
     var handlers = {};
     hf.mainBlock = undefined;
+
+    /*
+    var params = {};
+
+    Object.defineProperty(self, 'params', {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        return params;
+      },
+      set: function (newValue) {
+        params = newValue;
+      }
+    });
+    */
 
     var FormEvent = function (type) {
       this.type = type;

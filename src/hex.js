@@ -11,6 +11,9 @@ var hex = (function () {
   h.utils.isEmpty = function (v) {
     return !!(v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0));
   };
+
+
+
   h.utils.md5 = function (string) {
 
     function rotateLeft(lValue, iShiftBits) {

@@ -10,8 +10,14 @@ var hex = (function (h) {
       var defaultSettings = {
         theme: 'bootstrap',
         allowClear: true,
-        placeholder: placeholder
+        placeholder: placeholder,
+        minimumResultsForSearch: 10
       };
+
+
+      if (input.attr('multiple') !== undefined) {
+        defaultSettings.closeOnSelect = false;
+      }
 
       if (config.url !== undefined) {
         mode = 'ajax';
@@ -35,9 +41,11 @@ var hex = (function (h) {
                 more: (params.page * data.limit) < data.total
               }
             };
-          }
+          },
+          cache: true
         };
         delete config.url;
+
 
         if (config.parent !== undefined) {
           var pId = config.parent.selector;
@@ -83,6 +91,7 @@ var hex = (function (h) {
         input.trigger('change');
       }
     }
+
     init();
   };
 
