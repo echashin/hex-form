@@ -1,6 +1,5 @@
 var hex = (function (h) {
   'use strict';
-
   h.Block = function (element, form, parentBlock) {
     var block = this;
     block.element = undefined;
@@ -15,10 +14,6 @@ var hex = (function (h) {
     block.id = undefined;
     block.valid = true;
     block.form = undefined;
-
-
-
-
 
     block.hideErrors = function () {
       if (tab !== undefined) {
@@ -205,6 +200,7 @@ var hex = (function (h) {
         tab = $('[href="#' + block.id + '"]');
       }
       if (block.id === undefined) {
+        console.log(element);
         throw new Error('[data-hex-block] must have id attr');
       }
       findChildrenBlocks();
@@ -215,5 +211,5 @@ var hex = (function (h) {
 
   };
   return h;
-}(hex || {}));
+}(hex));
 

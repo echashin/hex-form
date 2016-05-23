@@ -1,4 +1,4 @@
-var hex = (function () {
+(function (window) {
   'use strict';
   var h = {'widgets': {}, 'validators': {}, 'utils': {}};
 
@@ -11,9 +11,6 @@ var hex = (function () {
   h.utils.isEmpty = function (v) {
     return !!(v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0));
   };
-
-
-
   h.utils.md5 = function (string) {
 
     function rotateLeft(lValue, iShiftBits) {
@@ -233,7 +230,6 @@ var hex = (function () {
 
   };
 
-  return h;
-
-}());
+  window.hex = h;
+}(window));
 

@@ -12,21 +12,6 @@ var hex = (function (h) {
     var handlers = {};
     hf.mainBlock = undefined;
 
-    /*
-    var params = {};
-
-    Object.defineProperty(self, 'params', {
-      enumerable: true,
-      configurable: true,
-      get: function () {
-        return params;
-      },
-      set: function (newValue) {
-        params = newValue;
-      }
-    });
-    */
-
     var FormEvent = function (type) {
       this.type = type;
       this.stoped = false;
@@ -35,7 +20,7 @@ var hex = (function (h) {
       };
     };
 
-    function removeBlock(blockId) {
+    hf.removeBlock = function (blockId) {
       var block = hf.mainBlock.findBlockById(blockId);
       if (block === false) {
         return false;
@@ -57,7 +42,7 @@ var hex = (function (h) {
         }
       }
       hf.mainBlock.isValid(false);
-    }
+    };
 
     hf.findControlByName = function (cName) {
       for (var i in hf.controls) {
@@ -202,9 +187,6 @@ var hex = (function (h) {
                       }
                     } else {
                       hf.loaderHide();
-                      if (res.newtab !== undefined) {
-                        $(window).open(res.newtab, '_self');
-                      }
                     }
                   } else {
                     hf.loaderHide();
@@ -381,14 +363,16 @@ var hex = (function (h) {
             }
 
             if (attr === 'id' && n <= 0) {
-
+              console.log('-----------change block.id start-------------');
               var currentBlock = hf.mainBlock.findBlockById(nodes[n].attr('id'));
-
+              console.log(tpl);
               if (currentBlock !== false) {
                 currentBlock.id = tpl;
               } else {
                 console.log('block not found id:' + nodes[n].attr('id'));
               }
+              console.log(currentBlock);
+              console.log('=========change block.id=========');
             }
             if (typeof tpl === 'object') {
               nodes[n].attr(attr, JSON.stringify(tpl));
@@ -503,7 +487,7 @@ var hex = (function (h) {
           var item = $(this).closest('[data-hex-multy-item]');
           var removedIndex = item.data('hexMultyItem');
           item.fadeOut(500, function () {
-            removeBlock(item.attr('id'));
+            hf.removeBlock(item.attr('id'));
             var items = block.find('[data-hex-multy-item]');
             items.each(function () {
               if ($(this).data('hexMultyItem') > removedIndex) {
@@ -526,6 +510,7 @@ var hex = (function (h) {
               }
             }
             multyCheck();
+            console.log(hf);
           });
 
         }
@@ -538,9 +523,8 @@ var hex = (function (h) {
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.attr('data-hex-block', '');
-      form.on('submit', submit);
-      form.on('reset', reset);
-
+      $(document).on('submit', '#' + formId, submit);
+      $(document).on('reset', '#' + formId, reset);
       if (form.find('.loader').size() === 0) {
         form.append('<div class="loader"></div>');
       }
@@ -584,7 +568,6 @@ var hex = (function (h) {
     }
     return hexForms;
   };
-
 
   $(document).ready(function () {
 

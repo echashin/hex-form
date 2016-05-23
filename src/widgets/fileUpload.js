@@ -5,7 +5,9 @@ var hex = (function (h) {
     var input, url, uploader;
     var dropzone;
     var allowedTypes;
+    var limit = 0;
     var single = false;
+
     var thumbSample;
     var uploaderId;
     var files = [];
@@ -270,6 +272,17 @@ var hex = (function (h) {
         single = true;
       }
 
+      if (config.limit !== undefined) {
+        limit = parseInt(config.limit);
+        if (isNaN(limit)) {
+          limit = 1;
+        }
+        if (limit === 0) {
+          limit = 0;
+        }
+        delete config.limit;
+      }
+
 
       if (config.url !== undefined) {
         url = config.url;
@@ -321,7 +334,7 @@ var hex = (function (h) {
       });
 
 
-      if (!single) {
+      if (limit !== 1) {
         var drake = dragula([dropzone[0]], {
           'mirrorContainer': dropzone.closest('.form-group')[0],
           'direction': 'horizontal',
