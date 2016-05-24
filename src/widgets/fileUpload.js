@@ -23,6 +23,7 @@ var hex = (function (h) {
         }
       }
       control.setValue(tmp);
+      input.trigger('change');
     }
 
     function checkLoading() {
