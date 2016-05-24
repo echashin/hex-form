@@ -1094,9 +1094,13 @@ var hex = (function (h) {
       var defaultSettings = {
         theme: 'bootstrap',
         allowClear: true,
-        placeholder: placeholder
+        placeholder: placeholder,
+        minimumResultsForSearch: 10
       };
 
+      if (input.attr('multiple') !== undefined) {
+        defaultSettings.closeOnSelect = false;
+      }
       if (config.url !== undefined) {
         mode = 'ajax';
         var selected = input.find('option[selected]');
@@ -1122,6 +1126,8 @@ var hex = (function (h) {
           },
           cache: false
         };
+
+
         delete config.url;
 
         if (config.parent !== undefined) {
@@ -1138,6 +1144,7 @@ var hex = (function (h) {
               input.val('').trigger('change');
             } else {
               control.enable();
+              input.val('').trigger('change');
             }
           });
           delete config.parent;
@@ -1167,6 +1174,7 @@ var hex = (function (h) {
         input.trigger('change');
       }
     }
+
     init();
   };
 
