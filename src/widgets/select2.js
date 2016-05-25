@@ -14,9 +14,6 @@ var hex = (function (h) {
         minimumResultsForSearch: 10
       };
 
-      if (input.attr('multiple') !== undefined) {
-        defaultSettings.closeOnSelect = false;
-      }
       if (config.url !== undefined) {
         mode = 'ajax';
         var selected = input.find('option[selected]');

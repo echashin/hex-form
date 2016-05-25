@@ -1098,9 +1098,6 @@ var hex = (function (h) {
         minimumResultsForSearch: 10
       };
 
-      if (input.attr('multiple') !== undefined) {
-        defaultSettings.closeOnSelect = false;
-      }
       if (config.url !== undefined) {
         mode = 'ajax';
         var selected = input.find('option[selected]');
@@ -1537,7 +1534,7 @@ var hex = (function (h) {
       });
 
 
-      if (limit !== 1) {
+      if (!single) {
         var drake = dragula([dropzone[0]], {
           'mirrorContainer': dropzone.closest('.form-group')[0],
           'direction': 'horizontal',
