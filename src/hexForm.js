@@ -10,6 +10,7 @@ var hex = (function (h) {
     hf.invalidText = 'Форма содержит ошибки';
     var form = $('#' + formId);
     var handlers = {};
+    var dataType = 'formdata';
     hf.mainBlock = undefined;
 
     var FormEvent = function (type) {
@@ -152,19 +153,21 @@ var hex = (function (h) {
             method = form.attr('method');
           }
 
-          var formData = new FormData();
-          $.each(data, function (k, v) {
-            if ($.isArray(v) || $.isPlainObject(v)) {
-
-              for (var j in v) {
-                if (v[j] !== null && v[j] !== false && v[j] !== undefined) {
-                  formData.append(k, v[j]);
+          if (dataType === 'formdata') {
+            var formData = new FormData();
+            $.each(data, function (k, v) {
+              if ($.isArray(v) || $.isPlainObject(v)) {
+                for (var j in v) {
+                  if (v[j] !== null && v[j] !== false && v[j] !== undefined) {
+                    formData.append(k, v[j]);
+                  }
                 }
+              } else {
+                formData.append(k, v);
               }
-            } else {
-              formData.append(k, v);
-            }
-          });
+            });
+          }
+
 
           $.ajax({
             url: url,
@@ -363,16 +366,14 @@ var hex = (function (h) {
             }
 
             if (attr === 'id' && n <= 0) {
-              console.log('-----------change block.id start-------------');
+
               var currentBlock = hf.mainBlock.findBlockById(nodes[n].attr('id'));
-              console.log(tpl);
+
               if (currentBlock !== false) {
                 currentBlock.id = tpl;
               } else {
                 console.log('block not found id:' + nodes[n].attr('id'));
               }
-              console.log(currentBlock);
-              console.log('=========change block.id=========');
             }
             if (typeof tpl === 'object') {
               nodes[n].attr(attr, JSON.stringify(tpl));
@@ -523,10 +524,14 @@ var hex = (function (h) {
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.attr('data-hex-block', '');
-      $(document).on('submit', '#' + formId, submit);
-      $(document).on('reset', '#' + formId, reset);
+      form.on('submit',submit);
+      form.on('reset',reset);
       if (form.find('.loader').size() === 0) {
         form.append('<div class="loader"></div>');
+      }
+
+      if(form.data('datatype')!==undefined){
+        dataType=form.data('datatype');
       }
 
       hf.mainBlock = new h.Block(form, hf);
