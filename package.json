@@ -30,6 +30,7 @@
       "browser": true
     },
     "rules": {
+      "no-new-func": 1,
       "no-unused-vars": [
         1,
         {

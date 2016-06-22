@@ -1,6 +1,6 @@
 (function (window) {
   'use strict';
-  var h = {'widgets': {}, 'validators': {}, 'utils': {}};
+  var h = {'widgets': {}, 'validators': {}, 'directives': {}, 'utils': {}};
 
   h.utils.toCamel = function (string) {
     return string.replace(/[-_]([a-z])/g, function (g) {
@@ -8,9 +8,148 @@
     });
   };
 
+  h.utils.isInt = function (value) {
+    return !isNaN(value) && (function (x) {
+        return (x | 0) === x;
+      })(parseFloat(value));
+  };
+
+  h.utils.arrayUniq = function (a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for (var i = 0; i < len; i++) {
+      var item = a[i];
+      if (seen[item] !== 1) {
+        seen[item] = 1;
+        out[j++] = item;
+      }
+    }
+    return out;
+  };
+
+  h.utils.exprToFunc = function (expr) {
+    expr = expr.replace(/\[['"]/g, '.').replace(/['"]]/g, '').replace(/\[(\D+)]/, '.$1');
+    var re = /([#a-z_$.0-9\[\]'"]*)/gi;
+    var vars = [];
+    var variables = expr.replace(/'[^']*'/g, '').replace(/"[^"]*"/g, '').match(re);
+
+    for (var v = 0, vl = variables.length; v < vl; v++) {
+      var variable = variables[v];
+      if (variable !== '') {
+        var variableCan = variable.replace(/['"]/gi, '').replace(/\[/g, '.').replace(/]/g, '').replace(/\.+/g, '.').replace(/^\./, '').replace(/\.$/, '');
+        variableCan = '[\'' + variableCan.split('.').join('\'][\'') + '\']';
+        if (vars.indexOf(variableCan) === -1) {
+          vars.push(variableCan);
+        }
+
+        var r = '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
+        r += '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        var regexp = new RegExp(r, 'gi');
+        expr = expr.replace(regexp, '__data' + variableCan);
+      }
+    }
+    var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.log(e);return "error"};return r;';
+    return {'vars': vars, 'func': funcBody};
+  };
+
+
+  h.utils.objectExtend = function (originalObject, newObject) {
+    if (newObject === undefined) {
+      newObject = {};
+    }
+    for (var o in originalObject) {
+      if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {
+        h.utils.objectExtend(originalObject[o], newObject[o]);
+      } else {
+        if (newObject[o] === undefined) {
+          originalObject[o] = undefined;
+        } else {
+          if ($.isArray(originalObject)) {
+            originalObject.push(newObject);
+          } else {
+            originalObject[o] = newObject[o];
+          }
+        }
+      }
+    }
+    for (var a in newObject) {
+      if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
+        if ($.isArray(newObject[a])) {
+          if (originalObject[a] === undefined) {
+            originalObject[a] = [];
+          }
+          h.utils.objectExtend(originalObject[a], newObject[a]);
+        } else if ($.isPlainObject(newObject[a])) {
+          if (originalObject[a] === undefined) {
+            originalObject[a] = {};
+          }
+        } else {
+          originalObject[a] = newObject[a];
+        }
+      }
+    }
+  };
+
+
+  h.utils.objectProperty = function (obj, name, value) {
+    var names = name.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
+    var nml = names.length - 1;
+    var cObj = obj;
+    if (value !== undefined) {
+      for (var i = 0; i <= nml; i++) {
+        var aName = names[i];
+        if (aName !== '') {
+          if (i < nml) {
+            if (cObj[aName] === undefined) {
+              if (h.utils.isInt(aName)) {
+                cObj[aName] = [];
+              } else {
+                cObj[aName] = {};
+              }
+            }
+            cObj = cObj[aName];
+          } else {
+            cObj[aName] = value;
+          }
+        }
+      }
+    } else {
+      for (var j = 0; j <= nml; j++) {
+        var aN = names[j];
+        if (aN !== '') {
+          if (j < nml) {
+            if (cObj[aN] === undefined) {
+              return undefined;
+            }
+            cObj = cObj[aN];
+          } else {
+            return cObj[aN];
+          }
+        }
+      }
+    }
+  };
+
+  //Пустая переменная или нет
   h.utils.isEmpty = function (v) {
     return !!(v === null || v === false || v === undefined || v === '' || ($.isArray(v) && v.length === 0));
   };
+
+  //Возвращает массив атрибутов узла
+  h.utils.getAttributes = function (node) {
+    var map = {};
+    var attributes = node[0].attributes;
+    var aLength = attributes.length;
+    for (var a = 0; a < aLength; a++) {
+      map[attributes[a].name.toLowerCase()] = attributes[a].value;
+    }
+    return map;
+  };
+
+  //Строка в md5
   h.utils.md5 = function (string) {
 
     function rotateLeft(lValue, iShiftBits) {
@@ -80,7 +219,7 @@
       var lNumberOfWordsTemp1 = lMessageLength + 8;
       var lNumberOfWordsTemp2 = (lNumberOfWordsTemp1 - (lNumberOfWordsTemp1 % 64)) / 64;
       var lNumberOfWords = (lNumberOfWordsTemp2 + 1) * 16;
-      var lWordArray = Array(lNumberOfWords - 1);
+      var lWordArray = new Array(lNumberOfWords - 1);
       var lBytePosition = 0;
       var lByteCount = 0;
       while (lByteCount < lMessageLength) {

@@ -24,14 +24,11 @@ var hex = (function (h) {
     }
 
     self.isValid = function (value) {
-      if (h.utils.isEmpty(value)) {
-        return false;
-      } else {
-        return true;
-      }
+      return !h.utils.isEmpty(value);
     };
-
-    init();
+    if (config !== undefined) {
+      init();
+    }
   };
 
   return h;
