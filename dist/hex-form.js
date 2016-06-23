@@ -464,6 +464,7 @@ var hex = (function (h) {
       template,//Шаблон
       namespace,
       block,
+      allowEmpty = false,
       handlers = {}//привязанные к контролу события
       ;
 
@@ -499,8 +500,6 @@ var hex = (function (h) {
 
 
     function add(item) {
-
-
       var newItem = template.clone(false);
       newItem.attr('data-hex-block', '');
       if (node.children('[data-hex-block]').size() > 0) {
@@ -527,13 +526,16 @@ var hex = (function (h) {
     }
 
     function remove(index) {
+      if (!allowEmpty) {
+        if (node.children('[data-hex-block]').size() === 1) {
+          return false;
+        }
+      }
       var ind = index + 1;
       var removed = node.children('[data-hex-block]:nth-child(' + ind + ')').first();
       if (removed.size() > 0) {
         removed.get(0).getBlock().remove();
       }
-
-
       node.children('[data-hex-block]').each(function (indx) {
         var nBlock = $(this).get(0).getBlock();
         var data = nBlock.getData();
@@ -573,8 +575,13 @@ var hex = (function (h) {
         h.utils.objectProperty(conf.data, namespace, []);
       }
 
+      if (node.attr('data-hex-list-allowempty') !== undefined) {
+        allowEmpty = true;
+      }
+
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
       node.children('[data-hex-list-tpl]').first().remove();
+
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
         on('add', function (newNode) {
@@ -2342,12 +2349,13 @@ var hex = (function (h) {
             //console.log(bd, _namespace);
           }
           bd = bd[namespace];
-
           if (bd[block.index] === undefined) {
             bd[block.index] = blockData;
           } else {
             blockData = bd[block.index];
           }
+          blockData.$index = block.index;
+
         }
       }
 

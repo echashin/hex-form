@@ -435,12 +435,13 @@ var hex = (function (h) {
             //console.log(bd, _namespace);
           }
           bd = bd[namespace];
-
           if (bd[block.index] === undefined) {
             bd[block.index] = blockData;
           } else {
             blockData = bd[block.index];
           }
+          blockData.$index = block.index;
+
         }
       }
 

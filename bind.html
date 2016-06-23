@@ -40,7 +40,7 @@
     <div class="col-xs-12">
       <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off" data-hex-block>
 
-        <ul data-hex-list="lots" class="nav nav-tabs" role="tablist">
+        <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
           <li data-hex-list-tpl role="presentation">
             <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
               <b data-hex-bind-html="label+' tab:'+$index"></b></a>
@@ -49,7 +49,7 @@
             <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
           </li>
         </ul>
-        <div class="tab-content" data-hex-list="lots">
+        <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
           <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
             <br>
             <div class="row">
