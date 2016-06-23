@@ -2394,8 +2394,6 @@ var hex = (function (h) {
   h.Control = function (config) {
 
 
-
-
     //DOM nodes (<input type="text"> || <input type="radio" value="male"><input type="radio" value="female">)
     var inputs = [];
     //Значение, значение по умолчанию (не обязательно верное)
@@ -2791,8 +2789,13 @@ var hex = (function (h) {
         }
       }
 
-
       controlName = conf.name;
+
+      if (controlName === undefined) {
+        console.error('Control dont have name');
+        console.error(conf.inputs);
+      }
+
       formGroup = conf.formGroup;
 
       errorsBlock = conf.errorsBlock;
