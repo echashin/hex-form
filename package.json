@@ -1,4 +1,5 @@
 {
+  "version": "0.0.30",
   "private": true,
   "engines": {
     "node": ">=0.12.0"
