@@ -2305,19 +2305,7 @@ var hex = (function (h) {
 
     function initBlock() {
       block.node = node;
-      if (node.attr('id') !== undefined) {
-        blockId = node.attr('id');
-        Object.defineProperty(blockData, '$' + blockId, {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return isValid;
-          },
-          set: function () {
 
-          }
-        });
-      }
 
       node.get(0).getBlock = function () {
         return block;
@@ -2363,6 +2351,19 @@ var hex = (function (h) {
         }
       }
 
+      if (node.attr('id') !== undefined) {
+        blockId = node.attr('id');
+        Object.defineProperty(blockData, '$' + blockId, {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return isValid;
+          },
+          set: function () {
+
+          }
+        });
+      }
 
       initDirectives(block);
       findChildrenBlocks(block);
