@@ -51,14 +51,14 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove]');
       bindNodes = Array.prototype.slice.call(bindNodes);
-      bindNodes[bindNodes.length] = node.get(0);
+      bindNodes[bindNodes.length] = currentBlock.node.get(0);
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
-        var n = $(bindNodes[bn]);
+        var findedNode = $(bindNodes[bn]);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-        if (n.closest('[data-hex-block]').get(0) === node.get(0)) {
-          var attributes = h.utils.getAttributes(n);
+        if (findedNode.closest('[data-hex-block]').get(0) === currentBlock.node.get(0)) {
+          var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
               switch (a) {
@@ -70,17 +70,17 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 {
-                  directives.push(new h.directives.Bind({node: n, attribute: a}));
+                  directives.push(new h.directives.Bind({node: findedNode, attribute: a}));
                   break;
                 }
                 case 'data-hex-show':
                 {
-                  directives.push(new h.directives.Show({node: n}));
+                  directives.push(new h.directives.Show({node: findedNode}));
                   break;
                 }
                 case 'data-hex-list':
                 {
-                  var list = new h.directives.List({node: n, data: currentBlock.getData(), block: currentBlock});
+                  var list = new h.directives.List({node: findedNode, data: currentBlock.getData(), block: currentBlock});
                   if (lists[list.getNamespace()] === undefined) {
                     lists[list.getNamespace()] = [];
                   }
@@ -90,14 +90,14 @@ var hex = (function (h) {
                 }
                 case 'data-hex-list-add':
                 {
-                  var listAddNew = new h.directives.ListAdd({node: n});
+                  var listAddNew = new h.directives.ListAdd({node: findedNode});
                   listAddNew.on('add', listAddItem);
                   listAdd.push(listAddNew);
                   break;
                 }
                 case 'data-hex-list-remove':
                 {
-                  var listRemoveNew = new h.directives.ListRemove({node: n});
+                  var listRemoveNew = new h.directives.ListRemove({node: findedNode});
                   listRemoveNew.on('remove', listRemoveItem);
                   listRemove.push(listRemoveNew);
                   break;
@@ -326,10 +326,8 @@ var hex = (function (h) {
 
     var block = {
       controls: controls,
-      parent: false,
+      parent: parentBlock,
       childBlocks: childBlocks,
-      namespace: namespace,
-      root: root,
       render: render,
       validate: validate,
       reset: reset,
@@ -340,6 +338,7 @@ var hex = (function (h) {
     };
 
     block.addBlock = function (newBlock) {
+
       if (newBlock instanceof h.Block === false) {
         newBlock = new h.Block(newBlock, block);
       }
@@ -378,7 +377,7 @@ var hex = (function (h) {
     function findChildrenBlocks(currentBlock) {
       var ownInputs = [];
       //Находим все инпуты внутри блока
-      node.find('input[type!="submit"],select,textarea').each(function () {
+      currentBlock.node.find('input[type!="submit"],select,textarea').each(function () {
         var el = $(this);
         var parentBlockNode = el.closest('[data-hex-block]');
         //Инпут находится непосредственно внутри нашего блока
@@ -387,47 +386,68 @@ var hex = (function (h) {
         }
       });
 
-      node.find('[data-hex-block]').each(function () {
+      currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
-        if (el.parents('[data-hex-block]:first').get(0) === node.get(0)) {
+        if (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0)) {
           currentBlock.addBlock(el);
         }
       });
-
       addControls(ownInputs, currentBlock);
     }
 
 
     function initBlock() {
       block.node = node;
+      if (node.attr('id') !== undefined) {
+        blockId = node.attr('id');
+        Object.defineProperty(blockData, '$' + blockId, {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return isValid;
+          },
+          set: function () {
+
+          }
+        });
+      }
 
       node.get(0).getBlock = function () {
         return block;
       };
 
       if (parentBlock !== undefined) {
-        block.parent = parentBlock;
         root = parentBlock.root;
       } else {
         root = block;
+        parentBlock = false;
+        block.parent = false;
       }
       block.root = root;
 
 
       if (node.closest('[data-hex-list]').size() > 0) {
         namespace = node.closest('[data-hex-list]').attr('data-hex-list');
+
+        if (namespace === undefined) {
+          throw new Error('attr hex-list is Empty');
+        }
         block.index = node.closest('[data-hex-list]').children('[data-hex-block]').index(node);
       }
 
-      if (h.utils.isEmpty(namespace) && block.parent !== false) {
-        blockData = block.parent.getData();
+      if (h.utils.isEmpty(namespace) && parentBlock !== false) {
+        blockData = parentBlock.getData();
       }
 
 
-      if (!h.utils.isEmpty(namespace) && block.parent !== false) {
-        var bd = block.parent.getData();
+      if (!h.utils.isEmpty(namespace) && parentBlock !== false) {
+        var bd = parentBlock.getData();
         if (bd !== undefined) {
+          if (bd[namespace] === undefined) {
+            //console.log(bd, _namespace);
+          }
           bd = bd[namespace];
+
           if (bd[block.index] === undefined) {
             bd[block.index] = blockData;
           } else {
@@ -451,24 +471,8 @@ var hex = (function (h) {
         }
       });
 
-      if (node.attr('id') !== undefined) {
-        blockId = node.attr('id');
-        Object.defineProperty(blockData, '$' + blockId, {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return isValid;
-          },
-          set: function () {
-
-          }
-        });
-
-      }
-
 
     }
-
 
     initBlock();
     return block;

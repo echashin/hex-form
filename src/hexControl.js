@@ -93,7 +93,6 @@ var hex = (function (h) {
         case 'text':
         default:
         {
-          console.log('setDomValue ' + controlName + controlValue);
           if (widgets.date !== undefined) {
             var picker = inputs[0].data('daterangepicker');
             var dates = controlValue.split(' - ');

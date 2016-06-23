@@ -12,6 +12,7 @@ var hex = (function (h) {
     var dataType = 'formdata';
     hf.root = undefined;
 
+    var formData = new FormData();
     var FormEvent = function (type) {
       this.type = type;
       this.stoped = false;
@@ -77,18 +78,23 @@ var hex = (function (h) {
     }
 
 
-    function setFormData(formData, data, namespace) {
+    function setFormData(data, name) {
+      var namespace = '';
+      if (name !== undefined) {
+        namespace = name;
+      }
       $.each(data, function (k, v) {
         if (!/^\$/.test(k)) {
-          if (namespace === undefined) {
-            namespace = k;
-          } else {
-            namespace += '[' + k + ']';
+          var nameZ = k;
+          if (namespace !== '') {
+            nameZ = namespace + '[' + k + ']';
           }
           if ($.isArray(v) || $.isPlainObject(v)) {
-            setFormData(formData, v, namespace);
+            if (!h.utils.isEmpty(v)) {
+              setFormData(v, nameZ);
+            }
           } else {
-            formData.append(namespace, v);
+            formData.append(nameZ, v);
           }
         }
       });
@@ -119,14 +125,11 @@ var hex = (function (h) {
             method = form.attr('method');
           }
 
-
           if (dataType === 'formdata') {
-            var formData = new FormData();
-            setFormData(formData, data);
+            setFormData(data);
           } else {
             formData = data;
           }
-
 
           $.ajax({
             url: url,

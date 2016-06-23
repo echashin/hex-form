@@ -43,16 +43,24 @@ var hex = (function (h) {
 
 
     function add(item) {
+
+
       var newItem = template.clone(false);
       newItem.attr('data-hex-block', '');
-      if (node.find('[data-hex-block]').size() > 0) {
-        newItem.insertAfter(node.find('[data-hex-block]').last());
+      if (node.children('[data-hex-block]').size() > 0) {
+        newItem.insertAfter(node.children('[data-hex-block]').last());
       } else {
         node.prepend(newItem);
       }
 
       var newBlock = block.addBlock(newItem);
+
       newBlock.getData().$index = node.children('[data-hex-block]').size() - 1;
+
+      if (newBlock.parent !== false) {
+        newBlock.getData().$parentIndex = newBlock.parent.getData().$index;
+      }
+
       if (!$.isEmptyObject(item)) {
         newBlock.setData(item);
       }
@@ -64,14 +72,22 @@ var hex = (function (h) {
 
     function remove(index) {
       var ind = index + 1;
-      var removed = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+      var removed = node.children('[data-hex-block]:nth-child(' + ind + ')').first();
       if (removed.size() > 0) {
         removed.get(0).getBlock().remove();
       }
 
+
       node.children('[data-hex-block]').each(function (indx) {
-        var data = $(this).get(0).getBlock().getData();
+        var nBlock = $(this).get(0).getBlock();
+        var data = nBlock.getData();
         data.$index = indx;
+        if (nBlock.childBlocks.length > 0) {
+          for (var i = 0, len = nBlock.childBlocks.length; i < len; i++) {
+            nBlock.childBlocks[i].getData().$parentIndex = indx;
+          }
+        }
+
         $(this).get(0).getBlock().render();
       });
       trigger('remove', index);
@@ -101,9 +117,8 @@ var hex = (function (h) {
         h.utils.objectProperty(conf.data, namespace, []);
       }
 
-      template = node.find('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
-      node.find('[data-hex-list-tpl]').first().remove();
-
+      template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
+      node.children('[data-hex-list-tpl]').first().remove();
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
         on('add', function (newNode) {
@@ -127,6 +142,7 @@ var hex = (function (h) {
           }, 1);
         });
       }
+
       directive.variables.push(namespace);
     }
 

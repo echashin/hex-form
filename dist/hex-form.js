@@ -499,16 +499,24 @@ var hex = (function (h) {
 
 
     function add(item) {
+
+
       var newItem = template.clone(false);
       newItem.attr('data-hex-block', '');
-      if (node.find('[data-hex-block]').size() > 0) {
-        newItem.insertAfter(node.find('[data-hex-block]').last());
+      if (node.children('[data-hex-block]').size() > 0) {
+        newItem.insertAfter(node.children('[data-hex-block]').last());
       } else {
         node.prepend(newItem);
       }
 
       var newBlock = block.addBlock(newItem);
+
       newBlock.getData().$index = node.children('[data-hex-block]').size() - 1;
+
+      if (newBlock.parent !== false) {
+        newBlock.getData().$parentIndex = newBlock.parent.getData().$index;
+      }
+
       if (!$.isEmptyObject(item)) {
         newBlock.setData(item);
       }
@@ -520,14 +528,22 @@ var hex = (function (h) {
 
     function remove(index) {
       var ind = index + 1;
-      var removed = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+      var removed = node.children('[data-hex-block]:nth-child(' + ind + ')').first();
       if (removed.size() > 0) {
         removed.get(0).getBlock().remove();
       }
 
+
       node.children('[data-hex-block]').each(function (indx) {
-        var data = $(this).get(0).getBlock().getData();
+        var nBlock = $(this).get(0).getBlock();
+        var data = nBlock.getData();
         data.$index = indx;
+        if (nBlock.childBlocks.length > 0) {
+          for (var i = 0, len = nBlock.childBlocks.length; i < len; i++) {
+            nBlock.childBlocks[i].getData().$parentIndex = indx;
+          }
+        }
+
         $(this).get(0).getBlock().render();
       });
       trigger('remove', index);
@@ -557,9 +573,8 @@ var hex = (function (h) {
         h.utils.objectProperty(conf.data, namespace, []);
       }
 
-      template = node.find('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
-      node.find('[data-hex-list-tpl]').first().remove();
-
+      template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
+      node.children('[data-hex-list-tpl]').first().remove();
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
         on('add', function (newNode) {
@@ -583,6 +598,7 @@ var hex = (function (h) {
           }, 1);
         });
       }
+
       directive.variables.push(namespace);
     }
 
@@ -1942,14 +1958,14 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove]');
       bindNodes = Array.prototype.slice.call(bindNodes);
-      bindNodes[bindNodes.length] = node.get(0);
+      bindNodes[bindNodes.length] = currentBlock.node.get(0);
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
-        var n = $(bindNodes[bn]);
+        var findedNode = $(bindNodes[bn]);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-        if (n.closest('[data-hex-block]').get(0) === node.get(0)) {
-          var attributes = h.utils.getAttributes(n);
+        if (findedNode.closest('[data-hex-block]').get(0) === currentBlock.node.get(0)) {
+          var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
               switch (a) {
@@ -1961,17 +1977,17 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 {
-                  directives.push(new h.directives.Bind({node: n, attribute: a}));
+                  directives.push(new h.directives.Bind({node: findedNode, attribute: a}));
                   break;
                 }
                 case 'data-hex-show':
                 {
-                  directives.push(new h.directives.Show({node: n}));
+                  directives.push(new h.directives.Show({node: findedNode}));
                   break;
                 }
                 case 'data-hex-list':
                 {
-                  var list = new h.directives.List({node: n, data: currentBlock.getData(), block: currentBlock});
+                  var list = new h.directives.List({node: findedNode, data: currentBlock.getData(), block: currentBlock});
                   if (lists[list.getNamespace()] === undefined) {
                     lists[list.getNamespace()] = [];
                   }
@@ -1981,14 +1997,14 @@ var hex = (function (h) {
                 }
                 case 'data-hex-list-add':
                 {
-                  var listAddNew = new h.directives.ListAdd({node: n});
+                  var listAddNew = new h.directives.ListAdd({node: findedNode});
                   listAddNew.on('add', listAddItem);
                   listAdd.push(listAddNew);
                   break;
                 }
                 case 'data-hex-list-remove':
                 {
-                  var listRemoveNew = new h.directives.ListRemove({node: n});
+                  var listRemoveNew = new h.directives.ListRemove({node: findedNode});
                   listRemoveNew.on('remove', listRemoveItem);
                   listRemove.push(listRemoveNew);
                   break;
@@ -2217,10 +2233,8 @@ var hex = (function (h) {
 
     var block = {
       controls: controls,
-      parent: false,
+      parent: parentBlock,
       childBlocks: childBlocks,
-      namespace: namespace,
-      root: root,
       render: render,
       validate: validate,
       reset: reset,
@@ -2231,6 +2245,7 @@ var hex = (function (h) {
     };
 
     block.addBlock = function (newBlock) {
+
       if (newBlock instanceof h.Block === false) {
         newBlock = new h.Block(newBlock, block);
       }
@@ -2269,7 +2284,7 @@ var hex = (function (h) {
     function findChildrenBlocks(currentBlock) {
       var ownInputs = [];
       //Находим все инпуты внутри блока
-      node.find('input[type!="submit"],select,textarea').each(function () {
+      currentBlock.node.find('input[type!="submit"],select,textarea').each(function () {
         var el = $(this);
         var parentBlockNode = el.closest('[data-hex-block]');
         //Инпут находится непосредственно внутри нашего блока
@@ -2278,47 +2293,68 @@ var hex = (function (h) {
         }
       });
 
-      node.find('[data-hex-block]').each(function () {
+      currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
-        if (el.parents('[data-hex-block]:first').get(0) === node.get(0)) {
+        if (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0)) {
           currentBlock.addBlock(el);
         }
       });
-
       addControls(ownInputs, currentBlock);
     }
 
 
     function initBlock() {
       block.node = node;
+      if (node.attr('id') !== undefined) {
+        blockId = node.attr('id');
+        Object.defineProperty(blockData, '$' + blockId, {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return isValid;
+          },
+          set: function () {
+
+          }
+        });
+      }
 
       node.get(0).getBlock = function () {
         return block;
       };
 
       if (parentBlock !== undefined) {
-        block.parent = parentBlock;
         root = parentBlock.root;
       } else {
         root = block;
+        parentBlock = false;
+        block.parent = false;
       }
       block.root = root;
 
 
       if (node.closest('[data-hex-list]').size() > 0) {
         namespace = node.closest('[data-hex-list]').attr('data-hex-list');
+
+        if (namespace === undefined) {
+          throw new Error('attr hex-list is Empty');
+        }
         block.index = node.closest('[data-hex-list]').children('[data-hex-block]').index(node);
       }
 
-      if (h.utils.isEmpty(namespace) && block.parent !== false) {
-        blockData = block.parent.getData();
+      if (h.utils.isEmpty(namespace) && parentBlock !== false) {
+        blockData = parentBlock.getData();
       }
 
 
-      if (!h.utils.isEmpty(namespace) && block.parent !== false) {
-        var bd = block.parent.getData();
+      if (!h.utils.isEmpty(namespace) && parentBlock !== false) {
+        var bd = parentBlock.getData();
         if (bd !== undefined) {
+          if (bd[namespace] === undefined) {
+            //console.log(bd, _namespace);
+          }
           bd = bd[namespace];
+
           if (bd[block.index] === undefined) {
             bd[block.index] = blockData;
           } else {
@@ -2342,24 +2378,8 @@ var hex = (function (h) {
         }
       });
 
-      if (node.attr('id') !== undefined) {
-        blockId = node.attr('id');
-        Object.defineProperty(blockData, '$' + blockId, {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return isValid;
-          },
-          set: function () {
-
-          }
-        });
-
-      }
-
 
     }
-
 
     initBlock();
     return block;
@@ -2463,7 +2483,6 @@ var hex = (function (h) {
         case 'text':
         default:
         {
-          console.log('setDomValue ' + controlName + controlValue);
           if (widgets.date !== undefined) {
             var picker = inputs[0].data('daterangepicker');
             var dates = controlValue.split(' - ');
@@ -2812,6 +2831,7 @@ var hex = (function (h) {
     var dataType = 'formdata';
     hf.root = undefined;
 
+    var formData = new FormData();
     var FormEvent = function (type) {
       this.type = type;
       this.stoped = false;
@@ -2877,18 +2897,23 @@ var hex = (function (h) {
     }
 
 
-    function setFormData(formData, data, namespace) {
+    function setFormData(data, name) {
+      var namespace = '';
+      if (name !== undefined) {
+        namespace = name;
+      }
       $.each(data, function (k, v) {
         if (!/^\$/.test(k)) {
-          if (namespace === undefined) {
-            namespace = k;
-          } else {
-            namespace += '[' + k + ']';
+          var nameZ = k;
+          if (namespace !== '') {
+            nameZ = namespace + '[' + k + ']';
           }
           if ($.isArray(v) || $.isPlainObject(v)) {
-            setFormData(formData, v, namespace);
+            if (!h.utils.isEmpty(v)) {
+              setFormData(v, nameZ);
+            }
           } else {
-            formData.append(namespace, v);
+            formData.append(nameZ, v);
           }
         }
       });
@@ -2919,14 +2944,11 @@ var hex = (function (h) {
             method = form.attr('method');
           }
 
-
           if (dataType === 'formdata') {
-            var formData = new FormData();
-            setFormData(formData, data);
+            setFormData(data);
           } else {
             formData = data;
           }
-
 
           $.ajax({
             url: url,
