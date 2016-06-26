@@ -30,8 +30,9 @@
   };
 
   h.utils.exprToFunc = function (expr) {
+    //TODO добавить пробелы к операторам _+_
     expr = expr.replace(/\[['"]/g, '.').replace(/['"]]/g, '').replace(/\[(\D+)]/, '.$1');
-    var re = /([#a-z_$.0-9\[\]'"]*)/gi;
+    var re = /([a-z_$][a-z_$.0-9\[\]'"]+)/gi;
     var vars = [];
     var variables = expr.replace(/'[^']*'/g, '').replace(/"[^"]*"/g, '').match(re);
 
@@ -384,6 +385,7 @@ var hex = (function (h) {
 
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
+
         switch (attribute) {
           case 'html':
           {
@@ -398,7 +400,6 @@ var hex = (function (h) {
       }
 
 
-
       var directive = {
         render: render,
         variables: []
@@ -410,7 +411,6 @@ var hex = (function (h) {
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
         var f = h.utils.exprToFunc(expr);
-
         for (var i = 0, l = f.vars.length; i < l; i++) {
           directive.variables.push(namespaceFull + f.vars[i]);
         }
@@ -2545,10 +2545,10 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(namespace)) {
         blockData.$index = block.index;
       }
-      if (parentBlock !== false) {
+
+      if (!h.utils.isEmpty(parentBlock)) {
         blockData.$parentIndex = parentBlock.getData().$index;
       }
-
 
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,
@@ -2823,7 +2823,7 @@ var hex = (function (h) {
       }
       else {
         lastValidateValue = controlValue;
-        hideErrors();
+        //hideErrors();
         errors = [];
         if (!isDisabled) {
           for (var v in validators) {

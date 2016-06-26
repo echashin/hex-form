@@ -6,6 +6,7 @@ var hex = (function (h) {
 
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
+
         switch (attribute) {
           case 'html':
           {
@@ -20,7 +21,6 @@ var hex = (function (h) {
       }
 
 
-
       var directive = {
         render: render,
         variables: []
@@ -32,7 +32,6 @@ var hex = (function (h) {
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
         var f = h.utils.exprToFunc(expr);
-
         for (var i = 0, l = f.vars.length; i < l; i++) {
           directive.variables.push(namespaceFull + f.vars[i]);
         }

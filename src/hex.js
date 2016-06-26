@@ -30,8 +30,9 @@
   };
 
   h.utils.exprToFunc = function (expr) {
+    //TODO добавить пробелы к операторам _+_
     expr = expr.replace(/\[['"]/g, '.').replace(/['"]]/g, '').replace(/\[(\D+)]/, '.$1');
-    var re = /([#a-z_$.0-9\[\]'"]*)/gi;
+    var re = /([a-z_$][a-z_$.0-9\[\]'"]+)/gi;
     var vars = [];
     var variables = expr.replace(/'[^']*'/g, '').replace(/"[^"]*"/g, '').match(re);
 

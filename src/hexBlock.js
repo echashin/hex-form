@@ -478,10 +478,10 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(namespace)) {
         blockData.$index = block.index;
       }
-      if (parentBlock !== false) {
+
+      if (!h.utils.isEmpty(parentBlock)) {
         blockData.$parentIndex = parentBlock.getData().$index;
       }
-
 
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,

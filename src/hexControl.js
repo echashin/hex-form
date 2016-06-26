@@ -249,7 +249,7 @@ var hex = (function (h) {
       }
       else {
         lastValidateValue = controlValue;
-        hideErrors();
+        //hideErrors();
         errors = [];
         if (!isDisabled) {
           for (var v in validators) {

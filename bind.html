@@ -42,7 +42,7 @@
         <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
           <li data-hex-list-tpl role="presentation">
             <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-              <b data-hex-bind-html="label+' tab:'+$index"></b></a>
+              <b data-hex-bind-html="label+' tab:'+( $index + 1 )"></b></a>
           </li>
           <li role="presentation">
             <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
