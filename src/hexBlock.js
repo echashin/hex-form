@@ -36,6 +36,17 @@ var hex = (function (h) {
       }
     }
 
+    function logErrors() {
+      for (var i = 0, il = controls.length; i < il; i++) {
+        if (!controls[i].validate(true)) {
+          console.warn(controls[i].getName());
+        }
+      }
+      for (i = 0, il = childBlocks.length; i < il; i++) {
+        childBlocks[i].validate(true);
+      }
+    }
+
     function listAddItem(params) {
       var ls = getLists(params.namespace);
       if (ls !== undefined) {
@@ -58,7 +69,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -76,6 +87,7 @@ var hex = (function (h) {
                 case 'data-hex-bind-href':
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
+                case 'data-hex-bind-for':
                 {
                   directives.push(new h.directives.Bind({
                     node: findedNode,
@@ -329,6 +341,7 @@ var hex = (function (h) {
       getLists: getLists,
       setData: setData,
       getData: getData,
+      logErrors: logErrors,
       getNamespaceFull: getNamespaceFull
     };
 

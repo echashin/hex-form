@@ -39,7 +39,6 @@
   <div class="row">
     <div class="col-xs-12">
       <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off" data-hex-block>
-
         <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
           <li data-hex-list-tpl role="presentation">
             <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
@@ -104,6 +103,12 @@
 
         <div class="label label-success" data-hex-bind-html="surname"></div>
         <hr/>
+
+        <div data-hex-repeat="lots">
+          <div>***</div>
+          <div data-hex-bind-html="label"></div>
+        </div>
+
         <hr/>
         <fieldset id="phones">
           <div class="form-group">
@@ -191,6 +196,7 @@
 <script src="src/directives/bind.js"></script>
 <script src="src/directives/show.js"></script>
 <script src="src/directives/if.js"></script>
+<script src="src/directives/repeat.js"></script>
 <script src="src/directives/list.js"></script>
 <script src="src/directives/listAdd.js"></script>
 <script src="src/directives/listRemove.js"></script>

@@ -53,10 +53,13 @@ var hex = (function (h) {
       return handlers;
     };
 
-
     function getValues() {
       var data = $.extend({}, hf.root.getData());
       return data;
+    }
+
+    function getErrors() {
+
     }
 
     function clearErrors() {
