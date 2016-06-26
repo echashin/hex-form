@@ -3018,10 +3018,8 @@ var hex = (function (h) {
           }
 
           if ($.isArray(v) || $.isPlainObject(v)) {
-            console.log(nameZ + ':>');
             setFormData(v, nameZ);
           } else {
-            console.log(nameZ + ':+');
             formData.append(nameZ, v);
           }
         }
