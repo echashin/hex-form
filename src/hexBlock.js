@@ -193,6 +193,35 @@ var hex = (function (h) {
     }
 
 
+    function removeControl(control) {
+      var cObj = blockData;
+      var controlName = control.getName();
+      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
+      var nml = names.length - 1;
+
+      for (var i = 0; i <= nml; i++) {
+        var aName = names[i];
+        if (i < nml) {
+          if (cObj[aName] === undefined) {
+            if (h.utils.isInt(aName)) {
+              cObj[aName] = [];
+            } else {
+              cObj[aName] = {};
+            }
+          }
+          cObj = cObj[aName];
+        } else {
+          if ($.isArray(cObj)) {
+            cObj.splice(aName, 1);
+          } else {
+            if ($.isPlainObject(cObj)) {
+              delete cObj[aName];
+            }
+          }
+        }
+      }
+    }
+
     function addControl(control) {
       var cObj = blockData;
       var controlName = control.getName();
@@ -359,7 +388,11 @@ var hex = (function (h) {
     };
 
     block.remove = function () {
-      node.remove();
+      block.controls.forEach(function (c) {
+        removeControl(c);
+      });
+
+
       if (parentBlock !== false) {
         if (!h.utils.isEmpty(namespace)) {
           if (parentBlock.getData()[namespace] !== undefined) {
@@ -385,6 +418,11 @@ var hex = (function (h) {
         render.clear();
         root.validate(false);
       }
+      block.childBlocks.forEach(function (b) {
+        b.remove();
+      });
+      node.remove();
+
     };
 
 
