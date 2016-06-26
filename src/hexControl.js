@@ -92,13 +92,15 @@ var hex = (function (h) {
         default:
         {
           if (widgets.date !== undefined) {
-            var picker = inputs[0].data('daterangepicker');
-            var dates = controlValue.split(' - ');
-            if (dates[0] !== undefined) {
-              picker.setStartDate(moment(dates[0]));
-            }
-            if (dates[1] !== undefined) {
-              picker.setEndDate(moment(dates[1]));
+            if (!h.utils.isEmpty(controlValue)) {
+              var picker = inputs[0].data('daterangepicker');
+              var dates = controlValue.split(' - ');
+              if (dates[0] !== undefined) {
+                picker.setStartDate(moment(dates[0]));
+              }
+              if (dates[1] !== undefined) {
+                picker.setEndDate(moment(dates[1]));
+              }
             }
           } else {
             inputs[0].val(controlValue);
@@ -169,7 +171,7 @@ var hex = (function (h) {
     }
 
     function getValue() {
-      if(isDisabled){
+      if (isDisabled) {
         return undefined;
       }
       return controlValue;
@@ -411,7 +413,6 @@ var hex = (function (h) {
         console.error('Control dont have name');
         console.error(conf.inputs);
       }
-
 
 
       formGroup = conf.formGroup;
