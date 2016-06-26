@@ -43,7 +43,7 @@ var hex = (function (h) {
         }
       }
       for (i = 0, il = childBlocks.length; i < il; i++) {
-        childBlocks[i].validate(true);
+        childBlocks[i].logErrors();
       }
     }
 
