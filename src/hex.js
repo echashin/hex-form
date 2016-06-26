@@ -37,16 +37,16 @@
 
     for (var v = 0, vl = variables.length; v < vl; v++) {
       var variable = variables[v];
-      if (variable !== '') {
+      if (variable !== '' && variable !== 'undefined') {
         var variableCan = variable.replace(/['"]/gi, '').replace(/\[/g, '.').replace(/]/g, '').replace(/\.+/g, '.').replace(/^\./, '').replace(/\.$/, '');
         variableCan = '[\'' + variableCan.split('.').join('\'][\'') + '\']';
         if (vars.indexOf(variableCan) === -1) {
           vars.push(variableCan);
         }
 
-        var r = '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        var r = '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
         r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
-        r += '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        r += '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
         var regexp = new RegExp(r, 'gi');
         expr = expr.replace(regexp, '__data' + variableCan);
       }
@@ -65,7 +65,7 @@
         h.utils.objectExtend(originalObject[o], newObject[o]);
       } else {
         if (newObject[o] === undefined) {
-          originalObject[o] = undefined;
+          //originalObject[o] = undefined;
         } else {
           if ($.isArray(originalObject)) {
             originalObject.push(newObject);
@@ -95,6 +95,9 @@
 
 
   h.utils.objectProperty = function (obj, name, value) {
+    if (h.utils.isEmpty(name)) {
+      return obj;
+    }
     var names = name.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
     var nml = names.length - 1;
     var cObj = obj;

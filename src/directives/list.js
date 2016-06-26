@@ -7,8 +7,10 @@ var hex = (function (h) {
       node,//DOM node
       template,//Шаблон
       namespace,
+      namespaceFull,
       block,
       allowEmpty = false,
+      itemSelector = '[data-hex-block]',
       handlers = {}//привязанные к контролу события
       ;
 
@@ -45,42 +47,34 @@ var hex = (function (h) {
 
     function add(item) {
       var newItem = template.clone(false);
-      newItem.attr('data-hex-block', '');
-      if (node.children('[data-hex-block]').size() > 0) {
-        newItem.insertAfter(node.children('[data-hex-block]').last());
+      newItem.attr('data-hex-block', namespace);
+      if (node.children(itemSelector).size() > 0) {
+        newItem.insertAfter(node.children(itemSelector).last());
       } else {
         node.prepend(newItem);
       }
 
       var newBlock = block.addBlock(newItem);
 
-      newBlock.getData().$index = node.children('[data-hex-block]').size() - 1;
-
-      if (newBlock.parent !== false) {
-        newBlock.getData().$parentIndex = newBlock.parent.getData().$index;
-      }
-
       if (!$.isEmptyObject(item)) {
         newBlock.setData(item);
       }
-
-      newBlock.render();
       trigger('add', newItem);
       return newBlock;
     }
 
     function remove(index) {
       if (!allowEmpty) {
-        if (node.children('[data-hex-block]').size() === 1) {
+        if (node.children(itemSelector).size() === 1) {
           return false;
         }
       }
       var ind = index + 1;
-      var removed = node.children('[data-hex-block]:nth-child(' + ind + ')').first();
+      var removed = node.children(itemSelector + ':nth-child(' + ind + ')').first();
       if (removed.size() > 0) {
         removed.get(0).getBlock().remove();
       }
-      node.children('[data-hex-block]').each(function (indx) {
+      node.children(itemSelector).each(function (indx) {
         var nBlock = $(this).get(0).getBlock();
         var data = nBlock.getData();
         data.$index = indx;
@@ -90,7 +84,7 @@ var hex = (function (h) {
           }
         }
 
-        $(this).get(0).getBlock().render();
+        $(this).get(0).getBlock().render.draw();
       });
       trigger('remove', index);
     }
@@ -111,19 +105,26 @@ var hex = (function (h) {
       remove: remove
     };
 
-    function init(conf) {
-      node = $(conf.node);
-      block = conf.block;
+    function init() {
+      node = $(config.node);
+      block = config.block;
       namespace = node.attr('data-hex-list');
-      if (conf.data[namespace] === undefined) {
-        h.utils.objectProperty(conf.data, namespace, []);
+      if (namespace === undefined) {
+        console.warn('list don`t have namespace');
+      }
+
+      namespaceFull = config.namespaceFull;
+
+      if (config.data[namespace] === undefined) {
+        h.utils.objectProperty(config.data, namespace, []);
       }
 
       if (node.attr('data-hex-list-allowempty') !== undefined) {
         allowEmpty = true;
       }
-
+      itemSelector = '[data-hex-block="' + namespace + '"]';
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
+      template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
 
 
@@ -136,12 +137,12 @@ var hex = (function (h) {
         on('remove', function (index) {
           var ind = index + 1;
           window.setTimeout(function () {
-            var next = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+            var next = node.find(itemSelector + ':nth-child(' + ind + ')').first();
             if (next.size() > 0) {
               next.find('a[data-toggle="tab"]').click();
             } else {
               ind--;
-              var prev = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+              var prev = node.find(itemSelector + ':nth-child(' + ind + ')').first();
               if (prev.size() > 0) {
                 prev.find('a[data-toggle="tab"]').click();
               }
@@ -149,11 +150,10 @@ var hex = (function (h) {
           }, 1);
         });
       }
-
-      directive.variables.push(namespace);
+      directive.variables.push(namespaceFull + '[\'' + namespace + '\']');
     }
 
-    init(config);
+    init();
     return directive;
   };
 

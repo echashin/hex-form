@@ -83,21 +83,24 @@ var hex = (function (h) {
       if (name !== undefined) {
         namespace = name;
       }
-      $.each(data, function (k, v) {
-        if (!/^\$/.test(k)) {
+      for (var k in data) {
+        var v = data[k];
+        k += '';
+        if (k.indexOf('$') !== 0) {
           var nameZ = k;
           if (namespace !== '') {
             nameZ = namespace + '[' + k + ']';
           }
+
           if ($.isArray(v) || $.isPlainObject(v)) {
-            if (!h.utils.isEmpty(v)) {
-              setFormData(v, nameZ);
-            }
+            console.log(nameZ + ':>');
+            setFormData(v, nameZ);
           } else {
+            console.log(nameZ + ':+');
             formData.append(nameZ, v);
           }
         }
-      });
+      }
     }
 
     var submit = function (event) {
@@ -108,6 +111,7 @@ var hex = (function (h) {
       if (formValid === true) {
         clearErrors();
         var data = getValues();
+        console.log(data);
         var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
         if (dontBreakBefore) {
           hf.loaderShow();

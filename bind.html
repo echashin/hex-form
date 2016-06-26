@@ -100,17 +100,11 @@
         <hr>
         <br>
         <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
-
-
         <hr>
-
 
         <div class="label label-success" data-hex-bind-html="surname"></div>
         <hr/>
-
-
         <hr/>
-
         <fieldset id="phones">
           <div class="form-group">
             <input required type="text" name="phone" class="form-control" value="+7-909-1411768">
@@ -132,6 +126,32 @@
           </div>
 
         </fieldset>
+
+        <div data-hex-list="prop">
+          <div data-hex-list-tpl>
+            <div data-hex-if="type === 'primary'">
+              <input type="text" name="params[0][name]"  value="right" class="form-control">
+              <span class="label label-default" data-hex-bind-html="$index"></span>
+              <span class="label label-primary" data-hex-bind-html="type"></span>
+            </div>
+            <div data-hex-if="type === 'info'">
+              <input type="text" name="params[0][name]" value="wrong" class="form-control">
+              <span class="label label-default" data-hex-bind-html="$index"></span>
+              <span class="label label-info" data-hex-bind-html="type"></span>
+            </div>
+          </div>
+
+        </div>
+
+        <button type="button" class="btn btn-primary" data-hex-list-add="prop" data-hex-list-add-item='{"type":"primary"}'>+prop</button>
+        <button type="button" class="btn btn-info" data-hex-list-add="prop" data-hex-list-add-item='{"type":"info"}'>+prop</button>
+        <button type="button" class="btn btn-success" data-hex-list-add="prop" data-hex-list-add-item='{"type":"success"}'>+prop</button>
+        <button type="button" class="btn btn-warning" data-hex-list-add="prop" data-hex-list-add-item='{"type":"warning"}'>+prop</button>
+        <button type="button" class="btn btn-warning" data-hex-list-add="prop" >+prop</button>
+
+
+        <hr>
+
         <button class="btn btn-info" type="submit">submit</button>
         <button class="btn btn-warning" type="reset">reset</button>
 
@@ -166,9 +186,11 @@
 
 <script src="src/hexBlock.js"></script>
 <script src="src/hexControl.js"></script>
+<script src="src/hexRender.js"></script>
 
 <script src="src/directives/bind.js"></script>
 <script src="src/directives/show.js"></script>
+<script src="src/directives/if.js"></script>
 <script src="src/directives/list.js"></script>
 <script src="src/directives/listAdd.js"></script>
 <script src="src/directives/listRemove.js"></script>

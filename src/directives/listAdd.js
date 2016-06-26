@@ -44,10 +44,10 @@ var hex = (function (h) {
 
     function init(conf) {
       node = $(conf.node);
-      var params = node.attr('data-hex-list-add').split('|');
-      namespace = params[0];
-      if (!h.utils.isEmpty(params[1])) {
-        item = JSON.parse(params[1]);
+      namespace = node.attr('data-hex-list-add');
+
+      if (node.attr('data-hex-list-add-item') !== undefined) {
+        item = JSON.parse(node.attr('data-hex-list-add-item'));
       }
 
       node.on('click', function (event) {

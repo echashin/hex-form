@@ -169,6 +169,9 @@ var hex = (function (h) {
     }
 
     function getValue() {
+      if(isDisabled){
+        return undefined;
+      }
       return controlValue;
     }
 
@@ -224,17 +227,19 @@ var hex = (function (h) {
     }
 
     function disable() {
-      for (var i = 0, len = inputs.length; i > len; i++) {
+      for (var i = 0, len = inputs.length; i < len; i++) {
         inputs[i].prop('disabled', true);
       }
       isDisabled = true;
+      trigger('disable');
     }
 
     function enable() {
-      for (var i = 0, len = inputs.length; i > len; i++) {
+      for (var i = 0, len = inputs.length; i < len; i++) {
         inputs[i].prop('disabled', false);
       }
       isDisabled = false;
+      trigger('enable');
     }
 
 
@@ -243,7 +248,6 @@ var hex = (function (h) {
         return isValid;
       }
       else {
-        trigger('validate', update);
         lastValidateValue = controlValue;
         hideErrors();
         errors = [];
@@ -265,7 +269,7 @@ var hex = (function (h) {
           isValid = true;
           hideErrors();
         }
-
+        trigger('validate', update);
         return isValid;
       }
     }
@@ -362,12 +366,14 @@ var hex = (function (h) {
           trigger('change', controlValue);
         });
       }
+
+      validators.sort(sortByProperty('weight'));
       for (var eventName in validationEvents) {
         if (validationEvents.hasOwnProperty(eventName)) {
           input.on(eventName, validate);
         }
       }
-      validators.sort(sortByProperty('weight'));
+
 
       if (input.prop('disabled')) {
         disable();
@@ -406,6 +412,8 @@ var hex = (function (h) {
         console.error(conf.inputs);
       }
 
+
+
       formGroup = conf.formGroup;
 
       errorsBlock = conf.errorsBlock;
@@ -419,6 +427,7 @@ var hex = (function (h) {
       }
       controlValue = defaultValue = getDomValue();
       lastValidateValue = controlValue;
+
       hideErrors();
     }
 

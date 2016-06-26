@@ -37,16 +37,16 @@
 
     for (var v = 0, vl = variables.length; v < vl; v++) {
       var variable = variables[v];
-      if (variable !== '') {
+      if (variable !== '' && variable !== 'undefined') {
         var variableCan = variable.replace(/['"]/gi, '').replace(/\[/g, '.').replace(/]/g, '').replace(/\.+/g, '.').replace(/^\./, '').replace(/\.$/, '');
         variableCan = '[\'' + variableCan.split('.').join('\'][\'') + '\']';
         if (vars.indexOf(variableCan) === -1) {
           vars.push(variableCan);
         }
 
-        var r = '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        var r = '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
         r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
-        r += '[^a-z0-9_\\[\\]\\+\\-\\|\\&\\!\\/\\*\\"\']*';
+        r += '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
         var regexp = new RegExp(r, 'gi');
         expr = expr.replace(regexp, '__data' + variableCan);
       }
@@ -65,7 +65,7 @@
         h.utils.objectExtend(originalObject[o], newObject[o]);
       } else {
         if (newObject[o] === undefined) {
-          originalObject[o] = undefined;
+          //originalObject[o] = undefined;
         } else {
           if ($.isArray(originalObject)) {
             originalObject.push(newObject);
@@ -95,6 +95,9 @@
 
 
   h.utils.objectProperty = function (obj, name, value) {
+    if (h.utils.isEmpty(name)) {
+      return obj;
+    }
     var names = name.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
     var nml = names.length - 1;
     var cObj = obj;
@@ -373,27 +376,28 @@
 }(window));
 
 
-/*jslint evil: true */
 var hex = (function (h) {
     'use strict';
     h.directives.Bind = function (config) {
 
-      var node, attribute, func;
+      var node, namespaceFull, attribute, func;
 
       function render(data) {
-
+        data = h.utils.objectProperty(data, namespaceFull);
         switch (attribute) {
           case 'html':
           {
-            node.get(0).innerHTML = func.call(null, data);
+            node.get(0).innerHTML = func(data);
             break;
           }
           default:
           {
-            node.attr(attribute, func.call(null, data));
+            node.attr(attribute, func(data));
           }
         }
       }
+
+
 
       var directive = {
         render: render,
@@ -402,11 +406,18 @@ var hex = (function (h) {
 
       function init() {
         node = config.node;
+        namespaceFull = config.namespaceFull;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
         var f = h.utils.exprToFunc(expr);
-        directive.variables = directive.variables.concat(f.vars);
+
+        for (var i = 0, l = f.vars.length; i < l; i++) {
+          directive.variables.push(namespaceFull + f.vars[i]);
+        }
+
+
         func = new Function('__data', f.func);
+
       }
 
       init();
@@ -421,9 +432,11 @@ var hex = (function (h) {
   'use strict';
   h.directives.Show = function (config) {
 
-    var node, func;
+    var node, func, namespaceFull;
 
     function render(data) {
+
+      data = h.utils.objectProperty(data, namespaceFull);
       var r = func.call(null, data);
       if (r) {
         node.removeClass('hide');
@@ -431,6 +444,7 @@ var hex = (function (h) {
         node.addClass('hide');
       }
     }
+
 
     var directive = {
       render: render,
@@ -440,10 +454,13 @@ var hex = (function (h) {
     function init() {
       node = $(config.node);
       node.addClass('hide');
+      namespaceFull = config.namespaceFull;
       var expr = node.attr('data-hex-show');
       var f = h.utils.exprToFunc(expr);
+      for (var i = 0, l = f.vars.length; i < l; i++) {
+        directive.variables.push(namespaceFull + f.vars[i]);
+      }
 
-      directive.variables = f.vars;
       func = new Function('__data', f.func);
     }
 
@@ -455,6 +472,65 @@ var hex = (function (h) {
 }(hex));
 
 var hex = (function (h) {
+    'use strict';
+    h.directives.If = function (config) {
+      var node, func, comment, template, block, namespaceFull;
+
+      function render(data) {
+        data = h.utils.objectProperty(data, namespaceFull);
+        var result = func.call(null, data);
+
+        if (result === true) {
+          if (node === undefined) {
+            node = template.clone(false);
+            node.insertAfter(comment);
+            block.addBlock(node);
+          }
+        } else {
+          if (node !== undefined) {
+            node.get(0).getBlock().remove();
+            node = undefined;
+          }
+        }
+      }
+
+
+      var directive = {
+        render: render,
+        variables: []
+      };
+
+      function init() {
+        node = config.node;
+        template = node.clone(false);
+        node.attr('data-hex-block');
+        template.attr('data-hex-block');
+        var expr = node.attr('data-hex-if');
+        block = config.block;
+        block.addBlock(node);
+        namespaceFull = config.namespaceFull;
+
+        var f = h.utils.exprToFunc(expr);
+
+        for (var i = 0, l = f.vars.length; i < l; i++) {
+          directive.variables.push(namespaceFull + f.vars[i]);
+        }
+
+        func = new Function('__data', f.func);
+
+        comment = $(document.createComment('hex-if (' + expr + ')'));
+        comment.insertBefore(node.get(0));
+      }
+
+      init();
+      return directive;
+    };
+
+    return h;
+  }(hex)
+);
+
+var hex = (function (h) {
   'use strict';
   h.directives.List = function (config) {
 
@@ -463,8 +539,10 @@ var hex = (function (h) {
       node,//DOM node
       template,//Шаблон
       namespace,
+      namespaceFull,
       block,
       allowEmpty = false,
+      itemSelector = '[data-hex-block]',
       handlers = {}//привязанные к контролу события
       ;
 
@@ -501,42 +579,34 @@ var hex = (function (h) {
 
     function add(item) {
       var newItem = template.clone(false);
-      newItem.attr('data-hex-block', '');
-      if (node.children('[data-hex-block]').size() > 0) {
-        newItem.insertAfter(node.children('[data-hex-block]').last());
+      newItem.attr('data-hex-block', namespace);
+      if (node.children(itemSelector).size() > 0) {
+        newItem.insertAfter(node.children(itemSelector).last());
       } else {
         node.prepend(newItem);
       }
 
       var newBlock = block.addBlock(newItem);
 
-      newBlock.getData().$index = node.children('[data-hex-block]').size() - 1;
-
-      if (newBlock.parent !== false) {
-        newBlock.getData().$parentIndex = newBlock.parent.getData().$index;
-      }
-
       if (!$.isEmptyObject(item)) {
         newBlock.setData(item);
       }
-
-      newBlock.render();
       trigger('add', newItem);
       return newBlock;
     }
 
     function remove(index) {
       if (!allowEmpty) {
-        if (node.children('[data-hex-block]').size() === 1) {
+        if (node.children(itemSelector).size() === 1) {
           return false;
         }
       }
       var ind = index + 1;
-      var removed = node.children('[data-hex-block]:nth-child(' + ind + ')').first();
+      var removed = node.children(itemSelector + ':nth-child(' + ind + ')').first();
       if (removed.size() > 0) {
         removed.get(0).getBlock().remove();
       }
-      node.children('[data-hex-block]').each(function (indx) {
+      node.children(itemSelector).each(function (indx) {
         var nBlock = $(this).get(0).getBlock();
         var data = nBlock.getData();
         data.$index = indx;
@@ -546,7 +616,7 @@ var hex = (function (h) {
           }
         }
 
-        $(this).get(0).getBlock().render();
+        $(this).get(0).getBlock().render.draw();
       });
       trigger('remove', index);
     }
@@ -567,19 +637,26 @@ var hex = (function (h) {
       remove: remove
     };
 
-    function init(conf) {
-      node = $(conf.node);
-      block = conf.block;
+    function init() {
+      node = $(config.node);
+      block = config.block;
       namespace = node.attr('data-hex-list');
-      if (conf.data[namespace] === undefined) {
-        h.utils.objectProperty(conf.data, namespace, []);
+      if (namespace === undefined) {
+        console.warn('list don`t have namespace');
+      }
+
+      namespaceFull = config.namespaceFull;
+
+      if (config.data[namespace] === undefined) {
+        h.utils.objectProperty(config.data, namespace, []);
       }
 
       if (node.attr('data-hex-list-allowempty') !== undefined) {
         allowEmpty = true;
       }
-
+      itemSelector = '[data-hex-block="' + namespace + '"]';
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
+      template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
 
 
@@ -592,12 +669,12 @@ var hex = (function (h) {
         on('remove', function (index) {
           var ind = index + 1;
           window.setTimeout(function () {
-            var next = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+            var next = node.find(itemSelector + ':nth-child(' + ind + ')').first();
             if (next.size() > 0) {
               next.find('a[data-toggle="tab"]').click();
             } else {
               ind--;
-              var prev = node.find('[data-hex-block]:nth-child(' + ind + ')').first();
+              var prev = node.find(itemSelector + ':nth-child(' + ind + ')').first();
               if (prev.size() > 0) {
                 prev.find('a[data-toggle="tab"]').click();
               }
@@ -605,11 +682,10 @@ var hex = (function (h) {
           }, 1);
         });
       }
-
-      directive.variables.push(namespace);
+      directive.variables.push(namespaceFull + '[\'' + namespace + '\']');
     }
 
-    init(config);
+    init();
     return directive;
   };
 
@@ -662,10 +738,10 @@ var hex = (function (h) {
 
     function init(conf) {
       node = $(conf.node);
-      var params = node.attr('data-hex-list-add').split('|');
-      namespace = params[0];
-      if (!h.utils.isEmpty(params[1])) {
-        item = JSON.parse(params[1]);
+      namespace = node.attr('data-hex-list-add');
+
+      if (node.attr('data-hex-list-add-item') !== undefined) {
+        item = JSON.parse(node.attr('data-hex-list-add-item'));
       }
 
       node.on('click', function (event) {
@@ -1915,20 +1991,19 @@ var hex = (function (h) {
 var hex = (function (h) {
   'use strict';
   h.Block = function (node, parentBlock) {
-
-
     var
       isValid = true; //Валиден блок или нет
     var blockId = false;
     var directives = [];
-    var linkedVars = [];
     var blockData = {};
     var childBlocks = [];
-    var namespace = false;
+    var namespace = '';
+    var namespaceFull = '';
     var controls = [];
-    var dataLastVersion = {};
+    var render;
     var root;
 
+    var isRoot = false;
     var lists = {};
     var listAdd = [];
     var listRemove = [];
@@ -1936,6 +2011,12 @@ var hex = (function (h) {
     function getId() {
       return blockId;
     }
+
+
+    function getNamespaceFull() {
+      return namespaceFull;
+    }
+
 
     function getLists(ns) {
       if (ns === undefined) {
@@ -1951,6 +2032,7 @@ var hex = (function (h) {
         for (var k = 0, kl = ls.length; k < kl; k++) {
           ls[k].add(params.item);
         }
+        render.draw();
       }
     }
 
@@ -1960,18 +2042,19 @@ var hex = (function (h) {
         for (var k = 0, kl = ls.length; k < kl; k++) {
           ls[k].remove(params.index);
         }
+        render.draw();
       }
     }
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if]');
       bindNodes = Array.prototype.slice.call(bindNodes);
-      bindNodes[bindNodes.length] = currentBlock.node.get(0);
+      bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
         var findedNode = $(bindNodes[bn]);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-        if (findedNode.closest('[data-hex-block]').get(0) === currentBlock.node.get(0)) {
+        if (findedNode.parents('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0)) {
           var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
@@ -1984,17 +2067,38 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 {
-                  directives.push(new h.directives.Bind({node: findedNode, attribute: a}));
+                  directives.push(new h.directives.Bind({
+                    node: findedNode,
+                    attribute: a,
+                    namespaceFull: namespaceFull
+                  }));
                   break;
                 }
                 case 'data-hex-show':
                 {
-                  directives.push(new h.directives.Show({node: findedNode}));
+                  directives.push(new h.directives.Show({node: findedNode, namespaceFull: namespaceFull}));
+                  break;
+                }
+                case 'data-hex-if':
+                {
+                  if (findedNode.get(0) !== currentBlock.node.get(0)) {
+                    directives.push(new h.directives.If({
+                      node: findedNode,
+                      namespaceFull: namespaceFull,
+                      block: currentBlock
+                    }));
+                  }
+
                   break;
                 }
                 case 'data-hex-list':
                 {
-                  var list = new h.directives.List({node: findedNode, data: currentBlock.getData(), block: currentBlock});
+                  var list = new h.directives.List({
+                    node: findedNode,
+                    namespaceFull: namespaceFull,
+                    data: currentBlock.getData(),
+                    block: currentBlock
+                  });
                   if (lists[list.getNamespace()] === undefined) {
                     lists[list.getNamespace()] = [];
                   }
@@ -2019,52 +2123,15 @@ var hex = (function (h) {
               }
             }
           }
-        }
-      }
 
-
-      for (var d = 0, len = directives.length; d < len; d++) {
-        linkedVars = linkedVars.concat(directives[d].variables);
-      }
-      linkedVars = h.utils.arrayUniq(linkedVars);
-    }
-
-    function render() {
-      var changedVars = [];
-      var data = $.extend({}, blockData);
-      for (var i = 0, length = linkedVars.length; i < length; i++) {
-        var paramAsString = linkedVars[i];
-        var value = h.utils.objectProperty(data, paramAsString);
-        if (value === undefined) {
-          h.utils.objectProperty(data, paramAsString, '');
-        }
-        if (JSON.stringify(value) !== dataLastVersion[paramAsString]) {
-          changedVars.push(paramAsString);
-        }
-      }
-      if (changedVars !== undefined && changedVars.length > 0) {
-        var bindings = directives.filter(function (bind) {
-          for (i = 0, length = changedVars.length; i < length; i++) {
-            if (bind.variables.indexOf(changedVars[i]) >= 0) {
-              return true;
+          for (var d = 0, dl = directives.length; d < dl; d++) {
+            if (render.directives.indexOf(directives[d])) {
+              render.directives.push(directives[d]);
             }
           }
-          return false;
-        });
+        }
+      }
 
-        for (i = 0, length = bindings.length; i < length; i++) {
-          bindings[i].render(data);
-        }
-        //Сохраняем последние изменения данных
-        for (i = 0, length = changedVars.length; i < length; i++) {
-          dataLastVersion[changedVars[i]] = JSON.stringify(h.utils.objectProperty(blockData, changedVars[i]));
-        }
-      }
-      if (childBlocks.length > 0) {
-        for (i = 0, length = childBlocks.length; i < length; i++) {
-          childBlocks[i].render();
-        }
-      }
     }
 
     function setData(data) {
@@ -2080,13 +2147,11 @@ var hex = (function (h) {
       var blockValid = true;
       for (var i = 0, il = controls.length; i < il; i++) {
         if (!controls[i].validate(update)) {
-
           blockValid = false;
         }
       }
       for (i = 0, il = childBlocks.length; i < il; i++) {
         if (!childBlocks[i].validate(update)) {
-
           blockValid = false;
         }
       }
@@ -2102,21 +2167,15 @@ var hex = (function (h) {
       for (i = 0, il = childBlocks.length; i < il; i++) {
         childBlocks[i].reset();
       }
-      render();
+      render.draw();
     }
 
 
     function addControl(control) {
       var cObj = blockData;
       var controlName = control.getName();
-      dataLastVersion[controlName] = control.getValue();
       var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
       var nml = names.length - 1;
-
-      function setV(v) {
-        control.setValue(v);
-        root.render();
-      }
 
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
@@ -2134,17 +2193,28 @@ var hex = (function (h) {
             enumerable: true,
             configurable: true,
             get: control.getValue,
-            set: setV
+            set: control.setValue
           });
         }
       }
+
       control.on('change', function (value) {
-        h.utils.objectProperty(blockData, controlName, value);
+        //h.utils.objectProperty(blockData, controlName, value);
+        render.draw();
       });
+
+
+      control.on('disable', function () {
+
+      });
+      control.on('enable', function () {
+
+      });
+
 
       control.on('validate', function () {
         root.validate(false);
-        root.render();
+        render.draw();
       });
     }
 
@@ -2242,18 +2312,18 @@ var hex = (function (h) {
       controls: controls,
       parent: parentBlock,
       childBlocks: childBlocks,
-      render: render,
+      $hexBlock: true,
       validate: validate,
       reset: reset,
       getId: getId,
       getLists: getLists,
       setData: setData,
-      getData: getData
+      getData: getData,
+      getNamespaceFull: getNamespaceFull
     };
 
     block.addBlock = function (newBlock) {
-
-      if (newBlock instanceof h.Block === false) {
+      if (newBlock.$hexBlock === undefined) {
         newBlock = new h.Block(newBlock, block);
       }
       var index = childBlocks.indexOf(newBlock);
@@ -2268,7 +2338,7 @@ var hex = (function (h) {
     block.remove = function () {
       node.remove();
       if (parentBlock !== false) {
-        if (namespace !== false) {
+        if (!h.utils.isEmpty(namespace)) {
           if (parentBlock.getData()[namespace] !== undefined) {
             if ($.isArray(parentBlock.getData()[namespace])) {
               var dIndex = parentBlock.getData()[namespace].indexOf(blockData);
@@ -2282,8 +2352,15 @@ var hex = (function (h) {
         if (bIndex !== -1) {
           parentBlock.childBlocks.splice(bIndex, 1);
         }
-        parentBlock.validate(false);
-        parentBlock.root.render();
+
+        for (var i = 0, l = directives.length; i < l; i++) {
+          var ind = render.directives.indexOf(directives[i]);
+          if (ind !== -1) {
+            render.directives.splice(ind, 1);
+          }
+        }
+        render.clear();
+        root.validate(false);
       }
     };
 
@@ -2313,28 +2390,32 @@ var hex = (function (h) {
     function initBlock() {
       block.node = node;
 
-
       node.get(0).getBlock = function () {
         return block;
       };
 
       if (parentBlock !== undefined) {
         root = parentBlock.root;
+        render = block.render = parentBlock.render;
       } else {
         root = block;
         parentBlock = false;
         block.parent = false;
+        isRoot = true;
+        render = block.render = new h.Render();
+        blockData = render.data;
       }
       block.root = root;
 
+      if (parentBlock !== false) {
+        namespaceFull = parentBlock.getNamespaceFull();
+      }
 
-      if (node.closest('[data-hex-list]').size() > 0) {
-        namespace = node.closest('[data-hex-list]').attr('data-hex-list');
+      if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
+        namespace = node.attr('data-hex-block');
+        block.index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
+        namespaceFull += '[\'' + namespace + '\'][\'' + block.index + '\']';
 
-        if (namespace === undefined) {
-          throw new Error('attr hex-list is Empty');
-        }
-        block.index = node.closest('[data-hex-list]').children('[data-hex-block]').index(node);
       }
 
       if (h.utils.isEmpty(namespace) && parentBlock !== false) {
@@ -2346,7 +2427,7 @@ var hex = (function (h) {
         var bd = parentBlock.getData();
         if (bd !== undefined) {
           if (bd[namespace] === undefined) {
-            //console.log(bd, _namespace);
+            //console.log(bd, namespace);
           }
           bd = bd[namespace];
           if (bd[block.index] === undefined) {
@@ -2354,8 +2435,6 @@ var hex = (function (h) {
           } else {
             blockData = bd[block.index];
           }
-          blockData.$index = block.index;
-
         }
       }
 
@@ -2367,14 +2446,19 @@ var hex = (function (h) {
           get: function () {
             return isValid;
           },
-          set: function () {
-
+          set: function (v) {
+            isValid = v;
           }
         });
       }
 
-      initDirectives(block);
-      findChildrenBlocks(block);
+      if (!h.utils.isEmpty(namespace)) {
+        blockData.$index = block.index;
+      }
+      if (parentBlock !== false) {
+        blockData.$parentIndex = parentBlock.getData().$index;
+      }
+
 
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,
@@ -2382,12 +2466,13 @@ var hex = (function (h) {
         get: function () {
           return isValid;
         },
-        set: function () {
-
+        set: function (v) {
+          isValid = v;
         }
       });
-
-
+      initDirectives(block);
+      findChildrenBlocks(block);
+      render.clear();
     }
 
     initBlock();
@@ -2568,6 +2653,9 @@ var hex = (function (h) {
     }
 
     function getValue() {
+      if(isDisabled){
+        return undefined;
+      }
       return controlValue;
     }
 
@@ -2623,17 +2711,19 @@ var hex = (function (h) {
     }
 
     function disable() {
-      for (var i = 0, len = inputs.length; i > len; i++) {
+      for (var i = 0, len = inputs.length; i < len; i++) {
         inputs[i].prop('disabled', true);
       }
       isDisabled = true;
+      trigger('disable');
     }
 
     function enable() {
-      for (var i = 0, len = inputs.length; i > len; i++) {
+      for (var i = 0, len = inputs.length; i < len; i++) {
         inputs[i].prop('disabled', false);
       }
       isDisabled = false;
+      trigger('enable');
     }
 
 
@@ -2642,7 +2732,6 @@ var hex = (function (h) {
         return isValid;
       }
       else {
-        trigger('validate', update);
         lastValidateValue = controlValue;
         hideErrors();
         errors = [];
@@ -2664,7 +2753,7 @@ var hex = (function (h) {
           isValid = true;
           hideErrors();
         }
-
+        trigger('validate', update);
         return isValid;
       }
     }
@@ -2761,12 +2850,14 @@ var hex = (function (h) {
           trigger('change', controlValue);
         });
       }
+
+      validators.sort(sortByProperty('weight'));
       for (var eventName in validationEvents) {
         if (validationEvents.hasOwnProperty(eventName)) {
           input.on(eventName, validate);
         }
       }
-      validators.sort(sortByProperty('weight'));
+
 
       if (input.prop('disabled')) {
         disable();
@@ -2805,6 +2896,8 @@ var hex = (function (h) {
         console.error(conf.inputs);
       }
 
+
+
       formGroup = conf.formGroup;
 
       errorsBlock = conf.errorsBlock;
@@ -2818,6 +2911,7 @@ var hex = (function (h) {
       }
       controlValue = defaultValue = getDomValue();
       lastValidateValue = controlValue;
+
       hideErrors();
     }
 
@@ -2914,21 +3008,24 @@ var hex = (function (h) {
       if (name !== undefined) {
         namespace = name;
       }
-      $.each(data, function (k, v) {
-        if (!/^\$/.test(k)) {
+      for (var k in data) {
+        var v = data[k];
+        k += '';
+        if (k.indexOf('$') !== 0) {
           var nameZ = k;
           if (namespace !== '') {
             nameZ = namespace + '[' + k + ']';
           }
+
           if ($.isArray(v) || $.isPlainObject(v)) {
-            if (!h.utils.isEmpty(v)) {
-              setFormData(v, nameZ);
-            }
+            console.log(nameZ + ':>');
+            setFormData(v, nameZ);
           } else {
+            console.log(nameZ + ':+');
             formData.append(nameZ, v);
           }
         }
-      });
+      }
     }
 
     var submit = function (event) {
@@ -2939,6 +3036,7 @@ var hex = (function (h) {
       if (formValid === true) {
         clearErrors();
         var data = getValues();
+        console.log(data);
         var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
         if (dontBreakBefore) {
           hf.loaderShow();
