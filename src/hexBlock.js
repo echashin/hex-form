@@ -220,6 +220,10 @@ var hex = (function (h) {
           }
         }
       }
+      var index = controls.indexOf(control);
+      if (index !== -1) {
+        controls.splice(index, 1);
+      }
     }
 
     function addControl(control) {
@@ -434,6 +438,7 @@ var hex = (function (h) {
         var parentBlockNode = el.closest('[data-hex-block]');
         //Инпут находится непосредственно внутри нашего блока
         if (parentBlockNode.get(0) === node.get(0)) {
+          console.log(el);
           ownInputs.push(el);
         }
       });
@@ -520,6 +525,7 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         blockData.$parentIndex = parentBlock.getData().$index;
       }
+
 
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,

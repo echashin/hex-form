@@ -132,6 +132,64 @@
 
         </fieldset>
 
+        <div class="form-group">
+          <label>Вид объекта</label>
+          <div class="btn-group btn-group-justified">
+            <label class="btn btn-default active"
+                   data-hex-bind-for="'lots_'+$index+'_type_model'">
+              <input
+                data-hex-bind-id="'lots_'+$index+'_type_model'"
+                type="radio"
+                name="type"
+                value="model"
+                checked> На основе модели</label>
+            <label class="btn btn-default"
+                   data-hex-bind-for="'lots_'+$index+'_type_catalog'"
+            ><input type="radio"
+                    name="type"
+                    data-hex-bind-id="'lots_'+$index+'_type_catalog'"
+                    value="catalog"> На основе каталога</label>
+          </div>
+          <div class="errors">
+            <span class="error-required label label-danger">Заполните поле</span>
+          </div>
+        </div>
+
+        <div data-hex-if="type === 'model'">
+          <div class="form-group">
+            <label>Модель </label>
+            <select
+              required style="width: 100%;"
+              name="model"
+              data-hex-widget-select2='{"url":"/?m=GetList&a=Tender&t=bimmodel"}'
+              class="form-control">
+            </select>
+            <div class="errors">
+              <span class="error-required label label-danger">Заполните поле</span>
+            </div>
+          </div>
+        </div>
+        <div data-hex-if="type === 'catalog'">
+          <div class="form-group">
+            <label>Каталог</label>
+            <select
+              required style="width: 100%;"
+              name="catalog"
+              data-hex-widget-select2='{"url":"/?m=GetList&a=Tender&t=catalog"}'
+              class="form-control">
+            </select>
+            <div class="errors">
+              <span class="error-required label label-danger">Заполните поле</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Позиция в каталоге</label>
+            <input data-hex-widget-mask='{"mask":"9{+}"}'
+                   type="text"
+                   class="form-control"
+                   name="catalog_position">
+          </div>
+        </div>
 
         <div data-hex-list="prop">
           <div data-hex-list-tpl>

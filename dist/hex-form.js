@@ -479,7 +479,6 @@ var hex = (function (h) {
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
         var result = func.call(null, data);
-
         if (result === true) {
           if (node === undefined) {
             node = template.clone(false);
@@ -503,11 +502,10 @@ var hex = (function (h) {
       function init() {
         node = config.node;
         template = node.clone(false);
-        node.attr('data-hex-block');
-        template.attr('data-hex-block');
+        node.attr('data-hex-block', '');
+        template.attr('data-hex-block', '');
         var expr = node.attr('data-hex-if');
         block = config.block;
-        block.addBlock(node);
         namespaceFull = config.namespaceFull;
 
         var f = h.utils.exprToFunc(expr);
@@ -2287,6 +2285,10 @@ var hex = (function (h) {
           }
         }
       }
+      var index = controls.indexOf(control);
+      if (index !== -1) {
+        controls.splice(index, 1);
+      }
     }
 
     function addControl(control) {
@@ -2501,6 +2503,7 @@ var hex = (function (h) {
         var parentBlockNode = el.closest('[data-hex-block]');
         //Инпут находится непосредственно внутри нашего блока
         if (parentBlockNode.get(0) === node.get(0)) {
+          console.log(el);
           ownInputs.push(el);
         }
       });
@@ -2587,6 +2590,7 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         blockData.$parentIndex = parentBlock.getData().$index;
       }
+
 
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,

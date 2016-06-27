@@ -6,7 +6,6 @@ var hex = (function (h) {
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
         var result = func.call(null, data);
-
         if (result === true) {
           if (node === undefined) {
             node = template.clone(false);
@@ -30,11 +29,10 @@ var hex = (function (h) {
       function init() {
         node = config.node;
         template = node.clone(false);
-        node.attr('data-hex-block');
-        template.attr('data-hex-block');
+        node.attr('data-hex-block', '');
+        template.attr('data-hex-block', '');
         var expr = node.attr('data-hex-if');
         block = config.block;
-        block.addBlock(node);
         namespaceFull = config.namespaceFull;
 
         var f = h.utils.exprToFunc(expr);
