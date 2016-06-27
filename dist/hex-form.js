@@ -2503,7 +2503,6 @@ var hex = (function (h) {
         var parentBlockNode = el.closest('[data-hex-block]');
         //Инпут находится непосредственно внутри нашего блока
         if (parentBlockNode.get(0) === node.get(0)) {
-          console.log(el);
           ownInputs.push(el);
         }
       });
