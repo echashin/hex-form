@@ -36,511 +36,525 @@
 <![endif]-->
 
 <div class="container">
-      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off">
-        <br>
-        <div class="row">
-          <div class="col-xs-8">
-            <ul class="nav nav-tabs nav-justified" role="tablist">
-              <li role="presentation" class="active">
-                <a href="#tab_email" aria-controls="tab_email" role="tab" data-toggle="tab"><span
-                  data-hex-show="!$tab_email" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                  Email,Пароль</a></li>
+  <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off">
+    <br>
+    <div class="row">
+      <div class="col-xs-8">
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+          <li role="presentation" class="active">
+            <a href="#tab_email" aria-controls="tab_email" role="tab" data-toggle="tab"><span
+              data-hex-show="!$tab_email" class="hide error glyphicon glyphicon-exclamation-sign"></span>
+              Email,Пароль</a></li>
 
-              <li role="presentation"><a href="#tab_date" aria-controls="tab_date" role="tab" data-toggle="tab"><span
-                data-hex-show="!$tab_date" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                Дата,время</a>
-              </li>
-              <li role="presentation"><a href="#tab_phone" aria-controls="tab_phone" role="tab"
-                                         data-toggle="tab"> <span data-hex-show="!$tab_phone"
-                                                                  class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                Телефоны</a>
-              </li>
-              <li role="presentation"><a href="#tab_other" aria-controls="tab_other" role="tab" data-toggle="tab"> <span
-                data-hex-show="!$tab_other"
-                class="hide error glyphicon glyphicon-exclamation-sign"></span> Другое</a>
-              </li>
-              <li role="presentation"><a href="#tab_multiple" aria-controls="tab_multiple" role="tab" data-toggle="tab">
-                <span data-hex-show="!$tab_multiple" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                Мультиполе</a>
-              </li>
-            </ul>
-            <div class="tab-content">
-              <div data-hex-block role="tabpanel" class="tab-pane active" id="tab_email">
-                <br/><br/>
-                <div class="form-group">
-                  <label class="required control-label" for="email2">Email</label>
-                  <input name="email"
-                         id="email2"
-                         required
-                         data-hex-validator-email
+          <li role="presentation"><a href="#tab_date" aria-controls="tab_date" role="tab" data-toggle="tab"><span
+            data-hex-show="!$tab_date" class="hide error glyphicon glyphicon-exclamation-sign"></span>
+            Дата,время</a>
+          </li>
+          <li role="presentation"><a href="#tab_phone" aria-controls="tab_phone" role="tab"
+                                     data-toggle="tab"> <span data-hex-show="!$tab_phone"
+                                                              class="hide error glyphicon glyphicon-exclamation-sign"></span>
+            Телефоны</a>
+          </li>
+          <li role="presentation"><a href="#tab_other" aria-controls="tab_other" role="tab" data-toggle="tab"> <span
+            data-hex-show="!$tab_other"
+            class="hide error glyphicon glyphicon-exclamation-sign"></span> Другое</a>
+          </li>
+          <li role="presentation"><a href="#tab_multiple" aria-controls="tab_multiple" role="tab" data-toggle="tab">
+            <span data-hex-show="!$tab_multiple" class="hide error glyphicon glyphicon-exclamation-sign"></span>
+            Мультиполе</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div data-hex-block role="tabpanel" class="tab-pane active" id="tab_email">
+            <br/><br/>
+            <div class="form-group">
+              <label class="required control-label" for="email2">Email</label>
+              <input name="email"
+                     id="email2"
+                     required
+                     data-hex-validator-email
 
-                         class="form-control"
-                         type="text"
-                         value="example@gmail.com">
+                     class="form-control"
+                     type="text"
+                     value="example@gmail.com">
 
-                  <div class="errors">
-                    <span class="error-required label label-danger">Введите Email</span>
-                    <span class="error-email label label-danger">Введите правильный Email</span>
-                    <span class="error-unique label label-danger">Этот Email уже используется</span>
-                  </div>
-                </div>
+              <div class="errors">
+                <span class="error-required label label-danger">Введите Email</span>
+                <span class="error-email label label-danger">Введите правильный Email</span>
+                <span class="error-unique label label-danger">Этот Email уже используется</span>
+              </div>
+            </div>
 
-                <div class="form-group">
-                  <label class="required control-label" for="password">Пароль</label>
+            <div class="form-group">
+              <label class="required control-label" for="password">Пароль</label>
 
-                  <div style="position: relative">
-                    <input
-                      data-hex-widget-password-strength
-                      data-hex-widget-password-show
-                      required
-                      data-hex-validator-string-length='{"min":6,"max":12}'
-                      class="form-control password"
-                      type="password"
-                      name="password"
-                      id="password"
-                      value="108256E$S?"
-                    />
-                    <button tabindex="-1" type='button' class="password-show">
-                      <i class="glyphicon glyphicon-eye-open on"></i>
-                      <i class="glyphicon glyphicon-eye-close off"></i>
-                    </button>
-                  </div>
-                  <div class="password-strength">
-                    <div></div>
-                  </div>
-                  <div class="errors">
-                    <span class="error-required label label-danger">Введите пароль</span>
+              <div style="position: relative">
+                <input
+                  data-hex-widget-password-strength
+                  data-hex-widget-password-show
+                  required
+                  data-hex-validator-string-length='{"min":6,"max":12}'
+                  class="form-control password"
+                  type="password"
+                  name="password"
+                  id="password"
+                  value="108256E$S?"
+                />
+                <button tabindex="-1" type='button' class="password-show">
+                  <i class="glyphicon glyphicon-eye-open on"></i>
+                  <i class="glyphicon glyphicon-eye-close off"></i>
+                </button>
+              </div>
+              <div class="password-strength">
+                <div></div>
+              </div>
+              <div class="errors">
+                <span class="error-required label label-danger">Введите пароль</span>
                             <span
                               class="error-string-length-min label label-danger">Минимальная длина пароля 6 символов</span>
                             <span
                               class="error-string-length-max label label-danger">Максимальная длина пароля 12 символов</span>
-                  </div>
-
-                </div>
-
-                <div class="form-group">
-                  <label class="required control-label" for="confirmPassword">Подтверждение пароля</label>
-
-                  <div style="position: relative">
-                    <input data-hex-widget-password-show
-                           required
-                           data-hex-validator-password-confirm='{"password":"#password"}'
-                           class="form-control password"
-                           name="confirmPassword"
-                           id="confirmPassword"
-                           value="108256E$S?"
-                           type="password"/>
-                    <button tabindex="-1" type='button' class="password-show">
-                      <i class="glyphicon glyphicon-eye-open on"></i>
-                      <i class="glyphicon glyphicon-eye-close off"></i>
-                    </button>
-                  </div>
-                  <div class="errors">
-                    <span class="error-required label label-danger">Подтвердите пароль</span>
-                    <span class="error-password-confirm label label-danger">Пароли не совпадают</span>
-                  </div>
-
-                </div>
-
-
               </div>
-              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_date">
-                <br/><br/>
-                <div class="well">
-                  <div class="row">
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="min_date">Минимум</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true,"parentMax":"#max_date"}'
-                               data-hex-validator-mask
-                               class="form-control"
-                               required
-                               name="min_date" id="min_date" type="text"/>
 
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-mask label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="max_date">Максимум</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true}'
-                               data-hex-validator-mask
-                               class="form-control"
-                               value="01.05.2019 00:40"
-                               name="max_date" id="max_date" type="text"/>
+            </div>
 
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-date label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            <div class="form-group">
+              <label class="required control-label" for="confirmPassword">Подтверждение пароля</label>
+
+              <div style="position: relative">
+                <input data-hex-widget-password-show
+                       required
+                       data-hex-validator-password-confirm='{"password":"#password"}'
+                       class="form-control password"
+                       name="confirmPassword"
+                       id="confirmPassword"
+                       value="108256E$S?"
+                       type="password"/>
+                <button tabindex="-1" type='button' class="password-show">
+                  <i class="glyphicon glyphicon-eye-open on"></i>
+                  <i class="glyphicon glyphicon-eye-close off"></i>
+                </button>
+              </div>
+              <div class="errors">
+                <span class="error-required label label-danger">Подтвердите пароль</span>
+                <span class="error-password-confirm label label-danger">Пароли не совпадают</span>
+              </div>
+
+            </div>
+
+
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab_date">
+            <br/><br/>
+            <div class="well">
+              <div class="row">
+                <div class="col-xs-6">
                   <div class="form-group">
-                    <label class="required control-label" for="date">Дата</label>
+                    <label class="control-label" for="min_date">Минимум</label>
                     <input autocomplete="off"
-                           data-hex-widget-date='{"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                           data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true,"parentMax":"#max_date"}'
                            data-hex-validator-mask
                            class="form-control"
-                           value=""
+                           required
+                           name="min_date" id="min_date" type="text"/>
 
-                           name="date" id="date" type="text"/>
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату рождения</span>
+                      <span class="error-mask label label-danger">Неверный формат даты</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <label class="control-label" for="max_date">Максимум</label>
+                    <input autocomplete="off"
+                           data-hex-widget-date='{"timePicker": true,"timePicker24Hour":true}'
+                           data-hex-validator-mask
+                           class="form-control"
+                           value="01.05.2019 00:40"
+                           name="max_date" id="max_date" type="text"/>
 
                     <div class="errors">
                       <span class="error-required label label-danger">Введите дату рождения</span>
                       <span class="error-date label label-danger">Неверный формат даты</span>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="required control-label" for="date">Дата</label>
+                <input autocomplete="off"
+                       data-hex-widget-date='{"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                       data-hex-validator-mask
+                       class="form-control"
+                       value=""
 
+                       name="date" id="date" type="text"/>
+
+                <div class="errors">
+                  <span class="error-required label label-danger">Введите дату рождения</span>
+                  <span class="error-date label label-danger">Неверный формат даты</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="required control-label" for="date_between">Дата диапазон</label>
+                <input autocomplete="off"
+                       required
+                       data-hex-validator-date
+                       data-hex-widget-date='{"singleDatePicker":false,"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                       class="form-control"
+                       name="date_between" id="date_between" type="text"/>
+
+                <div class="errors">
+                  <span class="error-required label label-danger">Введите дату</span>
+                  <span class="error-date label label-danger">Неверный формат даты</span>
+                </div>
+              </div>
+            </div>
+            <div class="well">
+              <div class="row">
+                <div class="col-xs-6">
                   <div class="form-group">
-                    <label class="required control-label" for="date_between">Дата диапазон</label>
+                    <label class="control-label" for="min_date2">Минимум</label>
                     <input autocomplete="off"
-                           required
-                           data-hex-validator-date
-                           data-hex-widget-date='{"singleDatePicker":false,"parentMin":"#min_date","parentMax":"#max_date","timePicker": true,"timePicker24Hour":true}'
+                           data-hex-widget-date
+                           data-hex-validator-mask
                            class="form-control"
-                           name="date_between" id="date_between" type="text"/>
+                           name="min_date2" id="min_date2" type="text"/>
 
                     <div class="errors">
-                      <span class="error-required label label-danger">Введите дату</span>
+                      <span class="error-required label label-danger">Введите дату рождения</span>
                       <span class="error-date label label-danger">Неверный формат даты</span>
                     </div>
                   </div>
                 </div>
-                <div class="well">
-                  <div class="row">
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="min_date2">Минимум</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date
-                               data-hex-validator-mask
-                               class="form-control"
-                               name="min_date2" id="min_date2" type="text"/>
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <label class="control-label" for="date2">Дата</label>
+                    <input autocomplete="off"
+                           data-hex-widget-date='{"parentMin":"#min_date2"}'
+                           data-hex-validator-mask
+                           class="form-control"
+                           name="date2" id="date2" type="text"/>
 
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-date label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="date2">Дата</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date='{"parentMin":"#min_date2"}'
-                               data-hex-validator-mask
-                               class="form-control"
-                               name="date2" id="date2" type="text"/>
-
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-date label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату рождения</span>
+                      <span class="error-date label label-danger">Неверный формат даты</span>
                     </div>
                   </div>
                 </div>
-                <div class="well">
-                  <div class="row">
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="max_date3">Максимум</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date
-                               data-hex-validator-mask
-                               class="form-control"
-                               name="max_date3" id="max_date3" type="text"/>
-
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-date label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-xs-6">
-                      <div class="form-group">
-                        <label class="control-label" for="date3">Дата</label>
-                        <input autocomplete="off"
-                               data-hex-widget-date='{"parentMin":"#max_date3"}'
-                               data-hex-validator-mask
-                               class="form-control"
-                               name="date3" id="date3" type="text"/>
-
-                        <div class="errors">
-                          <span class="error-required label label-danger">Введите дату рождения</span>
-                          <span class="error-date label label-danger">Неверный формат даты</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-              </div>
-              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_phone">
-                <br/><br/>
-                <div class="form-group">
-                  <label class="required control-label" for="phone">Телефон мобильный (Россия)</label>
-                  <input
-                    autocomplete="off"
-                    data-hex-validator-phone
-                    required
-                    data-hex-widget-phone
-                    class="form-control"
-                    name="phone"
-                    id="phone"
-                    value="+7(909)141-17-68"
-                    type="text"/>
-
-                  <div class="errors">
-                    <span class="error-required label label-danger">Введите телефон</span>
-                    <span class="error-phone label label-danger">Неверный формат телефона</span>
-                  </div>
-                </div>
-
-
-              </div>
-              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_multiple">
-                <br/><br/>
-                <h4>Товары</h4>
-                <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
-                  <li data-hex-list-tpl role="presentation">
-                    <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                      <b data-hex-bind-html="label+' tab:'+$index"></b></a>
-                  </li>
-                  <li data-hex-block role="presentation">
-                    <a data-hex-bind-href="'#tab_'+$index" href="#tab_0" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
-                      <b data-hex-bind-html="label+' tab:'+$index">tab: 0</b></a>
-                  </li>
-                  <li role="presentation">
-                    <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
-                  </li>
-                </ul>
-                <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
-                  <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
-                    <br>
-                    <div class="row">
-                      <div class="col-xs-10">
-                        <div class="form-group">
-                          <input required type="text" name="label" value="" class="form-control">
-                          <div class='label label-default' data-hex-bind-html="label"></div>
-                        </div>
-
-                        <h4>items</h4>
-                        <div data-hex-list="items">
-                          <div class="row" data-hex-list-tpl>
-                            <div class="col-xs-10">
-                              <div class="form-group">
-                                <label data-hex-bind-html="'item: '+$index">1</label>
-                                <input required type="text" name="dd" class="form-control" value="5">
-                                <span class='label label-info' data-hex-bind-html="dd"></span>
-                              </div>
-                              <div class="form-group">
-                                <input data-hex-widget-filesimple type="file" name="image">
-                              </div>
-
-                            </div>
-                            <div class="col-xs-2">
-                              <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
-                            </div>
-                          </div>
-                        </div>
-                        <button type="button" class="btn btn-success" data-hex-list-add='items'>+item</button>
-                      </div>
-                      <div class="col-xs-2">
-                        <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div data-hex-block role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
-                    <br>
-                    <div class="row">
-                      <div class="col-xs-10">
-                        <div class="form-group">
-                          <input required type="text" name="label" value="" class="form-control">
-                          <div class='label label-default' data-hex-bind-html="label"></div>
-                        </div>
-
-                        <h4>items</h4>
-                        <div data-hex-list="items">
-                          <div class="row" data-hex-list-tpl>
-                            <div class="col-xs-10">
-                              <div class="form-group">
-                                <label data-hex-bind-html="'item: '+$index">1</label>
-                                <input required type="text" name="dd" class="form-control" value="5">
-                                <span class='label label-info' data-hex-bind-html="dd"></span>
-                              </div>
-                              <div class="form-group">
-                                <input data-hex-widget-filesimple type="file" name="image">
-                              </div>
-
-                            </div>
-                            <div class="col-xs-2">
-                              <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
-                            </div>
-                          </div>
-                        </div>
-                        <button type="button" class="btn btn-success" data-hex-list-add='items'>+item</button>
-                      </div>
-                      <div class="col-xs-2">
-                        <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr>
-                <br>
-                <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
-              </div>
-              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_other">
-                <br><br>
-                <div class="form-group">
-                  <div class="upload-dropzone">
-                    <thumb>
-                      <remove title="Удалить файл"></remove>
-                      <div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div>
-                      <p></p><i title=""></i></thumb>
-                  </div>
-                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
-                  <input
-                    data-hex-files='[{"id":1,"name":"filename1.jpg","thumb":"/src/img/thumbs/1.jpg","url":"/src/img/1.jpg"},{"id":2,"name":"filename2.jpg","thumb":"/src/img/thumbs/2.jpg","url":"/src/img/2.jpg"},{"id":3,"name":"filename3.jpg","thumb":"/src/img/thumbs/3.jpg","url":"/src/img/3.jpg"},{"id":4,"name":"filename4.jpg","thumb":"/src/img/thumbs/4.jpg","url":"/src/img/4.jpg"}]'
-                    data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":false}'
-                    id="uploadedimages"
-                    type="hidden"
-                    name="uploadedimages[]">
-                  <div class="errors">
-                    <span class="error-required label label-danger">Загрузите изображения</span>
-                    <span class="error-file-type label label-danger">Не верный формат файла</span>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <div class="upload-dropzone">
-                    <thumb class="single">
-                      <remove title="Удалить файл"></remove>
-                      <div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div>
-                      <p></p><i title=""></i></thumb>
-                  </div>
-                  <button data-upload type="button" class="btn btn-success">загрузить файл</button>
-                  <input
-                    data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":true}'
-                    id="avatar"
-                    type="hidden"
-                    name="avatar">
-                  <div class="errors">
-                    <span class="error-required label label-danger">Загрузите изображения</span>
-                    <span class="error-file-type label label-danger">Не верный формат файла</span>
-                  </div>
-                </div>
-
-                <br>
-                <hr>
-                <div class="form-group">
-                  <input data-hex-widget-filesimple id="file" type="file" name="image">
-                  <div class="errors">
-                    <span class="error-required label label-danger">Загрузите изображения</span>
-                    <span class="error-file-type label label-danger">Не верный формат файла</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label">Согласен с правилами
-                    <input type="checkbox" id="agree" name="agree" value="8"></label>
-                </div>
-                <div class="form-group">
-                  <label class="control-label"><input type="radio" name="sex" value="F"/> Ж</label>
-                  <label class="control-label"><input type="radio" name="sex" value="M"/> М</label>
-                </div>
-                <div class="form-group">
-                  <label class="control-label">Комментарий</label>
-                  <textarea class="form-control" id="comment" name="comment"></textarea>
-                </div>
-                <div class="form-group">
-                  <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>
-                  <select data-hex-widget-select2='{"url":"/server/select2.php"}'
-                          style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control"
-                          multiple="multiple">
-                    <option value="5" selected="selected">Talley Richmond</option>
-                  </select>
-
-                  <div class="errors">
-                    <span class="error-required label label-danger">Выберите пользователей</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label" for="user_ajax">Пользователи AJAX зависимый</label>
-                  <select required
-                          data-hex-widget-select2='{"url":"/server/select2.php","parent":{"selector":"#user_ajax"}}'
-                          style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control"
-                          multiple="multiple">
-
-                  </select>
-
-                  <div class="errors">
-                    <span class="error-required label label-danger">Выберите пользователей</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label" for="user_simple">Пользователи</label>
-                  <select required data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]"
-                          class="form-control" multiple="multiple">
-                    <option value="190">Buckley Riddle</option>
-                    <option value="191">Suarez Tran</option>
-                    <option value="192">Morales Preston</option>
-                    <option value="193">Sykes Collins</option>
-                    <option value="194">Luella Beck</option>
-                  </select>
-
-                  <div class="errors">
-                    <span class="error-required label label-danger">Выберите пользователей</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label" for="user_simple2">Пользователи 2</label>
-                  <select style="width: 100%" id="user_simple2" name="user_simple2[]" class="form-control"
-                          multiple="multiple">
-                    <option value="190">Buckley Riddle</option>
-                    <option value="191">Suarez Tran</option>
-                    <option value="192">Morales Preston</option>
-                    <option value="193">Sykes Collins</option>
-                    <option value="194">Luella Beck</option>
-                  </select>
-
-                  <div class="errors">
-                    <span class="error-required label label-danger">Выберите пользователей</span>
-                  </div>
-                </div>
-
-
               </div>
             </div>
+            <div class="well">
+              <div class="row">
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <label class="control-label" for="max_date3">Максимум</label>
+                    <input autocomplete="off"
+                           data-hex-widget-date
+                           data-hex-validator-mask
+                           class="form-control"
+                           name="max_date3" id="max_date3" type="text"/>
+
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату рождения</span>
+                      <span class="error-date label label-danger">Неверный формат даты</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <label class="control-label" for="date3">Дата</label>
+                    <input autocomplete="off"
+                           data-hex-widget-date='{"parentMin":"#max_date3"}'
+                           data-hex-validator-mask
+                           class="form-control"
+                           name="date3" id="date3" type="text"/>
+
+                    <div class="errors">
+                      <span class="error-required label label-danger">Введите дату рождения</span>
+                      <span class="error-date label label-danger">Неверный формат даты</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
           </div>
-          <div class="col-xs-4">
-            <div data-hex-bind-html="email"></div>
-            <div data-hex-bind-html="password"></div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab_phone">
+            <br/><br/>
+            <div class="form-group">
+              <label class="required control-label" for="phone">Телефон мобильный (Россия)</label>
+              <input
+                autocomplete="off"
+                data-hex-validator-phone
+                required
+                data-hex-widget-phone
+                class="form-control"
+                name="phone"
+                id="phone"
+                value="+7(909)141-17-68"
+                type="text"/>
+
+              <div class="errors">
+                <span class="error-required label label-danger">Введите телефон</span>
+                <span class="error-phone label label-danger">Неверный формат телефона</span>
+              </div>
+            </div>
+
+
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab_multiple">
+            <br/><br/>
+            <h4>Товары</h4>
+            <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
+              <li data-hex-list-tpl role="presentation">
+                <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid"
+                                                                                          class="hide error glyphicon glyphicon-exclamation-sign"></span>
+                  <b data-hex-bind-html="label+' tab:'+$index"></b></a>
+              </li>
+              <li data-hex-block role="presentation">
+                <a data-hex-bind-href="'#tab_'+$index" href="#tab_0" role="tab" data-toggle="tab"><span
+                  data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
+                  <b data-hex-bind-html="label+' tab:'+$index">tab: 0</b></a>
+              </li>
+              <li role="presentation">
+                <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
+              </li>
+            </ul>
+            <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
+              <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
+                <br>
+                <div class="row">
+                  <div class="col-xs-10">
+                    <div class="form-group">
+                      <input required type="text" name="label" value="" class="form-control">
+                      <div class='label label-default' data-hex-bind-html="label"></div>
+                    </div>
+
+                    <h4>items</h4>
+                    <div data-hex-list="items">
+                      <div class="row" data-hex-list-tpl>
+                        <div class="col-xs-10">
+                          <div class="form-group">
+                            <label data-hex-bind-html="'item: '+$index">1</label>
+                            <input required type="text" name="dd" class="form-control" value="5">
+                            <span class='label label-info' data-hex-bind-html="dd"></span>
+                          </div>
+                          <div class="form-group">
+                            <input data-hex-widget-filesimple type="file" name="image">
+                          </div>
+
+                        </div>
+                        <div class="col-xs-2">
+                          <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-success" data-hex-list-add='items'>+item</button>
+                  </div>
+                  <div class="col-xs-2">
+                    <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
+                  </div>
+                </div>
+              </div>
+              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
+                <br>
+                <div class="row">
+                  <div class="col-xs-10">
+                    <div class="form-group">
+                      <input required type="text" name="label" value="" class="form-control">
+                      <div class='label label-default' data-hex-bind-html="label"></div>
+                    </div>
+
+                    <h4>items</h4>
+                    <div data-hex-list="items">
+                      <div class="row" data-hex-list-tpl>
+                        <div class="col-xs-10">
+                          <div class="form-group">
+                            <label data-hex-bind-html="'item: '+$index">1</label>
+                            <input required type="text" name="dd" class="form-control" value="5">
+                            <span class='label label-info' data-hex-bind-html="dd"></span>
+                          </div>
+                          <div class="form-group">
+                            <input data-hex-widget-filesimple type="file" name="image">
+                          </div>
+
+                        </div>
+                        <div class="col-xs-2">
+                          <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-success" data-hex-list-add='items'>+item</button>
+                  </div>
+                  <div class="col-xs-2">
+                    <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <br>
+            <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
+          </div>
+          <div data-hex-block role="tabpanel" class="tab-pane" id="tab_other">
+            <br><br>
+            <div class="form-group">
+              <div class="upload-dropzone">
+                <thumb>
+                  <remove title="Удалить файл"></remove>
+                  <div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div>
+                  <p></p><i title=""></i></thumb>
+              </div>
+              <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+              <input
+                data-hex-files='[{"id":1,"name":"filename1.jpg","thumb":"/src/img/thumbs/1.jpg","url":"/src/img/1.jpg"},{"id":2,"name":"filename2.jpg","thumb":"/src/img/thumbs/2.jpg","url":"/src/img/2.jpg"},{"id":3,"name":"filename3.jpg","thumb":"/src/img/thumbs/3.jpg","url":"/src/img/3.jpg"},{"id":4,"name":"filename4.jpg","thumb":"/src/img/thumbs/4.jpg","url":"/src/img/4.jpg"}]'
+                data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":false}'
+                id="uploadedimages"
+                type="hidden"
+                name="uploadedimages[]">
+              <div class="errors">
+                <span class="error-required label label-danger">Загрузите изображения</span>
+                <span class="error-file-type label label-danger">Не верный формат файла</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="upload-dropzone">
+                <thumb class="single">
+                  <remove title="Удалить файл"></remove>
+                  <div class='frame'><a class="upload-preview" target="_blank" href="#"></a></div>
+                  <p></p><i title=""></i></thumb>
+              </div>
+              <button data-upload type="button" class="btn btn-success">загрузить файл</button>
+              <input
+                data-hex-widget-fileupload='{"url":"http://ayvo.lc/img/upload/","types":["png","jpg","jpeg","gif"],"single":true}'
+                id="avatar"
+                type="hidden"
+                name="avatar">
+              <div class="errors">
+                <span class="error-required label label-danger">Загрузите изображения</span>
+                <span class="error-file-type label label-danger">Не верный формат файла</span>
+              </div>
+            </div>
+
+            <br>
+            <hr>
+            <div class="form-group">
+              <input data-hex-widget-filesimple id="file" type="file" name="image">
+              <div class="errors">
+                <span class="error-required label label-danger">Загрузите изображения</span>
+                <span class="error-file-type label label-danger">Не верный формат файла</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label">Согласен с правилами
+                <input type="checkbox" id="agree" name="agree" value="8"></label>
+            </div>
+            <div class="form-group">
+              <label class="control-label"><input type="radio" name="sex" value="F"/> Ж</label>
+              <label class="control-label"><input type="radio" name="sex" value="M"/> М</label>
+            </div>
+            <div class="form-group">
+              <label class="control-label">Комментарий</label>
+              <textarea class="form-control" id="comment" name="comment"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>
+              <select
+                data-hex-widget-select2='{"url":"/server/select2.php", "templateSelection":"selectTemplate","templateResult":"templateResult"}'
+                style="width: 100%" id="user_ajax" name="user_ajax[]" class="form-control"
+                multiple="multiple">
+                <option value="5" selected="selected">Talley Richmond</option>
+              </select>
+
+              <div class="errors">
+                <span class="error-required label label-danger">Выберите пользователей</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="user_ajax">Пользователи AJAX зависимый</label>
+              <select required
+                      data-hex-widget-select2='{"url":"/server/select2.php","parent":{"selector":"#user_ajax"}}'
+                      style="width: 100%" id="user_ajax_depend" name="user_ajax_depend[]" class="form-control"
+                      multiple="multiple">
+
+              </select>
+
+              <div class="errors">
+                <span class="error-required label label-danger">Выберите пользователей</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="user_simple">Пользователи</label>
+              <select required data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]"
+                      class="form-control" multiple="multiple">
+                <option value="190">Buckley Riddle</option>
+                <option value="191">Suarez Tran</option>
+                <option value="192">Morales Preston</option>
+                <option value="193">Sykes Collins</option>
+                <option value="194">Luella Beck</option>
+              </select>
+
+              <div class="errors">
+                <span class="error-required label label-danger">Выберите пользователей</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="user_simple2">Пользователи 2</label>
+              <select style="width: 100%" id="user_simple2" name="user_simple2[]" class="form-control"
+                      multiple="multiple">
+                <option value="190">Buckley Riddle</option>
+                <option value="191">Suarez Tran</option>
+                <option value="192">Morales Preston</option>
+                <option value="193">Sykes Collins</option>
+                <option value="194">Luella Beck</option>
+              </select>
+
+              <div class="errors">
+                <span class="error-required label label-danger">Выберите пользователей</span>
+              </div>
+            </div>
+
 
           </div>
         </div>
-        <input type="hidden" name="hiddenName" value="hiddenValue"/>
-        <div class="alerts"></div>
-        <div class="row">
-          <div class="col-xs-6">
-              <button class="btn btn-lg btn-default btn-block" type="reset">Сброс формы</button>
-          </div>
-          <div class="col-xs-6">
-            <button class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная регистрация
-            </button>
-          </div>
-        </div>
+      </div>
+      <div class="col-xs-4">
+        <div data-hex-bind-html="email"></div>
+        <div data-hex-bind-html="password"></div>
 
-      </form>
+      </div>
+    </div>
+    <input type="hidden" name="hiddenName" value="hiddenValue"/>
+    <div class="alerts"></div>
+    <div class="row">
+      <div class="col-xs-6">
+        <button class="btn btn-lg btn-default btn-block" type="reset">Сброс формы</button>
+      </div>
+      <div class="col-xs-6">
+        <button class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная регистрация
+        </button>
+      </div>
+    </div>
 
+  </form>
 
+  <script type="text/javascript">
+    function selectTemplate(state) {
+      return '[' + state.text + ']';
+    }
+
+    function templateResult(state) {
+      var $node=$('<span>');
+      $node.html('[' + state.text + ']<br>' + '<b>' + state.text + '</b>');
+      return $node;
+
+    }
+  </script>
 
 </div>
 
@@ -574,10 +588,6 @@
 <script src="src/directives/list.js"></script>
 <script src="src/directives/listAdd.js"></script>
 <script src="src/directives/listRemove.js"></script>
-
-
-
-
 
 
 <script src="src/widgets/passwordShow.js"></script>

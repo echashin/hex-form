@@ -6,6 +6,12 @@ var hex = (function (h) {
 
     function init() {
       input = control.getInputs()[0];
+      if (config.templateSelection !== undefined) {
+        config.templateSelection = window[config.templateSelection];
+      }
+      if (config.templateResult !== undefined) {
+        config.templateResult = window[config.templateResult];
+      }
       var placeholder = config.placeholder || '';
       var defaultSettings = {
         theme: 'bootstrap',
