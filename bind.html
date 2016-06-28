@@ -158,12 +158,7 @@
         <div data-hex-if="type === 'model'">
           <div class="form-group">
             <label>Модель </label>
-            <select
-              required style="width: 100%;"
-              name="model"
-              data-hex-widget-select2='{"url":"/?m=GetList&a=Tender&t=bimmodel"}'
-              class="form-control">
-            </select>
+            <input type="text" name="model" value="22">
             <div class="errors">
               <span class="error-required label label-danger">Заполните поле</span>
             </div>
@@ -216,8 +211,9 @@
 
         <hr>
 
-        <button class="btn btn-info" type="submit">submit</button>
-        <button class="btn btn-warning" type="reset">reset</button>
+        <button class="btn btn-info" type="submit">submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-warning" type="reset">reset</button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <button id="set_data" class="btn btn-danger" type="button">set data</button>
 
       </form>
     </div>

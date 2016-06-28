@@ -3121,9 +3121,10 @@ var hex = (function (h) {
       return data;
     }
 
-    function getErrors() {
 
-    }
+    hf.draw = function () {
+      hf.root.render.draw();
+    };
 
     function clearErrors() {
       form.find('.has-error').removeClass('has-error');
