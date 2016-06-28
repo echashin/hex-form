@@ -19,6 +19,20 @@ var hex = (function (h) {
 
     function clear() {
       linkedVars = undefined;
+      dataLastVersion = {};
+    }
+
+    function removeDirective(d) {
+      if (directives.indexOf(d) >= 0) {
+
+        d.variables.forEach(function (v) {
+          if (dataLastVersion[v] !== undefined) {
+            delete dataLastVersion[v];
+          }
+        });
+
+        directives.splice(d);
+      }
     }
 
     function draw() {
@@ -64,6 +78,7 @@ var hex = (function (h) {
 
     var render = {
       directives: directives,
+      removeDirective: removeDirective,
       data: data,
       draw: draw,
       clear: clear

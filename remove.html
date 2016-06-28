@@ -39,14 +39,23 @@
   <div class="row">
     <div class="col-xs-12">
       <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off" data-hex-block>
-        <div data-hex-list="lots" data-hex-list-allowempty="true">
-          <div data-hex-list-tpl>
+        <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
+          <li data-hex-list-tpl role="presentation">
+            <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
+              <b data-hex-bind-html="label+' tab:'+( $index + 1 )"></b></a>
+          </li>
+          <li role="presentation">
+            <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
+          </li>
+        </ul>
+        <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
+          <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
             <br>
             <div class="row">
               <div class="col-xs-10">
                 <div class="form-group">
                   <input required type="text" name="label" value="zzz" class="form-control">
-                  <label data-hex-bind-html="label">zzz1</label>
+                  <div class='label label-default' data-hex-bind-html="label"></div>
                 </div>
               </div>
               <div class="col-xs-2">
@@ -55,7 +64,6 @@
             </div>
           </div>
         </div>
-
         <hr>
         <br>
         <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
@@ -63,7 +71,9 @@
 
         <div class="label label-success" data-hex-bind-html="surname"></div>
         <hr/>
-        <hr/>
+
+
+        <hr>
 
         <button class="btn btn-info" type="submit">submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
         <button class="btn btn-warning" type="reset">reset</button>&nbsp;&nbsp;&nbsp;&nbsp;

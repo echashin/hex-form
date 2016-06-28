@@ -2012,6 +2012,20 @@ var hex = (function (h) {
 
     function clear() {
       linkedVars = undefined;
+      dataLastVersion = {};
+    }
+
+    function removeDirective(d) {
+      if (directives.indexOf(d) >= 0) {
+
+        d.variables.forEach(function (v) {
+          if (dataLastVersion[v] !== undefined) {
+            delete dataLastVersion[v];
+          }
+        });
+
+        directives.splice(d);
+      }
     }
 
     function draw() {
@@ -2057,6 +2071,7 @@ var hex = (function (h) {
 
     var render = {
       directives: directives,
+      removeDirective: removeDirective,
       data: data,
       draw: draw,
       clear: clear
@@ -2462,38 +2477,30 @@ var hex = (function (h) {
 
     block.remove = function () {
 
+      //Убираем контролы и их привязки к данным
       while (block.controls.length > 0) {
         removeControl(block.controls[0]);
       }
 
       //Убираем директивы
-
       for (var i = 0, l = directives.length; i < l; i++) {
-        if (render.directives.indexOf(directives[i]) > -1) {
-          render.directives.splice(render.directives.indexOf(directives[i]), 1);
-        }
+        render.removeDirective(directives[i]);
       }
-      render.clear();
-
 
       if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
-          if (parentBlock.getData()[namespace] !== undefined) {
-            if ($.isArray(parentBlock.getData()[namespace])) {
-              var dIndex = parentBlock.getData()[namespace].indexOf(blockData);
-              if (dIndex !== -1) {
-                parentBlock.getData()[namespace].splice(dIndex, 1);
-              }
+          var parentData = parentBlock.getData()[namespace];
+          if (parentData !== undefined) {
+            var dIndex = parentData.indexOf(blockData);
+            if (dIndex !== -1) {
+              parentData.splice(dIndex, 1);
             }
           }
         }
-
-
         var bIndex = parentBlock.childBlocks.indexOf(block);
         if (bIndex !== -1) {
           parentBlock.childBlocks.splice(bIndex, 1);
         }
-
       }
 
       while (block.childBlocks.length > 0) {
@@ -2501,8 +2508,8 @@ var hex = (function (h) {
       }
       node.remove();
 
+      render.clear();
       root.validate(false);
-
     };
 
 
@@ -2520,7 +2527,7 @@ var hex = (function (h) {
 
       currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
-        if (el.closest('[data-hex-tpl]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
+        if (el.closest('[data-hex-list-tpl]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
           currentBlock.addBlock(el);
         }
       });
@@ -2567,9 +2574,6 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(namespace) && parentBlock !== false) {
         var bd = parentBlock.getData();
         if (bd !== undefined) {
-          if (bd[namespace] === undefined) {
-            //console.log(bd, namespace);
-          }
           bd = bd[namespace];
           if (bd[block.index] === undefined) {
             bd[block.index] = blockData;
