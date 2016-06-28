@@ -52,7 +52,7 @@
         expr = expr.replace(regexp, '__data' + variableCan);
       }
     }
-    var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.log(e);return "error"};return r;';
+    var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.warn(e);return "error"};return r;';
     return {'vars': vars, 'func': funcBody};
   };
 
@@ -802,7 +802,6 @@ var hex = (function (h) {
     function init(conf) {
       node = $(conf.node);
       namespace = node.closest('[data-hex-list]').attr('data-hex-list');
-
       node.on('click', function (event) {
         event.preventDefault();
         var index = $(this).closest('[data-hex-block]').get(0).getBlock().getData().$index;
@@ -1649,7 +1648,7 @@ var hex = (function (h) {
   'use strict';
   h.validators.required = function (control, config) {
     var self = this;
-    var events = ['blur', 'change', 'keyup'];
+    var events = ['keyup', 'blur', 'change'];
     self.weight = 0;
     var name = 'required';
 
@@ -2146,7 +2145,7 @@ var hex = (function (h) {
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
         var findedNode = $(bindNodes[bn]);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-        if (findedNode.parents('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0)) {
+        if (findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.parents('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
           var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
@@ -2218,7 +2217,7 @@ var hex = (function (h) {
           }
 
           for (var d = 0, dl = directives.length; d < dl; d++) {
-            if (render.directives.indexOf(directives[d])) {
+            if (render.directives.indexOf(directives[d]) === -1) {
               render.directives.push(directives[d]);
             }
           }
@@ -2265,27 +2264,25 @@ var hex = (function (h) {
 
 
     function removeControl(control) {
-      var cObj = blockData;
+
       var controlName = control.getName();
-      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
+      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').replace(/^\./, '').split('.');
       var nml = names.length - 1;
 
+      var cObj = blockData;
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
+
         if (i < nml) {
-          if (cObj[aName] === undefined) {
-            if (h.utils.isInt(aName)) {
-              cObj[aName] = [];
-            } else {
-              cObj[aName] = {};
-            }
+          if (cObj[aName] !== undefined) {
+            cObj = cObj[aName];
           }
-          cObj = cObj[aName];
         } else {
-          if ($.isArray(cObj)) {
-            cObj.splice(aName, 1);
-          } else {
-            if ($.isPlainObject(cObj)) {
+
+          if (cObj[aName] !== undefined) {
+            if ($.isArray(cObj)) {
+              cObj.splice(aName, 1);
+            } else {
               delete cObj[aName];
             }
           }
@@ -2295,6 +2292,7 @@ var hex = (function (h) {
       if (index !== -1) {
         controls.splice(index, 1);
       }
+
     }
 
     function addControl(control) {
@@ -2463,12 +2461,22 @@ var hex = (function (h) {
     };
 
     block.remove = function () {
-      block.controls.forEach(function (c) {
-        removeControl(c);
-      });
+
+      while (block.controls.length > 0) {
+        removeControl(block.controls[0]);
+      }
+
+      //Убираем директивы
+
+      for (var i = 0, l = directives.length; i < l; i++) {
+        if (render.directives.indexOf(directives[i]) > -1) {
+          render.directives.splice(render.directives.indexOf(directives[i]), 1);
+        }
+      }
+      render.clear();
 
 
-      if (parentBlock !== false) {
+      if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
           if (parentBlock.getData()[namespace] !== undefined) {
             if ($.isArray(parentBlock.getData()[namespace])) {
@@ -2479,24 +2487,21 @@ var hex = (function (h) {
             }
           }
         }
+
+
         var bIndex = parentBlock.childBlocks.indexOf(block);
         if (bIndex !== -1) {
           parentBlock.childBlocks.splice(bIndex, 1);
         }
 
-        for (var i = 0, l = directives.length; i < l; i++) {
-          var ind = render.directives.indexOf(directives[i]);
-          if (ind !== -1) {
-            render.directives.splice(ind, 1);
-          }
-        }
-        render.clear();
-        root.validate(false);
       }
-      block.childBlocks.forEach(function (b) {
-        b.remove();
-      });
+
+      while (block.childBlocks.length > 0) {
+        block.childBlocks[0].remove();
+      }
       node.remove();
+
+      root.validate(false);
 
     };
 
@@ -2515,7 +2520,7 @@ var hex = (function (h) {
 
       currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
-        if (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0)) {
+        if (el.closest('[data-hex-tpl]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
           currentBlock.addBlock(el);
         }
       });
@@ -3176,7 +3181,6 @@ var hex = (function (h) {
       if (formValid === true) {
         clearErrors();
         var data = getValues();
-        console.log(data);
         var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
         if (dontBreakBefore) {
           hf.loaderShow();

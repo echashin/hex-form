@@ -6,7 +6,6 @@ var hex = (function (h) {
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
         var result = func.call(null, data);
-        console.log(result);
         if (result === true) {
           node.css('border', '1px solid red');
           controls.each(function () {

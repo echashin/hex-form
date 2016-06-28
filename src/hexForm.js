@@ -113,7 +113,6 @@ var hex = (function (h) {
       if (formValid === true) {
         clearErrors();
         var data = getValues();
-        console.log(data);
         var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
         if (dontBreakBefore) {
           hf.loaderShow();

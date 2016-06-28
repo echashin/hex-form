@@ -44,7 +44,6 @@ var hex = (function (h) {
     function init(conf) {
       node = $(conf.node);
       namespace = node.closest('[data-hex-list]').attr('data-hex-list');
-
       node.on('click', function (event) {
         event.preventDefault();
         var index = $(this).closest('[data-hex-block]').get(0).getBlock().getData().$index;

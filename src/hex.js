@@ -52,7 +52,7 @@
         expr = expr.replace(regexp, '__data' + variableCan);
       }
     }
-    var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.log(e);return "error"};return r;';
+    var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.warn(e);return "error"};return r;';
     return {'vars': vars, 'func': funcBody};
   };
 
