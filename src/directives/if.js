@@ -23,16 +23,20 @@ var hex = (function (h) {
 
       var directive = {
         render: render,
+        type: 'if',
         variables: []
       };
 
       function init() {
         node = config.node;
+        directive.node = node;
         template = node.clone(false);
         node.attr('data-hex-block', '');
         template.attr('data-hex-block', '');
+
         var expr = node.attr('data-hex-if');
         block = config.block;
+        console.log(block);
         namespaceFull = config.namespaceFull;
 
         var f = h.utils.exprToFunc(expr);
@@ -46,6 +50,7 @@ var hex = (function (h) {
         comment = $(document.createComment('hex-if (' + expr + ')'));
         comment.insertBefore(node.get(0));
       }
+
 
       init();
       return directive;

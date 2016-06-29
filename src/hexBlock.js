@@ -69,7 +69,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-opts]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -99,6 +99,11 @@ var hex = (function (h) {
                 case 'data-hex-show':
                 {
                   directives.push(new h.directives.Show({node: findedNode, namespaceFull: namespaceFull}));
+                  break;
+                }
+                case 'data-hex-opts':
+                {
+                  directives.push(new h.directives.Data({node: findedNode, namespaceFull: namespaceFull}));
                   break;
                 }
                 case 'data-hex-if':
@@ -373,6 +378,7 @@ var hex = (function (h) {
       getLists: getLists,
       setData: setData,
       getData: getData,
+      directives: directives,
       logErrors: logErrors,
       getNamespaceFull: getNamespaceFull
     };
@@ -392,10 +398,13 @@ var hex = (function (h) {
 
     block.remove = function () {
 
+
       //Убираем контролы и их привязки к данным
       while (block.controls.length > 0) {
         removeControl(block.controls[0]);
       }
+
+
 
       //Убираем директивы
       for (var i = 0, l = directives.length; i < l; i++) {

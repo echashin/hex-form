@@ -23,11 +23,13 @@ var hex = (function (h) {
 
       var directive = {
         render: render,
+        type: 'bind',
         variables: []
       };
 
       function init() {
         node = config.node;
+        directive.node = node;
         namespaceFull = config.namespaceFull;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');

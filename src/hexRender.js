@@ -30,8 +30,7 @@ var hex = (function (h) {
             delete dataLastVersion[v];
           }
         });
-
-        directives.splice(d);
+        directives.splice(directives.indexOf(d), 1);
       }
     }
 
