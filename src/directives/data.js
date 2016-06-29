@@ -5,16 +5,18 @@ var hex = (function (h) {
       var node, namespaceFull, filter, variables = [], map;
 
       function render(data) {
-
-        //data = h.utils.objectProperty(data, namespaceFull);
-        console.log(map);
-        console.log(data);
-        /*
         for (var variable in map) {
-
-          //node.data(variable, filter(data[map[variable]]));
+          if (!h.utils.isEmpty(data[map[variable]])) {
+            if (filter !== undefined) {
+              node.data(variable, filter(data[map[variable]]));
+            } else {
+              node.data(variable, data[map[variable]]);
+            }
+          } else {
+            node.data(variable, undefined);
+          }
         }
-        */
+
       }
 
 
@@ -27,7 +29,7 @@ var hex = (function (h) {
         node = config.node;
         namespaceFull = config.namespaceFull;
 
-        /*
+
         var params = JSON.parse(node.attr('data-hex-data'));
 
 
@@ -36,18 +38,12 @@ var hex = (function (h) {
           if (filter === undefined) {
             console.warn('function ' + params.filter + ' doesn,t exist');
           }
-        } else {
-          filter = function (data) {
-            return data;
-          }
         }
 
         for (var variable in params.vars) {
           directive.variables.push(variable);
         }
         map = params.vars;
-        */
-        console.log('init');
       }
 
       init();

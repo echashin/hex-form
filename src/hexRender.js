@@ -24,7 +24,6 @@ var hex = (function (h) {
 
     function removeDirective(d) {
       if (directives.indexOf(d) >= 0) {
-
         d.variables.forEach(function (v) {
           if (dataLastVersion[v] !== undefined) {
             delete dataLastVersion[v];

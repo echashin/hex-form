@@ -489,8 +489,12 @@ var hex = (function (h) {
           }
         } else {
           if (node !== undefined) {
-            node.get(0).getBlock().remove();
-            node = undefined;
+            if (node.get(0).getBlock !== undefined) {
+              node.get(0).getBlock().remove();
+              node = undefined;
+            } else {
+              node.hide();
+            }
           }
         }
       }
@@ -509,9 +513,10 @@ var hex = (function (h) {
         node.attr('data-hex-block', '');
         template.attr('data-hex-block', '');
 
+        console.log(template);
+
         var expr = node.attr('data-hex-if');
         block = config.block;
-        console.log(block);
         namespaceFull = config.namespaceFull;
 
         var f = h.utils.exprToFunc(expr);
@@ -1146,6 +1151,20 @@ var hex = (function (h) {
         placeholder: placeholder,
         minimumResultsForSearch: 10
       };
+
+      if (config.data !== undefined) {
+        var dParams = config.data.split('::');
+        var ns = dParams[0];
+        if (dParams[1] !== undefined) {
+          var filter = window[dParams[1]];
+          config.data = filter(input.closest('[data-hex-block]').get(0).getBlock().getData()[ns]);
+        } else {
+          config.data = input.closest('[data-hex-block]').get(0).getBlock().getData()[ns];
+        }
+
+
+      }
+
 
       if (config.url !== undefined) {
         mode = 'ajax';
@@ -2024,7 +2043,6 @@ var hex = (function (h) {
 
     function removeDirective(d) {
       if (directives.indexOf(d) >= 0) {
-
         d.variables.forEach(function (v) {
           if (dataLastVersion[v] !== undefined) {
             delete dataLastVersion[v];
@@ -2160,7 +2178,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-opts]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-data]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -2192,7 +2210,7 @@ var hex = (function (h) {
                   directives.push(new h.directives.Show({node: findedNode, namespaceFull: namespaceFull}));
                   break;
                 }
-                case 'data-hex-opts':
+                case 'data-hex-data':
                 {
                   directives.push(new h.directives.Data({node: findedNode, namespaceFull: namespaceFull}));
                   break;
@@ -2637,6 +2655,7 @@ var hex = (function (h) {
     }
 
     initBlock();
+    render.draw();
     return block;
   };
   return h;

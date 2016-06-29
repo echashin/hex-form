@@ -69,7 +69,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-opts]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-data]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -101,7 +101,7 @@ var hex = (function (h) {
                   directives.push(new h.directives.Show({node: findedNode, namespaceFull: namespaceFull}));
                   break;
                 }
-                case 'data-hex-opts':
+                case 'data-hex-data':
                 {
                   directives.push(new h.directives.Data({node: findedNode, namespaceFull: namespaceFull}));
                   break;
@@ -546,6 +546,7 @@ var hex = (function (h) {
     }
 
     initBlock();
+    render.draw();
     return block;
   };
   return h;

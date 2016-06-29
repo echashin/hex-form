@@ -91,9 +91,10 @@
           <div class="form-group">
             <label>Каталог</label>
             <select
-              data-hex-widget-select2='{"url":"/server/select2.php"}'
+
+              data-hex-widget-select2='{"data":"options::processResults"}'
               style="width: 100%" id="user_ajax" name="user_ajax" class="form-control"
-              >
+            >
             </select>
 
             <div data-hex-bind-html="user_ajax"></div>
@@ -115,10 +116,18 @@
 </div>
 
 <script>
-  function dataOptions(data) {
-    var result = [];
+  function processResults(data) {
+    if (data !== undefined && data !== null) {
+      var results = [];
+      for (var i = 0, l = data.length; i < l; i++) {
+        var id=data[i];
+        results.push({"id": id, "text": "text-" + id});
+      }
+      return results;
+    } else {
+      return undefined;
+    }
 
-    return result;
   }
 </script>
 

@@ -20,6 +20,20 @@ var hex = (function (h) {
         minimumResultsForSearch: 10
       };
 
+      if (config.data !== undefined) {
+        var dParams = config.data.split('::');
+        var ns = dParams[0];
+        if (dParams[1] !== undefined) {
+          var filter = window[dParams[1]];
+          config.data = filter(input.closest('[data-hex-block]').get(0).getBlock().getData()[ns]);
+        } else {
+          config.data = input.closest('[data-hex-block]').get(0).getBlock().getData()[ns];
+        }
+
+
+      }
+
+
       if (config.url !== undefined) {
         mode = 'ajax';
         var selected = input.find('option[selected]');

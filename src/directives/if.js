@@ -14,8 +14,12 @@ var hex = (function (h) {
           }
         } else {
           if (node !== undefined) {
-            node.get(0).getBlock().remove();
-            node = undefined;
+            if (node.get(0).getBlock !== undefined) {
+              node.get(0).getBlock().remove();
+              node = undefined;
+            } else {
+              node.hide();
+            }
           }
         }
       }
@@ -34,9 +38,10 @@ var hex = (function (h) {
         node.attr('data-hex-block', '');
         template.attr('data-hex-block', '');
 
+        console.log(template);
+
         var expr = node.attr('data-hex-if');
         block = config.block;
-        console.log(block);
         namespaceFull = config.namespaceFull;
 
         var f = h.utils.exprToFunc(expr);
