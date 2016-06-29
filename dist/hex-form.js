@@ -48,7 +48,7 @@
         var r = '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
         r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
         r += '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
-        var regexp = new RegExp(r, 'gi');
+        var regexp = new RegExp(r, 'g');
         expr = expr.replace(regexp, '__data' + variableCan);
       }
     }

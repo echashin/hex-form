@@ -12,6 +12,6 @@ $(document).ready(function () {
 
    */
 
-  console.log(hex.utils.exprToFunc("type === 'TypePropertyEnumeratedValue'"));
+  //console.log(hex.utils.exprToFunc("type === 'TypePropertyEnumeratedValue'"));
 
 });
