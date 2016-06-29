@@ -2656,7 +2656,6 @@ var hex = (function (h) {
     }
 
     initBlock();
-    render.draw();
     return block;
   };
   return h;
