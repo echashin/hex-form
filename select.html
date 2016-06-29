@@ -42,7 +42,7 @@
 
       <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off"
             data-hex-block>
-        <select required data-hex-widget-select2 style="width: 100%" name="options[]"
+        <select required data-hex-widget-select2 style="width: 100%" name="main.options[]"
                 class="form-control" multiple="multiple">
           <option value="190">Buckley Riddle</option>
           <option value="191">Suarez Tran</option>
@@ -92,7 +92,7 @@
             <label>Каталог</label>
             <select
 
-              data-hex-widget-select2='{"data":"options::processResults"}'
+              data-hex-widget-select2='{"data":"main.options::processResults"}'
               style="width: 100%" id="user_ajax" name="user_ajax" class="form-control"
             >
             </select>

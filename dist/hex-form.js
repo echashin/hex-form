@@ -1155,11 +1155,12 @@ var hex = (function (h) {
       if (config.data !== undefined) {
         var dParams = config.data.split('::');
         var ns = dParams[0];
+        var dataObj = input.closest('[data-hex-block]').get(0).getBlock().getData();
         if (dParams[1] !== undefined) {
           var filter = window[dParams[1]];
-          config.data = filter(input.closest('[data-hex-block]').get(0).getBlock().getData()[ns]);
+          config.data = filter(h.utils.objectProperty(dataObj, ns));
         } else {
-          config.data = input.closest('[data-hex-block]').get(0).getBlock().getData()[ns];
+          config.data = h.utils.objectProperty(dataObj, ns);
         }
 
 
