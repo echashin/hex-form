@@ -43,13 +43,12 @@
         variableCan = '[\'' + variableCan.split('.').join('\'][\'') + '\']';
         if (vars.indexOf(variableCan) === -1) {
           vars.push(variableCan);
+          var r = '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
+          r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
+          r += '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
+          var regexp = new RegExp(r, 'g');
+          expr = expr.replace(regexp, '__data' + variableCan);
         }
-
-        var r = '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
-        r += variable.replace(/#/g, '\\#').replace(/\$/g, '\\$').replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/]/g, '\\]');
-        r += '[^a-z0-9_\\[\\]\\+\\=\\-\\|\\&\\!\\/\\*\\"\'\\040]*';
-        var regexp = new RegExp(r, 'g');
-        expr = expr.replace(regexp, '__data' + variableCan);
       }
     }
     var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.warn(e);return "error"};return r;';
