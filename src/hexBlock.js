@@ -216,13 +216,11 @@ var hex = (function (h) {
       var cObj = blockData;
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
-
         if (i < nml) {
           if (cObj[aName] !== undefined) {
             cObj = cObj[aName];
           }
         } else {
-
           if (cObj[aName] !== undefined) {
             if ($.isArray(cObj)) {
               cObj.splice(aName, 1);
@@ -242,7 +240,9 @@ var hex = (function (h) {
     function addControl(control) {
       var cObj = blockData;
       var controlName = control.getName();
-      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
+      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.').filter(function (n) {
+        return !h.utils.isEmpty(n);
+      });
       var nml = names.length - 1;
       var defaultVal = hex.utils.objectProperty(blockData, controlName);
       if (defaultVal !== undefined) {
@@ -252,12 +252,8 @@ var hex = (function (h) {
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
         if (i < nml) {
-          if (cObj[aName] === undefined) {
-            if (h.utils.isInt(aName)) {
-              cObj[aName] = [];
-            } else {
-              cObj[aName] = {};
-            }
+          if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
+            cObj[aName] = {};
           }
           cObj = cObj[aName];
         } else {
