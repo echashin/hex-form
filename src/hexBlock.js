@@ -8,23 +8,19 @@ var hex = (function (h) {
     var blockData = {};
     var childBlocks = [];
     var namespace = '';
-    var namespaceFull = '';
     var controls = [];
     var render;
     var root;
 
+    var $index;
     var isRoot = false;
     var lists = {};
     var listAdd = [];
+    var listUp = [];
     var listRemove = [];
 
     function getId() {
       return blockId;
-    }
-
-
-    function getNamespaceFull() {
-      return namespaceFull;
     }
 
 
@@ -48,28 +44,38 @@ var hex = (function (h) {
     }
 
     function listAddItem(params) {
-      var ls = getLists(params.namespace);
-      if (ls !== undefined) {
-        for (var k = 0, kl = ls.length; k < kl; k++) {
-          ls[k].add(params.item);
-        }
+      blockData[params.namespace].push({});
+      render.draw();
+    }
+
+    function listRemoveItem(params) {
+      var parentData = parentBlock.getData()[params.namespace];
+      var index = parentData.indexOf(params.data);
+      if (index !== -1) {
+        parentData.splice(index, 1);
+        render.clear();
         render.draw();
       }
     }
 
-    function listRemoveItem(params) {
-      var ls = parentBlock.getLists(params.namespace);
-      if (ls !== undefined) {
-        for (var k = 0, kl = ls.length; k < kl; k++) {
-          ls[k].remove(params.index);
-        }
-        render.draw();
+    function listUpItem(params) {
+      var parentData = parentBlock.getData()[params.namespace];
+      var index = parentData.indexOf(params.data);
+      if (index > 0) {
+        var from = index;
+        var to = index - 1;
+        parentData.splice(to, 0, parentData.splice(from, 1)[0]);
       }
+      for (var i = index + 1, l = parentData.length; i < l; i++) {
+        parentData[i].$index = i;
+      }
+
+      render.draw();
     }
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-if],[data-hex-data]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -92,18 +98,18 @@ var hex = (function (h) {
                   directives.push(new h.directives.Bind({
                     node: findedNode,
                     attribute: a,
-                    namespaceFull: namespaceFull
+                    block: currentBlock
                   }));
                   break;
                 }
                 case 'data-hex-show':
                 {
-                  directives.push(new h.directives.Show({node: findedNode, namespaceFull: namespaceFull}));
+                  directives.push(new h.directives.Show({node: findedNode, block: currentBlock}));
                   break;
                 }
                 case 'data-hex-data':
                 {
-                  directives.push(new h.directives.Data({node: findedNode, namespaceFull: namespaceFull}));
+                  directives.push(new h.directives.Data({node: findedNode, block: currentBlock}));
                   break;
                 }
                 case 'data-hex-if':
@@ -111,7 +117,6 @@ var hex = (function (h) {
                   if (findedNode.get(0) !== currentBlock.node.get(0)) {
                     directives.push(new h.directives.If({
                       node: findedNode,
-                      namespaceFull: namespaceFull,
                       block: currentBlock
                     }));
                   }
@@ -122,10 +127,9 @@ var hex = (function (h) {
                 {
                   var list = new h.directives.List({
                     node: findedNode,
-                    namespaceFull: namespaceFull,
-                    data: currentBlock.getData(),
                     block: currentBlock
                   });
+
                   if (lists[list.getNamespace()] === undefined) {
                     lists[list.getNamespace()] = [];
                   }
@@ -147,14 +151,19 @@ var hex = (function (h) {
                   listRemove.push(listRemoveNew);
                   break;
                 }
+                case 'data-hex-list-up':
+                {
+                  var listUpNew = new h.directives.ListUp({node: findedNode});
+                  listUpNew.on('up', listUpItem);
+                  listUp.push(listUpNew);
+                  break;
+                }
               }
             }
           }
 
           for (var d = 0, dl = directives.length; d < dl; d++) {
-            if (render.directives.indexOf(directives[d]) === -1) {
-              render.directives.push(directives[d]);
-            }
+            render.addDirective(directives[d]);
           }
         }
       }
@@ -235,6 +244,10 @@ var hex = (function (h) {
       var controlName = control.getName();
       var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
       var nml = names.length - 1;
+      var defaultVal = hex.utils.objectProperty(blockData, controlName);
+      if (defaultVal !== undefined) {
+        control.setValue(defaultVal);
+      }
 
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
@@ -257,7 +270,8 @@ var hex = (function (h) {
         }
       }
 
-      control.on('change', function (value) {
+
+      control.on('change', function () {
         //h.utils.objectProperty(blockData, controlName, value);
         render.draw();
       });
@@ -379,8 +393,7 @@ var hex = (function (h) {
       setData: setData,
       getData: getData,
       directives: directives,
-      logErrors: logErrors,
-      getNamespaceFull: getNamespaceFull
+      logErrors: logErrors
     };
 
     block.addBlock = function (newBlock) {
@@ -398,13 +411,10 @@ var hex = (function (h) {
 
     block.remove = function () {
 
-
       //Убираем контролы и их привязки к данным
       while (block.controls.length > 0) {
         removeControl(block.controls[0]);
       }
-
-
 
       //Убираем директивы
       for (var i = 0, l = directives.length; i < l; i++) {
@@ -432,7 +442,7 @@ var hex = (function (h) {
       }
       node.remove();
 
-      render.clear();
+      //render.clear();
       root.validate(false);
     };
 
@@ -480,14 +490,23 @@ var hex = (function (h) {
       block.root = root;
 
       if (parentBlock !== false) {
-        namespaceFull = parentBlock.getNamespaceFull();
+        Object.defineProperty(block, 'namespaceFull', {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return parentBlock.namespaceFull;
+          },
+          set: function () {
+
+          }
+        });
+      } else {
+        block.namespaceFull = '';
       }
 
       if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
         namespace = node.attr('data-hex-block');
-        block.index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
-        namespaceFull += '[\'' + namespace + '\'][\'' + block.index + '\']';
-
+        $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
       }
 
       if (h.utils.isEmpty(namespace) && parentBlock !== false) {
@@ -499,13 +518,38 @@ var hex = (function (h) {
         var bd = parentBlock.getData();
         if (bd !== undefined) {
           bd = bd[namespace];
-          if (bd[block.index] === undefined) {
-            bd[block.index] = blockData;
+          if (bd[$index] === undefined) {
+            bd[$index] = blockData;
           } else {
-            blockData = bd[block.index];
+            blockData = bd[$index];
           }
         }
+
+        Object.defineProperty(blockData, '$index', {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return parentBlock.getData()[namespace].indexOf(blockData);
+          },
+          set: function () {
+
+          }
+        });
+
+        Object.defineProperty(block, 'namespaceFull', {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return parentBlock.namespaceFull + '[\'' + namespace + '\'][\'' + blockData.$index + '\']';
+          },
+          set: function () {
+
+          }
+        });
+
+
       }
+
 
       if (node.attr('id') !== undefined) {
         blockId = node.attr('id');
@@ -521,12 +565,17 @@ var hex = (function (h) {
         });
       }
 
-      if (!h.utils.isEmpty(namespace)) {
-        blockData.$index = block.index;
-      }
-
       if (!h.utils.isEmpty(parentBlock)) {
-        blockData.$parentIndex = parentBlock.getData().$index;
+        Object.defineProperty(blockData, '$parentIndex', {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return parentBlock.getData().$index;
+          },
+          set: function () {
+
+          }
+        });
       }
 
 
@@ -543,6 +592,7 @@ var hex = (function (h) {
       initDirectives(block);
       findChildrenBlocks(block);
       render.clear();
+      render.draw();
     }
 
     initBlock();

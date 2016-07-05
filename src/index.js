@@ -15,4 +15,10 @@ $(document).ready(function () {
 
   //console.log(hex.utils.exprToFunc("type === 'TypeSimpleProperty' || type === 'TypePropertySingleValue'"));
 
+  /*
+  hex.form('test');
+  hex.form('test').root.setData({"lots":[{"label":"first lot"},{"label":"second lot","items":[{"label":"first item"},{"label":"Second item"}]}]});
+  hex.form('test').draw();
+
+*/
 });

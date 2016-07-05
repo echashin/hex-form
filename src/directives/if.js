@@ -1,7 +1,7 @@
 var hex = (function (h) {
     'use strict';
     h.directives.If = function (config) {
-      var node, func, comment, template, block, namespaceFull;
+      var node, func, comment, template, block, namespaceFull, variables = [];
 
       function render(data) {
         data = h.utils.objectProperty(data, namespaceFull);
@@ -27,9 +27,21 @@ var hex = (function (h) {
 
       var directive = {
         render: render,
-        type: 'if',
-        variables: []
+        type: 'if'
       };
+
+      Object.defineProperty(directive, 'variables', {
+        enumerable: true,
+        configurable: true,
+        get: function(){
+          return variables.map(function (d) {
+            return config.block.namespaceFull + d;
+          });
+        },
+        set: function(){
+
+        }
+      });
 
       function init() {
         node = config.node;
@@ -37,21 +49,14 @@ var hex = (function (h) {
         template = node.clone(false);
         node.attr('data-hex-block', '');
         template.attr('data-hex-block', '');
-
-        console.log(template);
-
         var expr = node.attr('data-hex-if');
         block = config.block;
         namespaceFull = config.namespaceFull;
-
         var f = h.utils.exprToFunc(expr);
-
         for (var i = 0, l = f.vars.length; i < l; i++) {
-          directive.variables.push(namespaceFull + f.vars[i]);
+          variables.push(f.vars[i]);
         }
-
         func = new Function('__data', f.func);
-
         comment = $(document.createComment('hex-if (' + expr + ')'));
         comment.insertBefore(node.get(0));
       }

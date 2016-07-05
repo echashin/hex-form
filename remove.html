@@ -38,7 +38,10 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off" data-hex-block>
+      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off"
+            data-hex-block>
+
+
         <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
           <li data-hex-list-tpl role="presentation">
             <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
@@ -64,19 +67,28 @@
             </div>
           </div>
         </div>
+
         <hr>
         <br>
         <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
         <hr>
 
-        <div class="label label-success" data-hex-bind-html="surname"></div>
         <hr/>
-
+        <div class="form-group">
+          <input required type="text" name="phone" class="form-control" value="+7-909-1411768">
+          <div class="label label-success" data-hex-bind-html="phone"></div>
+          <div class="errors">
+            <span class="error-required label label-danger">Введите телефон</span>
+            <span class="error-phone label label-danger">Неверный формат телефона</span>
+          </div>
+        </div>
 
         <hr>
 
-        <button class="btn btn-info" type="submit">submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <button class="btn btn-warning" type="reset">reset</button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-info" type="submit">submit</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-warning" type="reset">reset</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <button id="set_data" class="btn btn-danger" type="button">set data</button>
 
       </form>
@@ -115,9 +127,9 @@
 <script src="src/directives/bind.js"></script>
 <script src="src/directives/show.js"></script>
 <script src="src/directives/if.js"></script>
-<script src="src/directives/repeat.js"></script>
 <script src="src/directives/list.js"></script>
 <script src="src/directives/listAdd.js"></script>
+<script src="src/directives/listUp.js"></script>
 <script src="src/directives/listRemove.js"></script>
 
 

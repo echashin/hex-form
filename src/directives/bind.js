@@ -2,10 +2,13 @@ var hex = (function (h) {
     'use strict';
     h.directives.Bind = function (config) {
 
-      var node, namespaceFull, attribute, func;
+      var node, attribute, func, variables = [];
 
       function render(data) {
-        data = h.utils.objectProperty(data, namespaceFull);
+        data = h.utils.objectProperty(data, config.block.namespaceFull);
+        if (data === undefined) {
+          data = {};
+        }
 
         switch (attribute) {
           case 'html':
@@ -23,24 +26,33 @@ var hex = (function (h) {
 
       var directive = {
         render: render,
-        type: 'bind',
-        variables: []
+        type: 'bind'
       };
+
+      Object.defineProperty(directive, 'variables', {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          return variables.map(function (d) {
+            return config.block.namespaceFull + d;
+          });
+        },
+        set: function () {
+
+        }
+      });
+
 
       function init() {
         node = config.node;
         directive.node = node;
-        namespaceFull = config.namespaceFull;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {
-          directive.variables.push(namespaceFull + f.vars[i]);
+          variables.push(f.vars[i]);
         }
-
-
         func = new Function('__data', f.func);
-
       }
 
       init();

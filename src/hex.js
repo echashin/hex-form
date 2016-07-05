@@ -1,4 +1,4 @@
-(function (window) {
+var hex = (function () {
   'use strict';
   var h = {'widgets': {}, 'validators': {}, 'directives': {}, 'utils': {}};
 
@@ -75,6 +75,7 @@
         }
       }
     }
+
     for (var a in newObject) {
       if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
         if ($.isArray(newObject[a])) {
@@ -86,6 +87,7 @@
           if (originalObject[a] === undefined) {
             originalObject[a] = {};
           }
+          h.utils.objectExtend(originalObject[a], newObject[a]);
         } else {
           originalObject[a] = newObject[a];
         }
@@ -101,11 +103,15 @@
     var names = name.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.');
     var nml = names.length - 1;
     var cObj = obj;
+
     if (value !== undefined) {
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
         if (aName !== '') {
           if (i < nml) {
+            if (cObj === '') {
+              cObj = {};
+            }
             if (cObj[aName] === undefined) {
               if (h.utils.isInt(aName)) {
                 cObj[aName] = [];
@@ -371,7 +377,6 @@
     return temp.toLowerCase();
 
   };
-
-  window.hex = h;
-}(window));
+  return h;
+})();
 

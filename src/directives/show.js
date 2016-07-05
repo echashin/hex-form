@@ -2,7 +2,7 @@ var hex = (function (h) {
   'use strict';
   h.directives.Show = function (config) {
 
-    var node, func, namespaceFull;
+    var node, func, namespaceFull, variables = [];
 
     function render(data) {
 
@@ -18,8 +18,21 @@ var hex = (function (h) {
 
     var directive = {
       render: render,
-      variables: []
+      type: 'show'
     };
+
+    Object.defineProperty(directive, 'variables', {
+      enumerable: true,
+      configurable: true,
+      get: function(){
+        return variables.map(function (d) {
+          return config.block.namespaceFull + d;
+        });
+      },
+      set: function(){
+
+      }
+    });
 
     function init() {
       node = $(config.node);
@@ -28,7 +41,7 @@ var hex = (function (h) {
       var expr = node.attr('data-hex-show');
       var f = h.utils.exprToFunc(expr);
       for (var i = 0, l = f.vars.length; i < l; i++) {
-        directive.variables.push(namespaceFull + f.vars[i]);
+        variables.push(f.vars[i]);
       }
 
       func = new Function('__data', f.func);

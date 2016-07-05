@@ -8,6 +8,8 @@ var hex = (function (h) {
       template,//Шаблон
       namespace,
       namespaceFull,
+      listData,
+      variables = [],
       block,
       allowEmpty = false,
       itemSelector = '[data-hex-block]',
@@ -55,11 +57,8 @@ var hex = (function (h) {
       }
 
       var newBlock = block.addBlock(newItem);
-
-      if (!$.isEmptyObject(item)) {
-        newBlock.setData(item);
-      }
       trigger('add', newItem);
+      block.render.draw();
       return newBlock;
     }
 
@@ -77,25 +76,71 @@ var hex = (function (h) {
       node.children(itemSelector).each(function (indx) {
         var nBlock = $(this).get(0).getBlock();
         var data = nBlock.getData();
+
         data.$index = indx;
         if (nBlock.childBlocks.length > 0) {
           for (var i = 0, len = nBlock.childBlocks.length; i < len; i++) {
             nBlock.childBlocks[i].getData().$parentIndex = indx;
           }
         }
-
         $(this).get(0).getBlock().render.draw();
       });
       trigger('remove', index);
     }
 
-    function render() {
+    function render(data) {
+      var currentItems = node.children(itemSelector);
+
+      //изменения в списке
+      var removed = -1;
+
+      //Удаление старых
+      currentItems.each(function (k) {
+        var itemData = $(this).get(0).getBlock().getData();
+        var dIndex = listData.indexOf(itemData);
+        if (dIndex === -1 || itemData === undefined) {
+          $(this).get(0).getBlock().remove();
+          removed = k;
+        }
+      });
+      currentItems = node.children(itemSelector);
+
+      //Добавление новых
+      for (var n in listData) {
+        if (!h.utils.isEmpty((listData[n]))) {
+          var finded = false;
+          for (var j = 0, jl = currentItems.length; j < jl; j++) {
+            if (currentItems[j].getBlock().getData() === listData[n]) {
+              finded = true;
+            }
+          }
+          if (!finded) {
+            add();
+          }
+        }
+      }
+
+
+      /*
+       var currentItems = node.children(itemSelector);
+
+       currentItems.each(function (j) {
+       var currentIndex=$(this).get(0).getBlock().getData().$index;
+       if (currentIndex!== j) {
+       console.info('!=');
+       $(this).insertBefore(node.children(itemSelector + ':nth-child(' + currentIndex+ ')').first());
+       }
+       });
+       */
+      if (removed > -1) {
+        trigger('remove', removed);
+      }
 
     }
 
 
     var directive = {
-      variables: [],
+      type: 'list',
       getNamespace: getNamespace,
       render: render,
       on: on,
@@ -105,6 +150,20 @@ var hex = (function (h) {
       remove: remove
     };
 
+
+    Object.defineProperty(directive, 'variables', {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        return variables.map(function (d) {
+          return config.block.namespaceFull + d;
+        });
+      },
+      set: function () {
+
+      }
+    });
+
     function init() {
       node = $(config.node);
       block = config.block;
@@ -113,11 +172,14 @@ var hex = (function (h) {
         console.warn('list don`t have namespace');
       }
 
-      namespaceFull = config.namespaceFull;
+      namespaceFull = config.block.namespaceFull;
 
-      if (config.data[namespace] === undefined) {
-        h.utils.objectProperty(config.data, namespace, []);
+      var blockData = config.block.getData();
+      if (blockData[namespace] === undefined) {
+        h.utils.objectProperty(blockData, namespace, []);
       }
+
+      listData = blockData[namespace];
 
       if (node.attr('data-hex-list-allowempty') !== undefined) {
         allowEmpty = true;
@@ -150,7 +212,7 @@ var hex = (function (h) {
           }, 1);
         });
       }
-      directive.variables.push(namespaceFull + '[\'' + namespace + '\']');
+      variables.push('[\'' + namespace + '\']');
     }
 
     init();

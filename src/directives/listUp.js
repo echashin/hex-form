@@ -1,6 +1,6 @@
 var hex = (function (h) {
   'use strict';
-  h.directives.ListRemove = function (config) {
+  h.directives.ListUp = function (config) {
 
 
     var
@@ -47,7 +47,7 @@ var hex = (function (h) {
       node.on('click', function (event) {
         event.preventDefault();
         var data = $(this).closest('[data-hex-block]').get(0).getBlock().getData();
-        trigger('remove', {
+        trigger('up', {
           namespace: namespace,
           data: data
         });
