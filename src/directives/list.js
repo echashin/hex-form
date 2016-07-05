@@ -7,7 +7,6 @@ var hex = (function (h) {
       node,//DOM node
       template,//Шаблон
       namespace,
-      namespaceFull,
       listData,
       variables = [],
       block,
@@ -171,8 +170,6 @@ var hex = (function (h) {
       if (namespace === undefined) {
         console.warn('list don`t have namespace');
       }
-
-      namespaceFull = config.block.namespaceFull;
 
       var blockData = config.block.getData();
       if (blockData[namespace] === undefined) {

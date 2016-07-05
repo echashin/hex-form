@@ -1,10 +1,10 @@
 var hex = (function (h) {
     'use strict';
     h.directives.If = function (config) {
-      var node, func, comment, template, block, namespaceFull, variables = [];
+      var node, func, comment, template, block, variables = [];
 
       function render(data) {
-        data = h.utils.objectProperty(data, namespaceFull);
+        data = h.utils.objectProperty(data, config.block.namespaceFull);
         var result = func.call(null, data);
         if (result === true) {
           if (node === undefined) {
@@ -33,12 +33,12 @@ var hex = (function (h) {
       Object.defineProperty(directive, 'variables', {
         enumerable: true,
         configurable: true,
-        get: function(){
+        get: function () {
           return variables.map(function (d) {
             return config.block.namespaceFull + d;
           });
         },
-        set: function(){
+        set: function () {
 
         }
       });
@@ -51,7 +51,7 @@ var hex = (function (h) {
         template.attr('data-hex-block', '');
         var expr = node.attr('data-hex-if');
         block = config.block;
-        namespaceFull = config.namespaceFull;
+
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);

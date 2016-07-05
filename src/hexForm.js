@@ -199,11 +199,6 @@ var hex = (function (h) {
       return getValues();
     };
 
-
-    function convertDataName(name) {
-      return name.replace('-', '').toUpperCase();
-    }
-
     var init = function () {
       form.addClass('loader-container').append('<div class="loader"></div>');
       form.attr('data-hex-block', '');
