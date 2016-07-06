@@ -216,11 +216,13 @@ var hex = (function (h) {
       var cObj = blockData;
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
+
         if (i < nml) {
           if (cObj[aName] !== undefined) {
             cObj = cObj[aName];
           }
         } else {
+
           if (cObj[aName] !== undefined) {
             if ($.isArray(cObj)) {
               cObj.splice(aName, 1);
@@ -587,8 +589,8 @@ var hex = (function (h) {
       });
       initDirectives(block);
       findChildrenBlocks(block);
-      render.clear();
-      render.draw();
+      //render.clear();
+      //render.draw();
     }
 
     initBlock();

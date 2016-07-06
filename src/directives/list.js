@@ -105,6 +105,7 @@ var hex = (function (h) {
       currentItems = node.children(itemSelector);
 
       //Добавление новых
+
       for (var n in listData) {
         if (!h.utils.isEmpty((listData[n]))) {
           var finded = false;
@@ -115,6 +116,7 @@ var hex = (function (h) {
           }
           if (!finded) {
             add();
+            currentItems = node.children(itemSelector);
           }
         }
       }

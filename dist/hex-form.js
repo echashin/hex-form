@@ -679,6 +679,7 @@ var hex = (function (h) {
       currentItems = node.children(itemSelector);
 
       //Добавление новых
+
       for (var n in listData) {
         if (!h.utils.isEmpty((listData[n]))) {
           var finded = false;
@@ -689,6 +690,7 @@ var hex = (function (h) {
           }
           if (!finded) {
             add();
+            currentItems = node.children(itemSelector);
           }
         }
       }
@@ -2437,11 +2439,13 @@ var hex = (function (h) {
       var cObj = blockData;
       for (var i = 0; i <= nml; i++) {
         var aName = names[i];
+
         if (i < nml) {
           if (cObj[aName] !== undefined) {
             cObj = cObj[aName];
           }
         } else {
+
           if (cObj[aName] !== undefined) {
             if ($.isArray(cObj)) {
               cObj.splice(aName, 1);
@@ -2808,8 +2812,8 @@ var hex = (function (h) {
       });
       initDirectives(block);
       findChildrenBlocks(block);
-      render.clear();
-      render.draw();
+      //render.clear();
+      //render.draw();
     }
 
     initBlock();

@@ -17,8 +17,9 @@ $(document).ready(function () {
 
   /*
   hex.form('test');
-  hex.form('test').root.setData({"lots":[{"label":"first lot"},{"label":"second lot","items":[{"label":"first item"},{"label":"Second item"}]}]});
+  hex.form('test').root.getData()['lots'].push({"label":"lot"});
+  hex.form('test').root.getData()['lots'].push({"label":"lot"});
   hex.form('test').draw();
+  */
 
-*/
 });
