@@ -135,7 +135,7 @@ var hex = (function () {
             }
             cObj = cObj[aN];
           } else {
-            if (typeof cObj !== 'object') {
+            if (h.utils.isEmpty(cObj)) {
               return undefined;
             }
             return cObj[aN];
