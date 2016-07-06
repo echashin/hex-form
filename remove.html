@@ -59,6 +59,10 @@
                   <input required type="text" name="label" value="zzz" class="form-control">
                   <div class='label label-default' data-hex-bind-html="label"></div>
                 </div>
+                <div class="form-group" data-hex-block data-hex-if="label === 'zzz'">
+                  <input required type="text" name="value[value][min][0]" value="$$$" class="form-control">
+                  <div class='label label-default' data-hex-bind-html="value[value][0]"></div>
+                </div>
               </div>
               <div class="col-xs-2">
                 <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>

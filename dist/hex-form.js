@@ -135,6 +135,9 @@ var hex = (function () {
             }
             cObj = cObj[aN];
           } else {
+            if (typeof cObj !== 'object') {
+              return undefined;
+            }
             return cObj[aN];
           }
         }
