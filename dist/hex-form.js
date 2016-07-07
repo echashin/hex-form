@@ -552,7 +552,6 @@ var hex = (function (h) {
         node = config.node;
         directive.node = node;
         template = node.clone(false);
-        node.attr('data-hex-block', '');
         template.attr('data-hex-block', '');
         var expr = node.attr('data-hex-if');
         block = config.block;
@@ -564,6 +563,8 @@ var hex = (function (h) {
         func = new Function('__data', f.func);
         comment = $(document.createComment('hex-if (' + expr + ')'));
         comment.insertBefore(node.get(0));
+        node.remove();
+        node = undefined;
       }
 
 
@@ -2815,8 +2816,10 @@ var hex = (function (h) {
       });
       initDirectives(block);
       findChildrenBlocks(block);
-      //render.clear();
-      //render.draw();
+      if(isRoot) {
+        render.clear();
+        render.draw();
+      }
     }
 
     initBlock();

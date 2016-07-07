@@ -589,8 +589,10 @@ var hex = (function (h) {
       });
       initDirectives(block);
       findChildrenBlocks(block);
-      //render.clear();
-      //render.draw();
+      if(isRoot) {
+        render.clear();
+        render.draw();
+      }
     }
 
     initBlock();
