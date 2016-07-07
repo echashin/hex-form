@@ -2816,10 +2816,9 @@ var hex = (function (h) {
       });
       initDirectives(block);
       findChildrenBlocks(block);
-      if(isRoot) {
-        render.clear();
-        render.draw();
-      }
+
+      render.clear();
+      render.draw();
     }
 
     initBlock();
