@@ -391,7 +391,6 @@ var hex = (function (h) {
         enable();
       });
 
-
     }
 
 

@@ -75,7 +75,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-bind-disabled],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]');
+      var bindNodes = currentBlock.node.get(0).querySelectorAll('[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]');
       bindNodes = Array.prototype.slice.call(bindNodes);
       bindNodes.push(currentBlock.node.get(0));
       for (var bn = 0, bnl = bindNodes.length; bn < bnl; bn++) {
@@ -88,7 +88,6 @@ var hex = (function (h) {
               switch (a) {
                 case 'data-hex-bind-html':
                 case 'data-hex-bind-css':
-                case 'data-hex-bind-disabled':
                 case 'data-hex-bind-name':
                 case 'data-hex-bind-href':
                 case 'data-hex-bind-src':
@@ -121,6 +120,14 @@ var hex = (function (h) {
                     }));
                   }
 
+                  break;
+                }
+                case 'data-hex-disable':
+                {
+                    directives.push(new h.directives.Disable({
+                      node: findedNode,
+                      block: currentBlock
+                    }));
                   break;
                 }
                 case 'data-hex-list':

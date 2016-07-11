@@ -1,18 +1,17 @@
 var hex = (function (h) {
     'use strict';
     h.directives.Disable = function (config) {
-      var node, func, controls, variables = [];
+      var node, func, variables = [];
 
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
         var result = func.call(null, data);
+        var controls = node.find('input[type!="submit"],select,textarea').addBack('input[type!="submit"],select,textarea');
         if (result === true) {
-          node.css('border', '1px solid red');
           controls.each(function () {
             $(this).trigger('disable');
           });
         } else {
-          node.css('border', '1px solid green');
           controls.each(function () {
             $(this).trigger('enable');
           });
@@ -46,9 +45,6 @@ var hex = (function (h) {
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);
         }
-
-        controls = node.find('input[type!="submit"],select,textarea');
-
         func = new Function('__data', f.func);
       }
 
