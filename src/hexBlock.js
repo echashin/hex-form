@@ -424,17 +424,16 @@ var hex = (function (h) {
           var parentData = parentBlock.getData()[namespace];
 
           if (parentData !== undefined) {
-            if($.isArray(parentData)) {
-              var dIndex = parentData.indexOf(blockData);
-              if (dIndex !== -1) {
-                parentData.splice(dIndex, 1);
-              }
-            }else{
-              if($.isPlainObject(parentData)){
-                console.log(parentData);
+            if (parentData === blockData) {
+              delete parentBlock.getData()[namespace];
+            } else {
+              if ($.isArray(parentData)) {
+                var dIndex = parentData.indexOf(blockData);
+                if (dIndex !== -1) {
+                  parentData.splice(dIndex, 1);
+                }
               }
             }
-
           }
         }
         var bIndex = parentBlock.childBlocks.indexOf(block);
