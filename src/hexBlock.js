@@ -504,7 +504,11 @@ var hex = (function (h) {
 
       if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
         namespace = node.attr('data-hex-block');
-        $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
+        $index = -1;
+        if (node.closest('[data-hex-list="' + namespace + '"]').size() > 0) {
+          $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
+        }
+        console.log(namespace + ':' + $index);
       }
 
       if (h.utils.isEmpty(namespace) && parentBlock !== false) {
@@ -512,7 +516,7 @@ var hex = (function (h) {
       }
 
 
-      if (!h.utils.isEmpty(namespace) && parentBlock !== false) {
+      if (!h.utils.isEmpty(namespace) && parentBlock !== false && $index >= 0) {
         var bd = parentBlock.getData();
         if (bd !== undefined) {
           bd = bd[namespace];
@@ -544,10 +548,30 @@ var hex = (function (h) {
 
           }
         });
-
-
       }
 
+      if (!h.utils.isEmpty(namespace) && parentBlock !== false && $index < 0) {
+        var bd = parentBlock.getData();
+        if (bd !== undefined) {
+          if (bd[namespace] === undefined) {
+            bd[namespace] = blockData
+          } else {
+            blockData = bd[namespace];
+          }
+        }
+
+        Object.defineProperty(block, 'namespaceFull', {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return parentBlock.namespaceFull + '[\'' + namespace + '\']';
+          },
+          set: function () {
+
+          }
+        });
+      }
+      
 
       if (node.attr('id') !== undefined) {
         blockId = node.attr('id');
