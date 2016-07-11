@@ -88,6 +88,20 @@ var hex = (function (h) {
         {
           break;
         }
+        case 'checkbox':
+        case 'radio':
+        {
+          for (var i in inputs) {
+            if (inputs.hasOwnProperty(i)) {
+              if (inputs[i].attr('value') === controlValue) {
+                inputs[i].prop('checked', true);
+              }else{
+                inputs[i].prop('checked', false);
+              }
+            }
+          }
+          break;
+        }
         case 'text':
         default:
         {
@@ -104,26 +118,9 @@ var hex = (function (h) {
             }
           } else {
             inputs[0].val(controlValue);
+            inputs[0].trigger('change');
           }
-        }
-        case 'radio':
-        {
-          for (var i in inputs) {
-            if (inputs.hasOwnProperty(i)) {
-              if (inputs[i].is(':checked') === true) {
-                return inputs[i].val();
-              }
-            }
-          }
-          return false;
-        }
-        case 'checkbox':
-        {
-          if (inputs[0].is(':checked') === true) {
-            return checkedValue;
-          } else {
-            return uncheckedValue;
-          }
+          break;
         }
       }
     }
