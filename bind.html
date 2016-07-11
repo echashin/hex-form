@@ -51,16 +51,6 @@
         </ul>
         <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
           <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
-            <div data-hex-block="phones">
-              <div class="form-group">
-                <input required type="text" name="phone" class="form-control" value="+7-909-1411768">
-                <div class="label label-success" data-hex-bind-html="phone"></div>
-                <div class="errors">
-                  <span class="error-required label label-danger">Введите телефон</span>
-                  <span class="error-phone label label-danger">Неверный формат телефона</span>
-                </div>
-              </div>
-            </div>
             <br>
             <div class="row">
               <div class="col-xs-10">
@@ -146,6 +136,8 @@
             <span class="error-required label label-danger">Заполните поле</span>
           </div>
         </div>
+
+        <input type="text" name="dis" data-hex-disabled="type === 'model'">
 
         <div data-hex-if="type === 'model'">
           <div class="form-group">

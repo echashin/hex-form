@@ -422,10 +422,13 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
           var parentData = parentBlock.getData()[namespace];
+
           if (parentData !== undefined) {
-            var dIndex = parentData.indexOf(blockData);
-            if (dIndex !== -1) {
-              parentData.splice(dIndex, 1);
+            if($.isArray(parentData)) {
+              var dIndex = parentData.indexOf(blockData);
+              if (dIndex !== -1) {
+                parentData.splice(dIndex, 1);
+              }
             }
           }
         }
@@ -508,7 +511,6 @@ var hex = (function (h) {
         if (node.closest('[data-hex-list="' + namespace + '"]').size() > 0) {
           $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
         }
-        console.log(namespace + ':' + $index);
       }
 
       if (h.utils.isEmpty(namespace) && parentBlock !== false) {
