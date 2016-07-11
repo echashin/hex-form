@@ -2656,7 +2656,12 @@ var hex = (function (h) {
               if (dIndex !== -1) {
                 parentData.splice(dIndex, 1);
               }
+            }else{
+              if($.isPlainObject(parentData)){
+                console.log(parentData);
+              }
             }
+
           }
         }
         var bIndex = parentBlock.childBlocks.indexOf(block);
