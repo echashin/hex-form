@@ -551,12 +551,12 @@ var hex = (function (h) {
       }
 
       if (!h.utils.isEmpty(namespace) && parentBlock !== false && $index < 0) {
-        var bd = parentBlock.getData();
-        if (bd !== undefined) {
-          if (bd[namespace] === undefined) {
-            bd[namespace] = blockData
+        var pd = parentBlock.getData();
+        if (pd !== undefined) {
+          if (pd[namespace] === undefined) {
+            pd[namespace] = blockData;
           } else {
-            blockData = bd[namespace];
+            blockData = pd[namespace];
           }
         }
 
@@ -571,7 +571,7 @@ var hex = (function (h) {
           }
         });
       }
-      
+
 
       if (node.attr('id') !== undefined) {
         blockId = node.attr('id');
