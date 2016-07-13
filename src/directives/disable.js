@@ -6,13 +6,18 @@ var hex = (function (h) {
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
         var result = func.call(null, data);
-        var controls = node.find('input[type!="submit"],select,textarea').addBack('input[type!="submit"],select,textarea');
+        var controls = node.find('input[type!="submit"],select,textarea,button').addBack('input[type!="submit"],select,textarea,button');
+
+
         if (result === true) {
           controls.each(function () {
+            $(this).prop('disabled', true);
             $(this).trigger('disable');
+
           });
         } else {
           controls.each(function () {
+            $(this).prop('disabled', false);
             $(this).trigger('enable');
           });
         }
@@ -45,6 +50,7 @@ var hex = (function (h) {
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);
         }
+        console.log(f);
         func = new Function('__data', f.func);
       }
 

@@ -306,7 +306,7 @@
                                                                                           class="hide error glyphicon glyphicon-exclamation-sign"></span>
                   <b data-hex-bind-html="label+' tab:'+$index"></b></a>
               </li>
-              <li data-hex-block role="presentation">
+              <li data-hex-block="lots" role="presentation">
                 <a data-hex-bind-href="'#tab_'+$index" href="#tab_0" role="tab" data-toggle="tab"><span
                   data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
                   <b data-hex-bind-html="label+' tab:'+$index">tab: 0</b></a>
@@ -351,7 +351,7 @@
                   </div>
                 </div>
               </div>
-              <div data-hex-block role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
+              <div data-hex-block="lots" role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
                 <br>
                 <div class="row">
                   <div class="col-xs-10">
@@ -391,6 +391,7 @@
             <br>
             <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
           </div>
+
           <div data-hex-block role="tabpanel" class="tab-pane" id="tab_other">
             <br><br>
             <div class="form-group">

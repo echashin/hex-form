@@ -10,11 +10,17 @@ var hex = (function (h) {
           data = {};
         }
 
+
         switch (attribute) {
           case 'html':
           {
             node.get(0).innerHTML = func(data);
             break;
+          }
+          case 'id':
+          {
+            var r = func(data);
+            node.attr(attribute, func(data));
           }
           default:
           {
@@ -48,6 +54,7 @@ var hex = (function (h) {
         directive.node = node;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
+
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);

@@ -57,12 +57,13 @@ var hex = (function (h) {
       }
       for (var i = 0, length = linkedVars.length; i < length; i++) {
         var paramAsString = linkedVars[i];
-        var value = h.utils.objectProperty(localData, paramAsString);
+        var value = h.utils.objectProperty(data, paramAsString);
 
         if (value === undefined) {
-          h.utils.objectProperty(localData, paramAsString, '');
           value = '';
         }
+
+        h.utils.objectProperty(localData, paramAsString, value);
 
         if (JSON.stringify(value) !== dataLastVersion[paramAsString]) {
           changedVars.push(paramAsString);

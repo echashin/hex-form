@@ -95,11 +95,13 @@ var hex = (function (h) {
 
       //Удаление старых
       currentItems.each(function (k) {
-        var itemData = $(this).get(0).getBlock().getData();
-        var dIndex = listData.indexOf(itemData);
-        if (dIndex === -1 || itemData === undefined) {
-          $(this).get(0).getBlock().remove();
-          removed = k;
+        if (typeof $(this).get(0).getBlock === 'function') {
+          var itemData = $(this).get(0).getBlock().getData();
+          var dIndex = listData.indexOf(itemData);
+          if (dIndex === -1 || itemData === undefined) {
+            $(this).get(0).getBlock().remove();
+            removed = k;
+          }
         }
       });
       currentItems = node.children(itemSelector);
@@ -110,8 +112,10 @@ var hex = (function (h) {
         if (!h.utils.isEmpty((listData[n]))) {
           var finded = false;
           for (var j = 0, jl = currentItems.length; j < jl; j++) {
-            if (currentItems[j].getBlock().getData() === listData[n]) {
-              finded = true;
+            if (typeof currentItems[j].getBlock === 'function') {
+              if (currentItems[j].getBlock().getData() === listData[n]) {
+                finded = true;
+              }
             }
           }
           if (!finded) {
@@ -187,7 +191,6 @@ var hex = (function (h) {
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
       template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
-
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
         on('add', function (newNode) {
