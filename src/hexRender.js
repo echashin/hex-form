@@ -11,7 +11,11 @@ var hex = (function (h) {
     function getLinkedVariables() {
       linkedVars = [];
       for (var i = 0, length = directives.length; i < length; i++) {
-        linkedVars = linkedVars.concat(directives[i].variables);
+        for (var j = 0, jl = directives[i].variables.length; j < jl; j++) {
+          if (linkedVars.indexOf(directives[i].variables[j]) === -1) {
+            linkedVars.push(directives[i].variables[j]);
+          }
+        }
       }
       linkedVars = h.utils.arrayUniq(linkedVars);
       return linkedVars;
@@ -32,17 +36,17 @@ var hex = (function (h) {
     function removeDirective(d) {
       if (directives.indexOf(d) >= 0) {
         /*
-        d.variables.forEach(function (v) {
-          if (dataLastVersion[v] !== undefined) {
-            delete dataLastVersion[v];
-          }
-          if (linkedVars !== undefined) {
-            if (linkedVars.indexOf(v) !== -1) {
-              linkedVars.splice(linkedVars.indexOf(v), 1);
-            }
-          }
-        });
-        */
+         d.variables.forEach(function (v) {
+         if (dataLastVersion[v] !== undefined) {
+         delete dataLastVersion[v];
+         }
+         if (linkedVars !== undefined) {
+         if (linkedVars.indexOf(v) !== -1) {
+         linkedVars.splice(linkedVars.indexOf(v), 1);
+         }
+         }
+         });
+         */
         directives.splice(directives.indexOf(d), 1);
         clear();
       }
