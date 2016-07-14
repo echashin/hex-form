@@ -56,8 +56,9 @@ var hex = (function (h) {
           variables.push(f.vars[i]);
         }
         func = new Function('__data', f.func);
-        comment = $(document.createComment('hex-if (' + expr + ')'));
+        comment = $(document.createComment('* hex-if *'));
         comment.insertBefore(node.get(0));
+        template.removeAttr('data-hex-if');
         node.remove();
         node = undefined;
       }

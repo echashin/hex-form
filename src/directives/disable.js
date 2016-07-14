@@ -50,7 +50,6 @@ var hex = (function (h) {
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);
         }
-        console.log(f);
         func = new Function('__data', f.func);
       }
 

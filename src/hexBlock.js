@@ -113,13 +113,10 @@ var hex = (function (h) {
                 }
                 case 'data-hex-if':
                 {
-                  if (findedNode.get(0) !== currentBlock.node.get(0)) {
-                    directives.push(new h.directives.If({
-                      node: findedNode,
-                      block: currentBlock
-                    }));
-                  }
-
+                  directives.push(new h.directives.If({
+                    node: findedNode,
+                    block: currentBlock
+                  }));
                   break;
                 }
                 case 'data-hex-disable':
@@ -201,6 +198,7 @@ var hex = (function (h) {
       isValid = blockValid;
       return isValid;
     }
+
 
     function reset() {
       isValid = true;
@@ -491,18 +489,7 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         root = parentBlock.root;
         render = block.render = parentBlock.render;
-
-        Object.defineProperty(block, 'namespaceFull', {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return parentBlock.namespaceFull;
-          },
-          set: function () {
-
-          }
-        });
-
+        isRoot = false;
       } else {
         root = block;
         parentBlock = false;
@@ -523,67 +510,78 @@ var hex = (function (h) {
         }
       }
 
-      if (h.utils.isEmpty(namespace) && parentBlock !== false) {
-        blockData = parentBlock.getData();
-      }
+      if(!isRoot){
 
-      //Если блок внутри списка
-      if (!h.utils.isEmpty(namespace) && parentBlock !== false && $index >= 0) {
-        var bd = parentBlock.getData();
-        if (bd !== undefined) {
-          bd = bd[namespace];
-          if (bd[$index] === undefined) {
-            bd[$index] = blockData;
-          } else {
-            blockData = bd[$index];
+        if (h.utils.isEmpty(namespace)) {
+          blockData = parentBlock.getData();
+          Object.defineProperty(block, 'namespaceFull', {
+            enumerable: true,
+            configurable: true,
+            get: function () {
+              return parentBlock.namespaceFull;
+            },
+            set: function () {
+
+            }
+          });
+        }else {
+          //Если блок внутри списка
+          if ($index >= 0) {
+            var bd = parentBlock.getData();
+            if (bd !== undefined) {
+              bd = bd[namespace];
+              if (bd[$index] === undefined) {
+                bd[$index] = blockData;
+              } else {
+                blockData = bd[$index];
+              }
+            }
+
+            Object.defineProperty(blockData, '$index', {
+              enumerable: true,
+              configurable: true,
+              get: function () {
+                return parentBlock.getData()[namespace].indexOf(blockData);
+              },
+              set: function () {
+
+              }
+            });
+
+            Object.defineProperty(block, 'namespaceFull', {
+              enumerable: true,
+              configurable: true,
+              get: function () {
+                return parentBlock.namespaceFull + '[\'' + namespace + '\'][\'' + blockData.$index + '\']';
+              },
+              set: function () {
+
+              }
+            });
+          }
+          else{
+            var pd = parentBlock.getData();
+            if (pd !== undefined) {
+              if (pd[namespace] === undefined) {
+                pd[namespace] = blockData;
+              } else {
+                blockData = pd[namespace];
+              }
+            }
+
+            Object.defineProperty(block, 'namespaceFull', {
+              enumerable: true,
+              configurable: true,
+              get: function () {
+                return parentBlock.namespaceFull + '[\'' + namespace + '\']';
+              },
+              set: function () {
+
+              }
+            });
           }
         }
-
-        Object.defineProperty(blockData, '$index', {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return parentBlock.getData()[namespace].indexOf(blockData);
-          },
-          set: function () {
-
-          }
-        });
-
-        Object.defineProperty(block, 'namespaceFull', {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return parentBlock.namespaceFull + '[\'' + namespace + '\'][\'' + blockData.$index + '\']';
-          },
-          set: function () {
-
-          }
-        });
       }
-
-      if (!h.utils.isEmpty(namespace) && parentBlock !== false && $index < 0) {
-        var pd = parentBlock.getData();
-        if (pd !== undefined) {
-          if (pd[namespace] === undefined) {
-            pd[namespace] = blockData;
-          } else {
-            blockData = pd[namespace];
-          }
-        }
-
-        Object.defineProperty(block, 'namespaceFull', {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return parentBlock.namespaceFull + '[\'' + namespace + '\']';
-          },
-          set: function () {
-
-          }
-        });
-      }
-
 
       if (node.attr('id') !== undefined) {
         blockId = node.attr('id');
@@ -599,7 +597,7 @@ var hex = (function (h) {
         });
       }
 
-      if (!h.utils.isEmpty(parentBlock)) {
+      if (!isRoot) {
         Object.defineProperty(blockData, '$parentIndex', {
           enumerable: true,
           configurable: true,
@@ -625,7 +623,7 @@ var hex = (function (h) {
       });
 
       if (block.namespaceFull === undefined) {
-        console.log(block);
+        console.warn(block);
       }
 
 
