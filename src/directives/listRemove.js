@@ -8,6 +8,7 @@ var hex = (function (h) {
       , handlers = {}//привязанные к контролу события
       , namespace
       , variables = []
+      , allowEmpty = false
       ;
 
 
@@ -38,13 +39,14 @@ var hex = (function (h) {
     }
 
     function render(data) {
-      var length = data[namespace].length;
-      if (length < 2) {
-        node.prop('disabled', true);
-      } else {
-        node.prop('disabled', false);
+      if (!allowEmpty) {
+        var length = data[namespace].length;
+        if (length < 2) {
+          node.prop('disabled', true);
+        } else {
+          node.prop('disabled', false);
+        }
       }
-
     }
 
     var directive = {
@@ -70,6 +72,10 @@ var hex = (function (h) {
     function init(conf) {
       node = $(conf.node);
       namespace = node.closest('[data-hex-list]').attr('data-hex-list');
+      if (node.closest('[data-hex-list]').attr('data-hex-list-allowempty') !== undefined) {
+        allowEmpty = true;
+      }
+
       variables.push('[\'' + namespace + '\']');
 
       node.on('click', function (event) {
