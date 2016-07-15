@@ -628,7 +628,7 @@ var hex = (function (h) {
 
 
 
-      //render.clear();
+      render.clear();
       render.draw(directives);
 
 
