@@ -2758,8 +2758,8 @@ var hex = (function (h) {
       currentBlock.node.find('input[type!="submit"],select,textarea').each(function () {
         var el = $(this);
         var parentBlockNode = el.closest('[data-hex-block]');
-        //Инпут находится непосредственно внутри нашего блока
-        if (parentBlockNode.get(0) === node.get(0)) {
+        //Инпут находится непосредственно внутри нашего блока не в шаблоне и не в hex-if
+        if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && parentBlockNode.get(0) === node.get(0)) {
           ownInputs.push(el);
         }
       });
