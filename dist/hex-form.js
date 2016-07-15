@@ -3033,7 +3033,7 @@ var hex = (function (h) {
             if (inputs.hasOwnProperty(i)) {
               if (inputs[i].attr('value') === controlValue) {
                 inputs[i].prop('checked', true);
-              }else{
+              } else {
                 inputs[i].prop('checked', false);
               }
             }
@@ -3220,6 +3220,7 @@ var hex = (function (h) {
       enable: enable,
       validate: validate,
       getInputs: getInputs,
+      inputs: inputs,
       on: on,
       off: off,
       trigger: trigger,
