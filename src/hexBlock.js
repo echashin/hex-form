@@ -76,8 +76,6 @@ var hex = (function (h) {
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
       var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
-      //var s = '[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if]';
-
       var bindNodes = currentBlock.node.find(s).addBack();
       bindNodes.each(function () {
         var findedNode = $(this);

@@ -95,15 +95,11 @@ var hex = (function (h) {
 
       //Удаление старых
       currentItems.each(function (k) {
-        if (typeof $(this).get(0).getBlock !== 'function') {
-          console.log($(this));
-        } else {
-          var itemData = $(this).get(0).getBlock().getData();
-          var dIndex = listData.indexOf(itemData);
-          if (dIndex === -1 || itemData === undefined) {
-            $(this).get(0).getBlock().remove();
-            removed = k;
-          }
+        var itemData = $(this).get(0).getBlock().getData();
+        var dIndex = listData.indexOf(itemData);
+        if (dIndex === -1 || itemData === undefined) {
+          $(this).get(0).getBlock().remove();
+          removed = k;
         }
       });
       currentItems = node.children(itemSelector);

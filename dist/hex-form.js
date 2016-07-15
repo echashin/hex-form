@@ -688,15 +688,11 @@ var hex = (function (h) {
 
       //Удаление старых
       currentItems.each(function (k) {
-        if (typeof $(this).get(0).getBlock !== 'function') {
-          console.log($(this));
-        } else {
-          var itemData = $(this).get(0).getBlock().getData();
-          var dIndex = listData.indexOf(itemData);
-          if (dIndex === -1 || itemData === undefined) {
-            $(this).get(0).getBlock().remove();
-            removed = k;
-          }
+        var itemData = $(this).get(0).getBlock().getData();
+        var dIndex = listData.indexOf(itemData);
+        if (dIndex === -1 || itemData === undefined) {
+          $(this).get(0).getBlock().remove();
+          removed = k;
         }
       });
       currentItems = node.children(itemSelector);
@@ -2371,8 +2367,6 @@ var hex = (function (h) {
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
       var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
-      //var s = '[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if]';
-
       var bindNodes = currentBlock.node.find(s).addBack();
       bindNodes.each(function () {
         var findedNode = $(this);
