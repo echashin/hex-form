@@ -2375,8 +2375,7 @@ var hex = (function (h) {
       bindNodes.each(function () {
         var findedNode = $(this);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-
-        if (findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
+        if (findedNode.parent('[data-hex-if]').size() === 0 && findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
           var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
@@ -2767,7 +2766,7 @@ var hex = (function (h) {
 
       currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
-        if (el.closest('[data-hex-list-tpl]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
+        if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
           currentBlock.addBlock(el);
         }
       });
@@ -2920,7 +2919,6 @@ var hex = (function (h) {
 
       initDirectives(block);
       findChildrenBlocks(block);
-
 
 
       render.clear();
