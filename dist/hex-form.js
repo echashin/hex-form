@@ -2920,7 +2920,7 @@ var hex = (function (h) {
 
 
       //render.clear();
-      //render.draw(directives);
+      render.draw(directives);
 
 
     }
