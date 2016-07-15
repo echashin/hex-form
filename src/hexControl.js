@@ -118,6 +118,7 @@ var hex = (function (h) {
             }
           } else {
             inputs[0].val(controlValue);
+            inputs[0].trigger('change');
           }
           break;
         }

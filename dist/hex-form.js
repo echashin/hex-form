@@ -563,7 +563,6 @@ var hex = (function (h) {
       });
 
       function init() {
-        console.info('hex-if');
         node = config.node;
         directive.node = node;
         template = node.clone(false);
@@ -3057,6 +3056,7 @@ var hex = (function (h) {
             }
           } else {
             inputs[0].val(controlValue);
+            inputs[0].trigger('change');
           }
           break;
         }

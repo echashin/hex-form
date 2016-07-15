@@ -48,7 +48,6 @@ var hex = (function (h) {
       });
 
       function init() {
-        console.info('hex-if');
         node = config.node;
         directive.node = node;
         template = node.clone(false);
