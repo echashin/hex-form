@@ -61,6 +61,40 @@
                   <input required type="text" name="label" value="zzz" class="form-control">
                   <div class='label label-default' data-hex-bind-html="label"></div>
                 </div>
+                <div class="form-group">
+                  <label>Вид объекта</label>
+                  <div class="btn-group btn-group-justified">
+                    <label class="btn btn-default active"
+                           data-hex-bind-for="'lots_'+$index+'_type_model'">
+                      <input
+                        data-hex-bind-id="'lots_'+$index+'_type_model'"
+                        type="radio"
+                        name="type"
+                        value="model"
+                        checked> На основе модели</label>
+                    <label class="btn btn-default"
+                           data-hex-bind-for="'lots_'+$index+'_type_catalog'"
+                    ><input type="radio"
+                            name="type"
+                            data-hex-bind-id="'lots_'+$index+'_type_catalog'"
+                            value="catalog"> На основе каталога</label>
+                  </div>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Заполните поле</span>
+                  </div>
+                </div>
+
+                <input type="text" name="dis" data-hex-disable="type === 'model'">
+
+                <div data-hex-if="type === 'model'">
+                  <div class="form-group">
+                    <label>Модель </label>
+                    <input type="text" name="model" value="22">
+                    <div class="errors">
+                      <span class="error-required label label-danger">Заполните поле</span>
+                    </div>
+                  </div>
+                </div>
 
                 <h4>items</h4>
                 <div data-hex-list="items">
@@ -71,9 +105,7 @@
                         <input required type="text" name="dd" class="form-control" value="5">
                         <span class='label label-info' data-hex-bind-html="dd"></span>
                       </div>
-                      <div class="form-group">
-                        <input data-hex-widget-filesimple type="file" name="image">
-                      </div>
+
 
                     </div>
                     <div class="col-xs-2">

@@ -563,6 +563,7 @@ var hex = (function (h) {
       });
 
       function init() {
+        console.info('hex-if');
         node = config.node;
         directive.node = node;
         template = node.clone(false);
@@ -777,7 +778,7 @@ var hex = (function (h) {
       }
       itemSelector = '[data-hex-block="' + namespace + '"]';
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
-      template.find('[data-hex-if]').attr('data-hex-block', '');
+      //template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
@@ -2372,10 +2373,12 @@ var hex = (function (h) {
     function initDirectives(currentBlock) {
       var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
       var bindNodes = currentBlock.node.find(s).addBack();
+
       bindNodes.each(function () {
         var findedNode = $(this);
         //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-        if (findedNode.parent('[data-hex-if]').size() === 0 && findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
+
+        if (findedNode.parents('[data-hex-if]').size() === 0 && findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
           var attributes = h.utils.getAttributes(findedNode);
           for (var a in attributes) {
             if (attributes.hasOwnProperty(a)) {
