@@ -29,7 +29,11 @@ var hex = (function (h) {
       function addDirective(d) {
         if (directives.indexOf(d) === -1) {
           directives.push(d);
-          linkedVars = linkedVars.concat(d.variables);
+          for (var j = 0, jl = d.variables.length; j < jl; j++) {
+            if (linkedVars.indexOf(d.variables[j]) === -1) {
+              linkedVars.push(d.variables[j]);
+            }
+          }
         }
       }
 
