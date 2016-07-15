@@ -76,6 +76,8 @@ var hex = (function (h) {
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
       var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
+      //var s = '[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if]';
+
       var bindNodes = currentBlock.node.find(s).addBack();
       bindNodes.each(function () {
         var findedNode = $(this);
@@ -252,7 +254,7 @@ var hex = (function (h) {
       });
       var nml = names.length - 1;
       var defaultVal = hex.utils.objectProperty(blockData, controlName);
-      if (defaultVal !== undefined) {
+      if (!h.utils.isEmpty(defaultVal)) {
         control.setValue(defaultVal);
       }
 
@@ -468,6 +470,7 @@ var hex = (function (h) {
           ownInputs.push(el);
         }
       });
+      addControls(ownInputs, currentBlock);
 
       currentBlock.node.find('[data-hex-block]').each(function () {
         var el = $(this);
@@ -475,7 +478,7 @@ var hex = (function (h) {
           currentBlock.addBlock(el);
         }
       });
-      addControls(ownInputs, currentBlock);
+
     }
 
 
@@ -490,10 +493,11 @@ var hex = (function (h) {
         root = parentBlock.root;
         render = block.render = parentBlock.render;
         isRoot = false;
+
       } else {
         root = block;
         parentBlock = false;
-        block.parent = false;
+        block.parent = undefined;
         isRoot = true;
         render = block.render = new h.Render();
         blockData = render.data;
@@ -510,8 +514,7 @@ var hex = (function (h) {
         }
       }
 
-      if(!isRoot){
-
+      if (!isRoot) {
         if (h.utils.isEmpty(namespace)) {
           blockData = parentBlock.getData();
           Object.defineProperty(block, 'namespaceFull', {
@@ -524,7 +527,7 @@ var hex = (function (h) {
 
             }
           });
-        }else {
+        } else {
           //Если блок внутри списка
           if ($index >= 0) {
             var bd = parentBlock.getData();
@@ -559,7 +562,7 @@ var hex = (function (h) {
               }
             });
           }
-          else{
+          else {
             var pd = parentBlock.getData();
             if (pd !== undefined) {
               if (pd[namespace] === undefined) {
@@ -583,7 +586,7 @@ var hex = (function (h) {
         }
       }
 
-      if (node.attr('id') !== undefined) {
+      if (!h.utils.isEmpty(node.attr('id'))) {
         blockId = node.attr('id');
         Object.defineProperty(blockData, '$' + blockId, {
           enumerable: true,
@@ -622,17 +625,14 @@ var hex = (function (h) {
         }
       });
 
-      if (block.namespaceFull === undefined) {
-        console.warn(block);
-      }
-
-
       initDirectives(block);
       findChildrenBlocks(block);
 
 
+
       render.clear();
-      render.draw();
+      render.draw(directives);
+
 
     }
 

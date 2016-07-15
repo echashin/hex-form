@@ -40,7 +40,11 @@ var hex = (function (h) {
 
     function render(data) {
       if (!allowEmpty) {
-        var length = data[namespace].length;
+        var list = h.utils.objectProperty(data, config.block.parent.namespaceFull + namespace);
+        var length = 0;
+        if (!h.utils.isEmpty(list)) {
+          length = list.length;
+        }
         if (length < 2) {
           node.prop('disabled', true);
         } else {

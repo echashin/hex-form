@@ -95,7 +95,9 @@ var hex = (function (h) {
 
       //Удаление старых
       currentItems.each(function (k) {
-        if (typeof $(this).get(0).getBlock === 'function') {
+        if (typeof $(this).get(0).getBlock !== 'function') {
+          console.log($(this));
+        } else {
           var itemData = $(this).get(0).getBlock().getData();
           var dIndex = listData.indexOf(itemData);
           if (dIndex === -1 || itemData === undefined) {
@@ -107,15 +109,12 @@ var hex = (function (h) {
       currentItems = node.children(itemSelector);
 
       //Добавление новых
-
       for (var n in listData) {
         if (!h.utils.isEmpty((listData[n]))) {
           var finded = false;
           for (var j = 0, jl = currentItems.length; j < jl; j++) {
-            if (typeof currentItems[j].getBlock === 'function') {
-              if (currentItems[j].getBlock().getData() === listData[n]) {
-                finded = true;
-              }
+            if (currentItems[j].getBlock().getData() === listData[n]) {
+              finded = true;
             }
           }
           if (!finded) {

@@ -5,7 +5,10 @@ var hex = (function (h) {
 
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
-        var result = func.call(null, data);
+        var result = false;
+        if (data !== undefined) {
+          result = func.call(null, data);
+        }
         if (result === true) {
           if (node === undefined) {
             node = template.clone(false);
@@ -22,6 +25,7 @@ var hex = (function (h) {
             }
           }
         }
+
       }
 
 

@@ -38,10 +38,21 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off"
-            data-hex-block>
+      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off">
 
-        <div data-hex-list="lots" data-hex-list-allowempty>
+        <br/><br/>
+        <h4>Товары</h4>
+        <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
+          <li data-hex-list-tpl role="presentation">
+            <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid"
+                                                                                      class="hide error glyphicon glyphicon-exclamation-sign"></span>
+              <b data-hex-bind-html="label+' tab:'+$index"></b></a>
+          </li>
+          <li role="presentation">
+            <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
+          </li>
+        </ul>
+        <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
           <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
             <br>
             <div class="row">
@@ -50,29 +61,69 @@
                   <input required type="text" name="label" value="zzz" class="form-control">
                   <div class='label label-default' data-hex-bind-html="label"></div>
                 </div>
-              </div>
-              <div class="col-xs-2">
-                <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
-              </div>
-            </div>
-          </div>
-          <div data-hex-block="lots" role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index" >
-            <br>
-            <div class="row">
-              <div class="col-xs-10">
-                <div class="form-group">
-                  <input required type="text" name="label" value="zzz" class="form-control">
-                  <div class='label label-default' data-hex-bind-html="label"></div>
+
+                <h4>items</h4>
+                <div data-hex-list="items">
+                  <div class="row" data-hex-list-tpl>
+                    <div class="col-xs-10">
+                      <div class="form-group">
+                        <label data-hex-bind-html="'item: '+$index">1</label>
+                        <input required type="text" name="dd" class="form-control" value="5">
+                        <span class='label label-info' data-hex-bind-html="dd"></span>
+                      </div>
+                      <div class="form-group">
+                        <input data-hex-widget-filesimple type="file" name="image">
+                      </div>
+
+                    </div>
+                    <div class="col-xs-2">
+                      <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
+                    </div>
+                  </div>
+                  <div class="row" data-hex-block="items">
+                    <div class="col-xs-10">
+                      <div class="form-group">
+                        <label data-hex-bind-html="'item: '+$index">1</label>
+                        <input required type="text" name="dd" class="form-control" value="5">
+                        <span class='label label-info' data-hex-bind-html="dd"></span>
+                      </div>
+                      <div class="form-group">
+                        <input data-hex-widget-filesimple type="file" name="image">
+                      </div>
+
+                    </div>
+                    <div class="col-xs-2">
+                      <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
+                    </div>
+                  </div>
+                  <div class="row" data-hex-block="items">
+                    <div class="col-xs-10">
+                      <div class="form-group">
+                        <label data-hex-bind-html="'item: '+$index">1</label>
+                        <input required type="text" name="dd" class="form-control" value="5">
+                        <span class='label label-info' data-hex-bind-html="dd"></span>
+                      </div>
+                      <div class="form-group">
+                        <input data-hex-widget-filesimple type="file" name="image">
+                      </div>
+
+                    </div>
+                    <div class="col-xs-2">
+                      <button type="button" class="btn btn-danger" data-hex-list-remove>remove item</button>
+                    </div>
+                  </div>
                 </div>
+                <button type="button" class="btn btn-success" data-hex-list-add='items'>+item</button>
               </div>
               <div class="col-xs-2">
                 <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>
               </div>
             </div>
           </div>
-
-
         </div>
+        <hr>
+        <br>
+        <button type="button" class="btn btn-success" data-hex-list-add="lots">+lot</button>
 
         <hr>
         <br>

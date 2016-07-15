@@ -6,7 +6,10 @@ var hex = (function (h) {
 
     function render(data) {
       data = h.utils.objectProperty(data, config.block.namespaceFull);
-      var r = func.call(null, data);
+      var r = false;
+      if (!h.utils.isEmpty(data)) {
+        r = func.call(null, data);
+      }
       if (r) {
         node.removeClass('hide');
       } else {
