@@ -3294,13 +3294,13 @@ var hex = (function (h) {
       }
 
       input.on('change', function () {
-        setValue(getDomValue());
+        controlValue = getDomValue();
         trigger('change', controlValue);
       });
 
       if (type === 'text' || type === 'textarea') {
         input.on('keyup', function () {
-          setValue(getDomValue());
+          controlValue = getDomValue();
           trigger('change', controlValue);
         });
       }
