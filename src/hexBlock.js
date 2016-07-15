@@ -628,8 +628,8 @@ var hex = (function (h) {
 
 
 
-      render.clear();
-      render.draw(directives);
+      //render.clear();
+      //render.draw(directives);
 
 
     }
