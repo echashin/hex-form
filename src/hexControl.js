@@ -74,8 +74,10 @@ var hex = (function (h) {
         case 'checkbox':
         {
           if (inputs[0].is(':checked') === true) {
+            inputs[0].closest('label').addClass('checked');
             return checkedValue;
           } else {
+            inputs[0].closest('label').removeClass('checked');
             return uncheckedValue;
           }
         }
@@ -89,6 +91,14 @@ var hex = (function (h) {
           break;
         }
         case 'checkbox':
+        {
+          if (checkedValue === controlValue) {
+            $(this).closest('label').addClass('checked');
+          } else {
+            $(this).closest('label').removeClass('checked');
+          }
+          break;
+        }
         case 'radio':
         {
           for (var i in inputs) {
