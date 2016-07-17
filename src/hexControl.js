@@ -93,9 +93,9 @@ var hex = (function (h) {
         case 'checkbox':
         {
           if (checkedValue === controlValue) {
-            $(this).closest('label').addClass('checked');
+            inputs[0].closest('label').addClass('checked');
           } else {
-            $(this).closest('label').removeClass('checked');
+            inputs[0].closest('label').removeClass('checked');
           }
           break;
         }
