@@ -507,7 +507,7 @@ var hex = (function (h) {
 
       if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
         namespace = node.attr('data-hex-block');
-        $index = -1;
+        $index = undefined;
         if (node.closest('[data-hex-list="' + namespace + '"]').size() > 0) {
           $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
         }
@@ -528,7 +528,7 @@ var hex = (function (h) {
           });
         } else {
           //Если блок внутри списка
-          if ($index >= 0) {
+          if ($index !== undefined) {
             var bd = parentBlock.getData();
             if (bd !== undefined) {
               bd = bd[namespace];
