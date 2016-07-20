@@ -3022,9 +3022,9 @@ var hex = (function (h) {
             for (var ci = 0, l = inputs.length; ci < l; ci++) {
               if (inputs[ci].is(':checked') === true) {
                 vals.push(inputs[ci].val());
-                inputs[0].closest('label').addClass('checked');
+                inputs[ci].closest('label').addClass('checked');
               } else {
-                inputs[0].closest('label').removeClass('checked');
+                inputs[ci].closest('label').removeClass('checked');
                 if (inputs[ci].attr('data-hex-false-value') !== undefined) {
                   vals.push(inputs[ci].attr('data-hex-false-value'));
                 }
@@ -3051,6 +3051,7 @@ var hex = (function (h) {
               inputs[0].closest('label').removeClass('checked');
             }
           } else {
+
             for (var ci = 0, l = inputs.length; ci < l; ci++) {
               if (controlValue.indexOf(inputs[ci].val()) !== -1) {
                 inputs[ci].closest('label').addClass('checked');
