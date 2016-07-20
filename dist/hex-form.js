@@ -777,7 +777,6 @@ var hex = (function (h) {
       }
       itemSelector = '[data-hex-block="' + namespace + '"]';
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
-      //template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {
@@ -2230,6 +2229,7 @@ var hex = (function (h) {
       function draw(renderDirectives) {
 
         var changedVars = [];
+
         var localData = JSON.parse(JSON.stringify(data));
 
 
@@ -2709,7 +2709,6 @@ var hex = (function (h) {
     };
 
     block.remove = function () {
-
       //Убираем контролы и их привязки к данным
       while (block.controls.length > 0) {
         removeControl(block.controls[0]);
@@ -2723,12 +2722,13 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
           var parentData = parentBlock.getData()[namespace];
-
           if (parentData !== undefined) {
+
             if (parentData === blockData) {
               delete parentBlock.getData()[namespace];
             } else {
               if ($.isArray(parentData)) {
+                console.info(JSON.parse(JSON.stringify(parentData)));
                 var dIndex = parentData.indexOf(blockData);
                 if (dIndex !== -1) {
                   parentData.splice(dIndex, 1);
@@ -2747,8 +2747,6 @@ var hex = (function (h) {
         block.childBlocks[0].remove();
       }
       node.remove();
-
-      //render.clear();
       root.validate(false);
     };
 
@@ -3011,12 +3009,28 @@ var hex = (function (h) {
         }
         case 'checkbox':
         {
-          if (inputs[0].is(':checked') === true) {
-            inputs[0].closest('label').addClass('checked');
-            return checkedValue;
+          if (inputs.length < 2) {
+            if (inputs[0].is(':checked') === true) {
+              inputs[0].closest('label').addClass('checked');
+              return checkedValue;
+            } else {
+              inputs[0].closest('label').removeClass('checked');
+              return uncheckedValue;
+            }
           } else {
-            inputs[0].closest('label').removeClass('checked');
-            return uncheckedValue;
+            var vals = [];
+            for (var ir in inputs) {
+              if (inputs.hasOwnProperty(ir)) {
+                if (inputs[ir].is(':checked') === true) {
+                  vals.push(inputs[ir].val());
+                } else {
+                  if (inputs[ir].attr('data-hex-false-value') !== undefined) {
+                    vals.push(inputs[ir].attr('data-hex-false-value'));
+                  }
+                }
+              }
+            }
+            return vals;
           }
         }
       }
@@ -3030,10 +3044,24 @@ var hex = (function (h) {
         }
         case 'checkbox':
         {
-          if (checkedValue === controlValue) {
-            inputs[0].closest('label').addClass('checked');
+          if (inputs.length < 2) {
+            if (checkedValue === controlValue) {
+              inputs[0].closest('label').addClass('checked');
+            } else {
+              inputs[0].closest('label').removeClass('checked');
+            }
           } else {
-            inputs[0].closest('label').removeClass('checked');
+            for (var ci = 0, l = inputs.length; ci < l; ci++) {
+              if (inputs.hasOwnProperty(ci)) {
+                if (controlValue.indexOf(inputs[ci].val()) !== -1) {
+                  inputs[ci].closest('label').addClass('checked');
+                  inputs[ci].prop('checked', true);
+                } else {
+                  inputs[ci].closest('label').removeClass('checked');
+                  inputs[ci].prop('checked', false);
+                }
+              }
+            }
           }
           break;
         }

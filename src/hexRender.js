@@ -59,6 +59,7 @@ var hex = (function (h) {
       function draw(renderDirectives) {
 
         var changedVars = [];
+
         var localData = JSON.parse(JSON.stringify(data));
 
 

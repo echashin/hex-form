@@ -184,7 +184,6 @@ var hex = (function (h) {
       }
       itemSelector = '[data-hex-block="' + namespace + '"]';
       template = node.children('[data-hex-list-tpl]').first().clone(false).removeAttr('data-hex-list-tpl');
-      //template.find('[data-hex-if]').attr('data-hex-block', '');
       node.children('[data-hex-list-tpl]').first().remove();
 
       if (template.find('a[data-toggle="tab"]').size() > 0) {

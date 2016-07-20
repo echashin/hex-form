@@ -414,7 +414,6 @@ var hex = (function (h) {
     };
 
     block.remove = function () {
-
       //Убираем контролы и их привязки к данным
       while (block.controls.length > 0) {
         removeControl(block.controls[0]);
@@ -428,12 +427,13 @@ var hex = (function (h) {
       if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
           var parentData = parentBlock.getData()[namespace];
-
           if (parentData !== undefined) {
+
             if (parentData === blockData) {
               delete parentBlock.getData()[namespace];
             } else {
               if ($.isArray(parentData)) {
+                console.info(JSON.parse(JSON.stringify(parentData)));
                 var dIndex = parentData.indexOf(blockData);
                 if (dIndex !== -1) {
                   parentData.splice(dIndex, 1);
@@ -452,8 +452,6 @@ var hex = (function (h) {
         block.childBlocks[0].remove();
       }
       node.remove();
-
-      //render.clear();
       root.validate(false);
     };
 
