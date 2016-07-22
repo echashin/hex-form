@@ -10,7 +10,7 @@ var hex = (function (h) {
     var lastValidValue = false;
     var url;
     var ajax = false;
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
