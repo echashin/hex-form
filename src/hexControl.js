@@ -282,12 +282,13 @@ var hex = (function (h) {
 
 
     function validate(update) {
+
       if (update === false) {
         return isValid;
       }
       else {
         lastValidateValue = controlValue;
-        //hideErrors();
+        hideErrors();
         errors = [];
         if (!isDisabled) {
           for (var v in validators) {
@@ -399,10 +400,10 @@ var hex = (function (h) {
         trigger('change', controlValue);
       });
 
-      if (type === 'text' || type === 'textarea') {
+      if (type === 'text' || type === 'textarea' || type === 'password') {
         input.on('keyup', function () {
           controlValue = getDomValue();
-          trigger('change', controlValue);
+          input.trigger('change');
         });
       }
 

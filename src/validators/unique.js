@@ -10,7 +10,7 @@ var hex = (function (h) {
     var lastValidValue = false;
     var url;
     var ajax = false;
-    var events = ['change', 'blur'];
+    var events = ['blur'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
@@ -30,6 +30,9 @@ var hex = (function (h) {
     }
 
     self.isValid = function (value) {
+      if (h.utils.isEmpty(value)) {
+        return true;
+      }
       if (ajax !== false) {
         ajax.abort();
       }
@@ -43,10 +46,11 @@ var hex = (function (h) {
         var result = ajax.responseText;
         if (result === 'true') {
           lastValidValue = value;
+          return true;
         } else {
           lastValidValue = false;
+          return false;
         }
-        return result;
       } else {
         return true;
       }

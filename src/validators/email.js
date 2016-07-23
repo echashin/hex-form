@@ -6,7 +6,7 @@ var hex = (function (h) {
     self.getClassName = function () {
       return className;
     };
-    var events = ['change', 'keyup'];
+    var events = ['blur'];
     var emailPattern = /^\S+[@]\S+\.\S{2,10}$/i;
     self.weight = 1;
     self.setEvents = function (e) {
@@ -22,6 +22,7 @@ var hex = (function (h) {
         self.setEvents(config.events);
       }
     }
+
     self.isValid = function (value) {
       if (h.utils.isEmpty(value)) {
         return true;

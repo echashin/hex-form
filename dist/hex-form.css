@@ -1,14 +1,16 @@
-body{
+body {
   background-color: #eee;
 }
+
 .hex-form {
   position: relative;
 }
 
-.hex-form [hex-list-tpl]{
+.hex-form [hex-list-tpl] {
   display: none;
 }
-.hex-form [data-hex-list-tpl]{
+
+.hex-form [data-hex-list-tpl] {
   display: none;
 }
 
@@ -127,8 +129,6 @@ body{
   color: #D9534F;
 }
 
-
-
 .hex-form .fileinput-button {
   display: inline-block;
   overflow: hidden;
@@ -161,10 +161,12 @@ body{
   display: table;
   width: 100%;
 }
+
 .hex-form .upload-dropzone.drag {
   border: dashed 3px #5cb85c;
 }
-.hex-form .upload-dropzone.drag *{
+
+.hex-form .upload-dropzone.drag * {
   opacity: 0.3;
 }
 
@@ -188,6 +190,7 @@ body{
   padding-top: 12px;
   background-color: white;
 }
+
 .hex-form thumb.single {
   width: 100%;
   max-width: 200px;
@@ -258,9 +261,10 @@ body{
   display: block;
   position: absolute;
   left: 0;
-  top:5px;
+  top: 5px;
 }
-.hex-form thumb.single .upload-error{
+
+.hex-form thumb.single .upload-error {
   font-size: 14px;
 }
 
@@ -285,6 +289,7 @@ body{
   z-index: 20;
   color: black;
 }
+
 .hex-form thumb remove::after {
   content: "×";
   font-family: Verdana, Arial;
@@ -294,12 +299,11 @@ body{
   font-size: 10px;
 }
 
-.hex-form thumb.loading{
+.hex-form thumb.loading {
   background-image: url("upload.gif");
   background-position: center center;
   background-repeat: no-repeat;
 }
-
 
 .hex-form thumb:hover > remove:hover {
   background-color: #D9534F;
@@ -322,7 +326,8 @@ body{
   -khtml-user-drag: element;
   -webkit-user-drag: element;
 }
-.hex-form thumb p{
+
+.hex-form thumb p {
   display: block;
   padding: 0;
   margin: 0;
@@ -335,7 +340,8 @@ body{
   width: 0;
   transition: all 0.5s ease;
 }
-.hex-form thumb .frame{
+
+.hex-form thumb .frame {
   display: block;
   padding-top: 100%;
   width: 100%;
@@ -347,6 +353,7 @@ body{
 .hex-form .upfile-error {
   border-color: #D9534F;
 }
+
 .hex-form .upfile-new {
   border-color: #5cb85c;
 }

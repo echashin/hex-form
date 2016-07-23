@@ -3,7 +3,7 @@ var hex = (function (h) {
   'use strict';
   h.validators.date = function (control, config) {
     var self = this;
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 3;
     var input;
     var className = 'date';

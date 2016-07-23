@@ -1401,6 +1401,7 @@ var hex = (function (h) {
   'use strict';
   h.widgets.filesimple = function (control) {
     var input;
+
     function prepareUpload(event) {
       control.setValue(event.target.files[0]);
     }
@@ -1825,7 +1826,7 @@ var hex = (function (h) {
   'use strict';
   h.validators.required = function (control, config) {
     var self = this;
-    var events = ['keyup', 'blur', 'change'];
+    var events = ['blur', 'change'];
     self.weight = 0;
     var name = 'required';
 
@@ -1865,7 +1866,7 @@ var hex = (function (h) {
     self.getClassName = function () {
       return className;
     };
-    var events = ['change', 'keyup'];
+    var events = ['blur'];
     var emailPattern = /^\S+[@]\S+\.\S{2,10}$/i;
     self.weight = 1;
     self.setEvents = function (e) {
@@ -1881,6 +1882,7 @@ var hex = (function (h) {
         self.setEvents(config.events);
       }
     }
+
     self.isValid = function (value) {
       if (h.utils.isEmpty(value)) {
         return true;
@@ -1905,7 +1907,7 @@ var hex = (function (h) {
     var lastValidValue = false;
     var url;
     var ajax = false;
-    var events = ['change', 'blur'];
+    var events = ['blur'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
@@ -1925,6 +1927,9 @@ var hex = (function (h) {
     }
 
     self.isValid = function (value) {
+      if (h.utils.isEmpty(value)) {
+        return true;
+      }
       if (ajax !== false) {
         ajax.abort();
       }
@@ -1938,10 +1943,11 @@ var hex = (function (h) {
         var result = ajax.responseText;
         if (result === 'true') {
           lastValidValue = value;
+          return true;
         } else {
           lastValidValue = false;
+          return false;
         }
-        return result;
       } else {
         return true;
       }
@@ -1961,7 +1967,7 @@ var hex = (function (h) {
     self.getClassName = function () {
       return className;
     };
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 3;
     self.setEvents = function (e) {
       events = e;
@@ -2013,7 +2019,7 @@ var hex = (function (h) {
     self.getClassName = function () {
       return className;
     };
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 4;
     var password;
     self.setEvents = function (e) {
@@ -2131,7 +2137,7 @@ var hex = (function (h) {
   'use strict';
   h.validators.date = function (control, config) {
     var self = this;
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 3;
     var input;
     var className = 'date';
@@ -3218,12 +3224,13 @@ var hex = (function (h) {
 
 
     function validate(update) {
+
       if (update === false) {
         return isValid;
       }
       else {
         lastValidateValue = controlValue;
-        //hideErrors();
+        hideErrors();
         errors = [];
         if (!isDisabled) {
           for (var v in validators) {
@@ -3335,10 +3342,10 @@ var hex = (function (h) {
         trigger('change', controlValue);
       });
 
-      if (type === 'text' || type === 'textarea') {
+      if (type === 'text' || type === 'textarea' || type === 'password') {
         input.on('keyup', function () {
           controlValue = getDomValue();
-          trigger('change', controlValue);
+          input.trigger('change');
         });
       }
 

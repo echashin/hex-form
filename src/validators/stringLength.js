@@ -7,7 +7,7 @@ var hex = (function (h) {
     self.getClassName = function () {
       return className;
     };
-    var events = ['change', 'keyup', 'blur'];
+    var events = ['change', 'blur'];
     self.weight = 3;
     self.setEvents = function (e) {
       events = e;

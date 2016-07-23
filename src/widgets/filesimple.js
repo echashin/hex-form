@@ -2,6 +2,7 @@ var hex = (function (h) {
   'use strict';
   h.widgets.filesimple = function (control) {
     var input;
+
     function prepareUpload(event) {
       control.setValue(event.target.files[0]);
     }
