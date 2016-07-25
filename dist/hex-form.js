@@ -1903,11 +1903,10 @@ var hex = (function (h) {
       return className;
     };
 
-    var lastValidValue = false;
-    var valid = false;
+    var lastValidValue, lastInValidValue = false;
     var url;
     var ajax = false;
-    var events = ['blur', 'change'];
+    var events = ['blur', 'change', 'unique'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
@@ -1930,25 +1929,32 @@ var hex = (function (h) {
       if (ajax !== false) {
         ajax.abort();
       }
-      if (h.utils.isEmpty(value)) {
-        valid = true;
-      }
 
-      ajax = $.ajax({
-        'url': url,
-        'data': {'value': value},
-        'method': 'POST',
-        'async': true,
-        'success': function (data) {
-          if (data.success !== true) {
-            valid = true;
-          } else {
-            valid = false;
-          }
-          control.validate(true);
+
+      if (h.utils.isEmpty(value) || value === lastValidValue) {
+        return true;
+      } else {
+        if (value === lastInValidValue) {
+          return false;
+        } else {
+          ajax = $.ajax({
+            'url': url,
+            'data': {'value': value},
+            'method': 'POST',
+            'async': true,
+            'success': function (data) {
+              if (data.success === true) {
+                lastValidValue = value;
+                control.validate(true, 'unique');
+              } else {
+                lastInValidValue = value;
+                control.validate(true, 'unique');
+              }
+            }
+          });
+          return true;
         }
-      });
-      return valid;
+      }
     };
     init();
   };
