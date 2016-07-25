@@ -62,7 +62,7 @@ var hex = (function (h) {
 
         var localData = JSON.parse(JSON.stringify(data));
 
-
+        localData.trololo = '1456';
         if (linkedVars.length === 0) {
           linkedVars = getLinkedVariables();
         }
@@ -70,7 +70,7 @@ var hex = (function (h) {
 
         for (var i = 0, length = linkedVars.length; i < length; i++) {
           var paramAsString = linkedVars[i];
-          var value = h.utils.objectProperty(data, paramAsString);
+          var value = h.utils.objectProperty(localData, paramAsString);
 
           if (value === undefined) {
             value = '';

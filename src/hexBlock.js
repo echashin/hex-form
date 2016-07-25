@@ -428,14 +428,12 @@ var hex = (function (h) {
         if (!h.utils.isEmpty(namespace)) {
           var parentData = parentBlock.getData()[namespace];
           if (parentData !== undefined) {
-
             if (parentData === blockData) {
               delete parentBlock.getData()[namespace];
             } else {
               if ($.isArray(parentData)) {
-                console.info(JSON.parse(JSON.stringify(parentData)));
                 var dIndex = parentData.indexOf(blockData);
-                if (dIndex !== -1) {
+                if (dIndex !== undefined && dIndex !== -1) {
                   parentData.splice(dIndex, 1);
                 }
               }
@@ -490,7 +488,6 @@ var hex = (function (h) {
         root = parentBlock.root;
         render = block.render = parentBlock.render;
         isRoot = false;
-
       } else {
         root = block;
         parentBlock = false;
@@ -541,7 +538,8 @@ var hex = (function (h) {
               enumerable: true,
               configurable: true,
               get: function () {
-                return parentBlock.getData()[namespace].indexOf(blockData);
+                var ind = parentBlock.getData()[namespace].indexOf(blockData);
+                return ind;
               },
               set: function () {
 
@@ -597,7 +595,7 @@ var hex = (function (h) {
         });
       }
 
-      if (!isRoot) {
+      if (!isRoot && parentBlock.getData().$index !== undefined) {
         Object.defineProperty(blockData, '$parentIndex', {
           enumerable: true,
           configurable: true,

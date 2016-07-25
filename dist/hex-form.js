@@ -392,11 +392,10 @@ var hex = (function (h) {
 
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
+
         if (data === undefined) {
           data = {};
         }
-
-
         switch (attribute) {
           case 'html':
           {
@@ -1905,9 +1904,10 @@ var hex = (function (h) {
     };
 
     var lastValidValue = false;
+    var valid = false;
     var url;
     var ajax = false;
-    var events = ['blur'];
+    var events = ['blur', 'change'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
@@ -1927,30 +1927,28 @@ var hex = (function (h) {
     }
 
     self.isValid = function (value) {
-      if (h.utils.isEmpty(value)) {
-        return true;
-      }
       if (ajax !== false) {
         ajax.abort();
       }
-      if (lastValidValue !== value) {
-        ajax = $.ajax({
-          'url': url,
-          'data': {'value': value},
-          'method': 'POST',
-          'async': false
-        });
-        var result = ajax.responseText;
-        if (result === 'true') {
-          lastValidValue = value;
-          return true;
-        } else {
-          lastValidValue = false;
-          return false;
-        }
-      } else {
-        return true;
+      if (h.utils.isEmpty(value)) {
+        valid = true;
       }
+
+      ajax = $.ajax({
+        'url': url,
+        'data': {'value': value},
+        'method': 'POST',
+        'async': true,
+        'success': function (data) {
+          if (data.success !== true) {
+            valid = true;
+          } else {
+            valid = false;
+          }
+          control.validate(true);
+        }
+      });
+      return valid;
     };
     init();
   };
@@ -2238,7 +2236,7 @@ var hex = (function (h) {
 
         var localData = JSON.parse(JSON.stringify(data));
 
-
+        localData.trololo = '1456';
         if (linkedVars.length === 0) {
           linkedVars = getLinkedVariables();
         }
@@ -2246,7 +2244,7 @@ var hex = (function (h) {
 
         for (var i = 0, length = linkedVars.length; i < length; i++) {
           var paramAsString = linkedVars[i];
-          var value = h.utils.objectProperty(data, paramAsString);
+          var value = h.utils.objectProperty(localData, paramAsString);
 
           if (value === undefined) {
             value = '';
@@ -2729,14 +2727,12 @@ var hex = (function (h) {
         if (!h.utils.isEmpty(namespace)) {
           var parentData = parentBlock.getData()[namespace];
           if (parentData !== undefined) {
-
             if (parentData === blockData) {
               delete parentBlock.getData()[namespace];
             } else {
               if ($.isArray(parentData)) {
-                console.info(JSON.parse(JSON.stringify(parentData)));
                 var dIndex = parentData.indexOf(blockData);
-                if (dIndex !== -1) {
+                if (dIndex !== undefined && dIndex !== -1) {
                   parentData.splice(dIndex, 1);
                 }
               }
@@ -2791,7 +2787,6 @@ var hex = (function (h) {
         root = parentBlock.root;
         render = block.render = parentBlock.render;
         isRoot = false;
-
       } else {
         root = block;
         parentBlock = false;
@@ -2842,7 +2837,8 @@ var hex = (function (h) {
               enumerable: true,
               configurable: true,
               get: function () {
-                return parentBlock.getData()[namespace].indexOf(blockData);
+                var ind = parentBlock.getData()[namespace].indexOf(blockData);
+                return ind;
               },
               set: function () {
 
@@ -2898,7 +2894,7 @@ var hex = (function (h) {
         });
       }
 
-      if (!isRoot) {
+      if (!isRoot && parentBlock.getData().$index !== undefined) {
         Object.defineProperty(blockData, '$parentIndex', {
           enumerable: true,
           configurable: true,
@@ -3223,8 +3219,7 @@ var hex = (function (h) {
     }
 
 
-    function validate(update) {
-
+    function validate(update, event) {
       if (update === false) {
         return isValid;
       }
@@ -3235,9 +3230,11 @@ var hex = (function (h) {
         if (!isDisabled) {
           for (var v in validators) {
             if (validators.hasOwnProperty(v)) {
-              if (!validators[v].isValid(controlValue)) {
-                errors.push(validators[v].getClassName());
-                break;
+              if (event === undefined || validators[v].getEvents().indexOf(event) !== -1) {
+                if (!validators[v].isValid(controlValue)) {
+                  errors.push(validators[v].getClassName());
+                  break;
+                }
               }
             }
           }
@@ -3265,6 +3262,9 @@ var hex = (function (h) {
       enable: enable,
       validate: validate,
       getInputs: getInputs,
+      errors: errors,
+      showErrors: showErrors,
+      hideErrors: hideErrors,
       inputs: inputs,
       on: on,
       off: off,
@@ -3314,6 +3314,10 @@ var hex = (function (h) {
       }
     }
 
+    function trigValidate(event) {
+      validate(true, event.type);
+    }
+
     function addInput(input) {
       inputs.push(input);
       //Подключение валидаторов и виджетов
@@ -3352,7 +3356,7 @@ var hex = (function (h) {
       validators.sort(sortByProperty('weight'));
       for (var eventName in validationEvents) {
         if (validationEvents.hasOwnProperty(eventName)) {
-          input.on(eventName, validate);
+          input.on(eventName, trigValidate);
         }
       }
 

@@ -15,9 +15,12 @@ header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size, Con
 
 $value=$_POST['value'];
 
-sleep(1);
+sleep(3);
 //По результатам проверки значения возвращаем строкой "true" или "false"
 if($value !== 'example@gmail.com'){
-echo "true";
-}
+$result=['success'=>true];
+}else{
+$result=['success'=>false];}
+header('Content-Type: application/json');
+echo json_encode($result);
 exit();

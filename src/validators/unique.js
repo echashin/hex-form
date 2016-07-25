@@ -8,9 +8,10 @@ var hex = (function (h) {
     };
 
     var lastValidValue = false;
+    var valid = false;
     var url;
     var ajax = false;
-    var events = ['blur'];
+    var events = ['blur', 'change'];
     self.weight = 5;
     self.setEvents = function (e) {
       events = e;
@@ -30,30 +31,28 @@ var hex = (function (h) {
     }
 
     self.isValid = function (value) {
-      if (h.utils.isEmpty(value)) {
-        return true;
-      }
       if (ajax !== false) {
         ajax.abort();
       }
-      if (lastValidValue !== value) {
-        ajax = $.ajax({
-          'url': url,
-          'data': {'value': value},
-          'method': 'POST',
-          'async': false
-        });
-        var result = ajax.responseText;
-        if (result === 'true') {
-          lastValidValue = value;
-          return true;
-        } else {
-          lastValidValue = false;
-          return false;
-        }
-      } else {
-        return true;
+      if (h.utils.isEmpty(value)) {
+        valid = true;
       }
+
+      ajax = $.ajax({
+        'url': url,
+        'data': {'value': value},
+        'method': 'POST',
+        'async': true,
+        'success': function (data) {
+          if (data.success !== true) {
+            valid = true;
+          } else {
+            valid = false;
+          }
+          control.validate(true);
+        }
+      });
+      return valid;
     };
     init();
   };

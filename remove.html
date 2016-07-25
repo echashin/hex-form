@@ -42,26 +42,17 @@
 
         <br/><br/>
         <h4>Товары</h4>
-        <ul data-hex-list="lots" data-hex-list-allowempty class="nav nav-tabs" role="tablist">
-          <li data-hex-list-tpl role="presentation">
-            <a data-hex-bind-href="'#tab_'+$index" role="tab" data-toggle="tab"><span data-hex-show="!$valid"
-                                                                                      class="hide error glyphicon glyphicon-exclamation-sign"></span>
-              <b data-hex-bind-html="label+' tab:'+$index"></b></a>
-          </li>
-          <li role="presentation">
-            <a href="#" data-hex-list-add="lots" class="">+ Добавить</a>
-          </li>
-        </ul>
+
         <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
-          <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
+          <div data-hex-list-tpl>
             <br>
             <div class="row">
               <div class="col-xs-10">
                 <div class="form-group">
-                  <input required type="text" name="label" value="zzz" class="form-control">
-                  <div class='label label-default' data-hex-bind-html="label"></div>
+                  1111
+                  <input required type="text" name="label" class="form-control" value="+7-909-1411768">
+                  <span data-hex-bind-html="label"></span>
                 </div>
-                <h4>items</h4>
               </div>
               <div class="col-xs-2">
                 <button type="button" class="btn btn-danger" data-hex-list-remove>remove lot</button>

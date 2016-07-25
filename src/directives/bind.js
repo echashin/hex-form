@@ -6,11 +6,10 @@ var hex = (function (h) {
 
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
+
         if (data === undefined) {
           data = {};
         }
-
-
         switch (attribute) {
           case 'html':
           {

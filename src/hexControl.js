@@ -281,8 +281,7 @@ var hex = (function (h) {
     }
 
 
-    function validate(update) {
-
+    function validate(update, event) {
       if (update === false) {
         return isValid;
       }
@@ -293,9 +292,11 @@ var hex = (function (h) {
         if (!isDisabled) {
           for (var v in validators) {
             if (validators.hasOwnProperty(v)) {
-              if (!validators[v].isValid(controlValue)) {
-                errors.push(validators[v].getClassName());
-                break;
+              if (event === undefined || validators[v].getEvents().indexOf(event) !== -1) {
+                if (!validators[v].isValid(controlValue)) {
+                  errors.push(validators[v].getClassName());
+                  break;
+                }
               }
             }
           }
@@ -323,6 +324,9 @@ var hex = (function (h) {
       enable: enable,
       validate: validate,
       getInputs: getInputs,
+      errors: errors,
+      showErrors: showErrors,
+      hideErrors: hideErrors,
       inputs: inputs,
       on: on,
       off: off,
@@ -372,6 +376,10 @@ var hex = (function (h) {
       }
     }
 
+    function trigValidate(event) {
+      validate(true, event.type);
+    }
+
     function addInput(input) {
       inputs.push(input);
       //Подключение валидаторов и виджетов
@@ -410,7 +418,7 @@ var hex = (function (h) {
       validators.sort(sortByProperty('weight'));
       for (var eventName in validationEvents) {
         if (validationEvents.hasOwnProperty(eventName)) {
-          input.on(eventName, validate);
+          input.on(eventName, trigValidate);
         }
       }
 
