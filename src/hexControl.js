@@ -62,17 +62,18 @@ var hex = (function (h) {
         }
         case 'radio':
         {
+          var r = false;
           for (var i in inputs) {
             if (inputs.hasOwnProperty(i)) {
               if (inputs[i].is(':checked') === true) {
                 inputs[i].closest('label').addClass('checked');
-                return inputs[i].val();
-              }else{
+                r = inputs[i].val();
+              } else {
                 inputs[i].closest('label').removeClass('checked');
               }
             }
           }
-          return false;
+          return r;
         }
         case 'checkbox':
         {

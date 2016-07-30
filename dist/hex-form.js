@@ -2399,6 +2399,7 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 case 'data-hex-bind-for':
+                case 'data-hex-bind-class':
                 {
                   directives.push(new h.directives.Bind({
                     node: findedNode,
@@ -3006,17 +3007,18 @@ var hex = (function (h) {
         }
         case 'radio':
         {
+          var r = false;
           for (var i in inputs) {
             if (inputs.hasOwnProperty(i)) {
               if (inputs[i].is(':checked') === true) {
                 inputs[i].closest('label').addClass('checked');
-                return inputs[i].val();
-              }else{
+                r = inputs[i].val();
+              } else {
                 inputs[i].closest('label').removeClass('checked');
               }
             }
           }
-          return false;
+          return r;
         }
         case 'checkbox':
         {

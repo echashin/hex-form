@@ -94,6 +94,7 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 case 'data-hex-bind-for':
+                case 'data-hex-bind-class':
                 {
                   directives.push(new h.directives.Bind({
                     node: findedNode,
