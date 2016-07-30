@@ -3009,7 +3009,10 @@ var hex = (function (h) {
           for (var i in inputs) {
             if (inputs.hasOwnProperty(i)) {
               if (inputs[i].is(':checked') === true) {
+                inputs[i].closest('label').addClass('checked');
                 return inputs[i].val();
+              }else{
+                inputs[i].closest('label').removeClass('checked');
               }
             }
           }
@@ -3078,8 +3081,10 @@ var hex = (function (h) {
             if (inputs.hasOwnProperty(i)) {
               if (inputs[i].attr('value') === controlValue) {
                 inputs[i].prop('checked', true);
+                inputs[i].closest('label').addClass('checked');
               } else {
                 inputs[i].prop('checked', false);
+                inputs[i].closest('label').removeClass('checked');
               }
             }
           }
