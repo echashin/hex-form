@@ -31,6 +31,9 @@ var hex = (function () {
 
   h.utils.exprToFunc = function (expr) {
     //TODO добавить пробелы к операторам _+_
+    var exprFilters = expr.split('|');
+    expr = exprFilters[0];
+
     expr = expr.replace(/\[['"]/g, '.').replace(/['"]]/g, '').replace(/\[(\D+)]/, '.$1');
     var re = /([a-z_$][a-z_$.0-9\[\]'"]+)/gi;
     var vars = [];
@@ -51,6 +54,12 @@ var hex = (function () {
         }
       }
     }
+    if (exprFilters.length > 1) {
+      for (var i = 1; i < exprFilters.length; i++) {
+        expr = exprFilters[i] + '(' + expr + ')';
+      }
+    }
+
     var funcBody = 'var r="";try{var r=' + expr + ';}catch (e){console.warn(e);return "error"};return r;';
     return {'vars': vars, 'func': funcBody};
   };

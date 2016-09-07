@@ -516,7 +516,7 @@
         </div>
       </div>
       <div class="col-xs-4">
-        <div data-hex-bind-html="email"></div>
+        <div data-hex-bind-html="email|filter1|filter2"></div>
         <div data-hex-bind-html="password"></div>
 
       </div>
@@ -536,6 +536,12 @@
   </form>
 
   <script type="text/javascript">
+    function filter1(email) {
+      return '('+email+')';
+    }
+    function filter2(email) {
+      return '['+email+']';
+    }
     function selectTemplate(state) {
       return '[' + state.text + ']';
     }
