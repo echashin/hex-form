@@ -2004,6 +2004,11 @@ var hex = (function (h) {
 
     self.isValid = function (string) {
       var strLen = string.length;
+
+      if (h.utils.isEmpty(string)) {
+        return true;
+      }
+
       if (min !== undefined) {
         if (strLen < min) {
           className = 'string-length-min';
