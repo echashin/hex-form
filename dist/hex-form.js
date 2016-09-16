@@ -31,7 +31,7 @@ var hex = (function () {
 
   h.utils.exprToFunc = function (expr) {
     //TODO добавить пробелы к операторам _+_
-    var exprFilters = expr.split('|');
+    var exprFilters = expr.split('##');
     expr = exprFilters[0];
 
     expr = expr.replace(/\[['"]/g, '.').replace(/['"]]/g, '').replace(/\[(\D+)]/, '.$1');
