@@ -132,6 +132,27 @@
               </div>
 
             </div>
+            <div class="form-group">
+              <label class="control-label">Число от 100 до 1000</label>
+
+
+                <input
+                       data-hex-widget-mask='{"mask":"9{+}"}'
+                       data-hex-validator-num-size='{"min":100,"max":1000}'
+                       class="form-control"
+                       name="number"
+                       type="text"/>
+
+              <div class="errors">
+                      <span class="error-required label label-danger">Введите число</span>
+                            <span
+                              class="error-num-size-min label label-danger">Минимум 100</span>
+                            <span
+                              class="error-num-size-max label label-danger">Максимум 1000</span>
+              </div>
+
+
+            </div>
 
 
           </div>
