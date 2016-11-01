@@ -1,24 +1,29 @@
 var hex = (function (h) {
     'use strict';
     h.directives.Disable = function (config) {
-      var node, func, variables = [];
+      var node, func, variables = [], block = false;
 
       function render(data) {
         data = h.utils.objectProperty(data, config.block.namespaceFull);
         var result = func.call(null, data);
         var controls = node.find('input[type!="submit"],select,textarea,button').addBack('input[type!="submit"],select,textarea,button');
-
-
-        if (result === true) {
+        if (result) {
           controls.each(function () {
-            $(this).prop('disabled', true);
-            $(this).trigger('disable');
-
+            if (block === false) {
+              $(this).prop('disabled', true);
+              $(this).trigger('disable');
+            } else {
+              block.disable();
+            }
           });
         } else {
           controls.each(function () {
-            $(this).prop('disabled', false);
-            $(this).trigger('enable');
+            if (block === false) {
+              $(this).prop('disabled', false);
+              $(this).trigger('enable');
+            } else {
+              block.enable();
+            }
           });
         }
       }
@@ -45,6 +50,10 @@ var hex = (function (h) {
 
       function init() {
         node = config.node;
+        if (typeof node.get(0).getBlock === 'function') {
+          block = node.get(0).getBlock();
+        }
+
         var expr = node.attr('data-hex-disable');
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {

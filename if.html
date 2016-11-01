@@ -58,22 +58,24 @@
                     data-hex-bind-id="'lots_'+$index+'_type_catalog'"
                     value="catalog"> На основе каталога</label>
           </div>
-          <div class="errors">
-            <span class="error-required label label-danger">Заполните поле</span>
-          </div>
         </div>
 
-        <input type="text" name="dis" data-hex-disable="type === 'model'">
+        <div data-hex-bind-html="type"></div>
 
-        <div data-hex-if="type === 'model'">
+
+
+
+
+
+        <fielsset data-hex-block data-hex-disable="type !== 'model'" >
           <div class="form-group">
             <label>Модель </label>
-            <input type="text" name="model" value="22">
+            <input required type="text" name="model" value="22">
             <div class="errors">
               <span class="error-required label label-danger">Заполните поле</span>
             </div>
           </div>
-        </div>
+        </fielsset>
 
 
 

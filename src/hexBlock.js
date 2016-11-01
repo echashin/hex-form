@@ -176,6 +176,19 @@ var hex = (function (h) {
 
     }
 
+    function disable() {
+
+      for (var i = 0, il = controls.length; i < il; i++) {
+        controls[i].disable();
+      }
+    }
+
+    function enable() {
+      for (var i = 0, il = controls.length; i < il; i++) {
+        controls[i].enable();
+      }
+    }
+
     function setData(data) {
       h.utils.objectExtend(blockData, data);
     }
@@ -397,6 +410,8 @@ var hex = (function (h) {
       getLists: getLists,
       setData: setData,
       getData: getData,
+      disable: disable,
+      enable: enable,
       directives: directives,
       logErrors: logErrors
     };

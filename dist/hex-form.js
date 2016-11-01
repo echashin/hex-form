@@ -600,6 +600,78 @@ var hex = (function (h) {
 );
 
 var hex = (function (h) {
+    'use strict';
+    h.directives.Disable = function (config) {
+      var node, func, variables = [], block = false;
+
+      function render(data) {
+        data = h.utils.objectProperty(data, config.block.namespaceFull);
+        var result = func.call(null, data);
+        var controls = node.find('input[type!="submit"],select,textarea,button').addBack('input[type!="submit"],select,textarea,button');
+        if (result) {
+          controls.each(function () {
+            if (block === false) {
+              $(this).prop('disabled', true);
+              $(this).trigger('disable');
+            } else {
+              block.disable();
+            }
+          });
+        } else {
+          controls.each(function () {
+            if (block === false) {
+              $(this).prop('disabled', false);
+              $(this).trigger('enable');
+            } else {
+              block.enable();
+            }
+          });
+        }
+      }
+
+
+      var directive = {
+        render: render,
+        type: 'disable'
+      };
+
+      Object.defineProperty(directive, 'variables', {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          return variables.map(function (d) {
+            return config.block.namespaceFull + d;
+          });
+        },
+        set: function () {
+
+        }
+      });
+
+
+      function init() {
+        node = config.node;
+        if (typeof node.get(0).getBlock === 'function') {
+          block = node.get(0).getBlock();
+        }
+
+        var expr = node.attr('data-hex-disable');
+        var f = h.utils.exprToFunc(expr);
+        for (var i = 0, l = f.vars.length; i < l; i++) {
+          variables.push(f.vars[i]);
+        }
+        func = new Function('__data', f.func);
+      }
+
+      init();
+      return directive;
+    };
+
+    return h;
+  }(hex)
+);
+
+var hex = (function (h) {
   'use strict';
   h.directives.List = function (config) {
 
@@ -2570,6 +2642,19 @@ var hex = (function (h) {
 
     }
 
+    function disable() {
+
+      for (var i = 0, il = controls.length; i < il; i++) {
+        controls[i].disable();
+      }
+    }
+
+    function enable() {
+      for (var i = 0, il = controls.length; i < il; i++) {
+        controls[i].enable();
+      }
+    }
+
     function setData(data) {
       h.utils.objectExtend(blockData, data);
     }
@@ -2791,6 +2876,8 @@ var hex = (function (h) {
       getLists: getLists,
       setData: setData,
       getData: getData,
+      disable: disable,
+      enable: enable,
       directives: directives,
       logErrors: logErrors
     };
@@ -3310,6 +3397,7 @@ var hex = (function (h) {
       }
       isDisabled = true;
       trigger('disable');
+      hideErrors();
     }
 
     function enable() {

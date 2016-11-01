@@ -276,6 +276,7 @@ var hex = (function (h) {
       }
       isDisabled = true;
       trigger('disable');
+      hideErrors();
     }
 
     function enable() {
