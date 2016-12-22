@@ -55,8 +55,8 @@ var hex = (function (h) {
 
     function getValues() {
       var data = $.extend({}, hf.root.getData());
-      for(var name in data){
-        if(/^\$(.*)/.test(name)){
+      for (var name in data) {
+        if (/^\$(.*)/.test(name)) {
           delete data[name];
         }
       }
@@ -113,11 +113,16 @@ var hex = (function (h) {
     var submit = function (event) {
       event.preventDefault();
       event.stopPropagation();
+      var data = getValues();
+      var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
+      if (!dontBreakBeforeValidation) {
+        return false;
+      }
       var formValid = hf.root.validate(true);
 
       if (formValid === true) {
         clearErrors();
-        var data = getValues();
+
         var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
         if (dontBreakBefore) {
           hf.loaderShow();
