@@ -7,7 +7,7 @@ var hex = (function (h) {
       return className;
     };
     var events = ['blur'];
-    var emailPattern = /^\S+[@]\S+\.\S{2,10}$/i;
+    var emailPattern = /^\S+[@]\S+\.\S{2,10}$/im;
     self.weight = 1;
     self.setEvents = function (e) {
       events = e;
