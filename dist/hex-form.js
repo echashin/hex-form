@@ -2787,7 +2787,7 @@ var hex = (function (h) {
         if (formGroup.size() <= 0) {
           formGroup = undefined;
         } else {
-          errorsBlock = formGroup.children('.errors');
+          errorsBlock = formGroup.find('.errors');
           if (errorsBlock.size() <= 0) {
             errorsBlock = undefined;
           }
