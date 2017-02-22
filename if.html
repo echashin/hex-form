@@ -1,936 +1,164 @@
-<!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<!doctype html>
+<html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-  <title></title>
-  <meta name="description" content=""/>
-  <meta name="keywords" content=""/>
-
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content=""/>
-  <meta property="og:title" content=""/>
-  <meta property="og:site_name" content="BIMLIB.RU"/>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hex</title>
 
 
-  <meta property="og:image" content="/res/front/img/full_logo.jpg"/>
-  <link rel="image_src" href="/res/front/img/full_logo.jpg"/>
+  <!-- Place favicon.ico in the root directory -->
 
-  <meta property="og:description" content=""/>
+  <!-- build:css vendor.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css"/>
+  <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css"/>
 
-  <meta name="yandex-verification" content="f59a6adee0e0fdc4"/>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" sizes="57x57" href="/res/front/img/fav/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="/res/front/img/fav/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/res/front/img/fav/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="/res/front/img/fav/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="/res/front/img/fav/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="/res/front/img/fav/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="/res/front/img/fav/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="/res/front/img/fav/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/res/front/img/fav/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/res/front/img/fav/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/res/front/img/fav/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/res/front/img/fav/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/res/front/img/fav/favicon-16x16.png">
-  <link rel="manifest" href="/res/front/img/fav/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="/res/front/img/fav/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css"/>
+  <link rel="stylesheet" href="bower_components/dragula.js/dist/dragula.min.css"/>
+  <!-- endbuild -->
 
-  <!--minify:fv.css-->
-  <link href="/res/front/bower_components/owl.carousel/dist/assets/owl.carousel.min.css" rel="stylesheet">
-  <link href="/res/front/bower_components/owl.carousel/dist/assets/owl.theme.default.css" rel="stylesheet">
-  <link href="/res/front/bower_components/fancybox/source/jquery.fancybox.css" rel="stylesheet">
-  <link href="/res/front/bower_components/bootstrap-table/dist/bootstrap-table.css" rel="stylesheet">
-  <link href="/res/front/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
-  <link href="/res/front/bower_components/select2/dist/css/select2.min.css" rel="stylesheet">
-  <link href="/res/front/bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css" rel="stylesheet">
-  <link href="/res/front/bower_components/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-  <link
-    href="/res/front/bower_components/bootstrap-table/src/extensions/sticky-header/bootstrap-table-sticky-header.css"
-    rel="stylesheet">
-  <link href="/res/front/css/reset.css" rel="stylesheet">
-  <link href="/res/front/css/layout.css" rel="stylesheet">
-  <link href="/res/front/css/typography.css" rel="stylesheet">
-  <link href="/res/front/css/forms.css" rel="stylesheet">
-  <link href="/res/front/css/grid.css" rel="stylesheet">
-  <link href="/res/front/css/components.css" rel="stylesheet">
-  <link href="/res/front/icomoon/style.css" rel="stylesheet">
-  <link href="/res/front/css/filetypes.css" rel="stylesheet">
-  <link href="/res/front/font/stylesheet.css" rel="stylesheet">
-  <!--endminify-->
-
-  <!--minify:fc.css-->
-  <!--endminify-->
-
-  <!--[if lt IE 8]><!-->
-  <link rel="stylesheet" href="/res/front/icomoon/ie7/ie7.css">
-  <script src="/res/front/icomoon/ie7/ie7.js"></script>
-  <!--<![endif]-->
+  <!-- build:css data-hex-form.css -->
+  <link rel="stylesheet" href="src/hex-form.css">
+  <!-- endbuild -->
 
   <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.js"></script>
   <![endif]-->
+
+
 </head>
+<body>
+<!--[if lt IE 10]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+  your browser</a> to improve your experience.</p>
+<![endif]-->
 
-<body class="jsload ">
-<div id="jsload"></div>
-<div id="header">
-  <div class="container clearfix">
-    <ul class="menu">
-      <li><a id="logo" href="/"><img src="/res/front/img/logo_white2.png" width="108" height="25" alt="BIMLIB"></a></li>
-      <li>
-        <a href="/manufacturers/">Производители</a></li>
-      <li><a href="/models/">Модели</a></li>
-      <li><a href="/news/">Читальный зал</a></li>
-
-      <li class="pull-right"><a id="menu_profile_btn" href="/user/messages/">Евгений&nbsp;Чашин</a></li>
-      <li class="pull-right messages-count zero"><a href="/user/messages/"><b>0</b><span class="ava ava-36">
-                                        <img
-                                          src="/uploads/users/bimlib8530684cec07861a336c583971fca715/bimlibf382bca379cba81ac07246939887266530x30.jpg"
-                                          alt="avatar">
-                                    </span></a></li>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off" data-hex-block>
 
 
-    </ul>
-
-  </div>
-
-
-</div>
-
-
-<div id="view-main">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-2">
-        <div id="profile-menu-cont">
-          <ul class="profile-menu">
-            <li><a href="/user/profile/"><i class="icon-profile"></i>&nbsp;Евгений Чашин</a></li>
-
-            <li><a href="/user/company/"><i class="icon-company"></i> Компания</a></li>
-
-            <li><a href="/user/stat/"><i class="icon-stat"></i> Статистика</a></li>
-            <li><a href="/user/messages/"><i class="icon-comment"></i> Сообщения</a></li>
-            <li><a href="/user/models/"><i class="icon-model"></i> Модели</a></li>
-
-            <li><a href="/user/options/"><i class="icon-psets"></i> Свойства</a></li>
-
-
-            <li><a href="/user/articles/"><i class="icon-news"></i> Блог</a></li>
-
-
-            <li><a href="/user/balance/"><i class="icon-money"></i> Финансы</a></li>
-
-            <li><a href="/user/tariffchange/"><i class="icon-business"></i> Тарифы</a></li>
-
-            <li><a href="/passwordchange/"><i class="icon-lock"></i>&nbsp;Сменить пароль</a></li>
-            <li><a href="/logout/"><i class="icon-logout"></i>&nbsp;Выйти</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-xs-8">
-        <br>
-        <div class="row">
-          <div class="col-xs-6"><h1>Баланс</h1></div>
-          <div class="col-xs-6">
-            <div class="b_price"><span>45 654 р.</span>
-              <button type="button" class="btn btn-default btn-square">+</button>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <label>Тип свойства</label>
+              <select class="form-control" name="type">
+                <option value="TypePropertySingleValue">TypePropertySingleValue</option>
+                <option value="TypePropertyReferenceValue">TypePropertyReferenceValue</option>
+                <option value="TypeSimpleProperty">TypeSimpleProperty</option>
+                <option value="TypePropertyEnumeratedValue">TypePropertyEnumeratedValue</option>
+                <option value="TypePropertyBoundedValue">TypePropertyBoundedValue</option>
+                <option value="TypePropertyListValue">TypePropertyListValue</option>
+              </select>
             </div>
-          </div>
-        </div>
-
-        <ul class="tabs" role="tablist">
-          <li role="presentation" class="active"><a href="#options" aria-controls="history" role="tab"
-                                                    data-toggle="tab"><span>Опции и услуги</span></a>
-          </li>
-          <li role="presentation"><a href="#history" aria-controls="plans" role="tab"
-                                     data-toggle="tab"><span>История операций</span></a>
-          </li>
-        </ul>
-
-        <div id="lk_balance">
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="options"><p>На этой странице отображен весь спектр услуг,
-              которые
-              вы можете подключить для максимально эффективной работы с порталом.
-              <br>
-              Каждая услуга может быть подключена как самостоятельная опция.<br>
-              Внимание: вы можете <a href="#">изменить набор услуг</a> только один раз в сутки.</p>
-              <div class="row">
-                <div class="col-xs-6"><h3>Подключенные услуги</h3></div>
-                <div class="col-xs-6 text-align-right">12 356 р. в месяц</div>
+            <div class="col-xs-12 col-sm-6">
+              <label>Описание типа</label>
+              <div style="color:#999;font-size:12px;">
+                <div data-hex-if="type === 'TypePropertySingleValue'">Простая
+                  переменная. Этот тип охватывает
+                  большинство вариантов свойств. Имеет одно значение.
+                </div>
+                <div data-hex-if="type === 'TypePropertyReferenceValue'">Ссылочная
+                  переменная. Фактически это -
+                  текстовое поле. Ссылочным этот тип делает внутренняя логика IFC-формата. Имеет
+                  одно значение.
+                </div>
+                <div data-hex-if="type === 'TypeSimpleProperty'">Простое свойство.
+                  Имеет одно значение.
+                </div>
+                <div data-hex-if="type === 'TypePropertyEnumeratedValue'">
+                  Перечислимое свойство. Имеет множество
+                  фиксированных значений, из которых можно выбрать одно.
+                </div>
+                <div data-hex-if="type === 'TypePropertyBoundedValue'">Диапазонная
+                  переменная. Имеет два значения (
+                  определяет диапазон значений :от и :до ).
+                </div>
+                <div data-hex-if="type === 'TypePropertyListValue'">Определяет формат
+                  списка значений. Сама переменная
+                  имеет одно значение, но переменных может быть много (список).
+                </div>
+                <div data-hex-if="type === 'TypePropertyTableValue'">Таблица
+                  значений. Сама переменная имеет два
+                  значения, но переменных может быть много (таблица).
+                </div>
               </div>
-
-
-              <form action="" class="hex-form" id="form-tariff" data-hex-block>
-                <table class="table table-hover">
-                  <tr>
-                    <th>
-                      Опции и услуги
-                    </th>
-                    <th class="text-align-center">
-                      Стоимость&nbsp;в&nbsp;месяц
-                    </th>
-                    <th class="text-align-center">
-                      Описание
-                    </th>
-                    <th class="text-align-center">
-                      Статус
-                    </th>
-                  </tr>
-                  <tr>
-                    <td>Карточка&nbsp;компании</td>
-                    <td class="text-align-center">Бесплатно</td>
-                    <td>Страница с базовой информацией об изделии/материале в составе:
-                      <ol>
-                        <li>Полного наименования изделия;</li>
-                        <li>Наименования производителя;</li>
-                        <li>Изображений изделия (не ограничено);</li>
-                        <li>Цены изделия в рублях;</li>
-                        <li>Базовых параметров (Ширина, высота, длина, вес);</li>
-                        <li>Материалов;</li>
-                        <li>Описания (не ограничено);</li>
-                        <li>Применимости в типах зданий и помещений;</li>
-                        <li>Ссылки на сайт производителя.</li>
-                      </ol>
-                      На странице по умолчанию также размещается:
-                      <ul>
-                        <li>кнопка обратной связи «Запросить формат»;</li>
-                        <li>кнопка перехода на сайт производителя – «Купить».</li>
-                      </ul>
-                    </td>
-                    <td class="text-align-center"><span class="color-success">Подключено</span>
-                      <br>
-                      <br>
-                      <div class="description">Базовая услуга</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Карточка&nbsp;товара</td>
-                    <td class="text-align-center">Бесплатно</td>
-                    <td>
-                      Страница с базовой информацией об изделии/материале в составе:
-                      <ol>
-                        <li>Полного наименования изделия;</li>
-                        <li>Наименования производителя;</li>
-                        <li>Изображений изделия (не ограничено);</li>
-                        <li>Цены изделия в рублях;</li>
-                        <li>Базовых параметров (Ширина, высота, длина, вес);</li>
-                        <li>Материалов;</li>
-                        <li>Описания (не ограничено);</li>
-                        <li>Применимости в типах зданий и помещений;</li>
-                        <li>Ссылки на сайт производителя.</li>
-                      </ol>
-                      На странице по умолчанию также размещается:
-                      <ul>
-                        <li>кнопка обратной связи «Запросить формат»;</li>
-                        <li>кнопка перехода на сайт производителя – «Купить».</li>
-                      </ul>
-
-                    </td>
-                    <td class="text-align-center"><span class="color-success">Подключено</span>
-                      <br>
-                      <br>
-                      <div class="description">Базовая услуга</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Динамическое размещение статей в блоге</td>
-                    <td class="text-align-center">Бесплатно</td>
-                    <td>
-                      Неограниченное размещение статей о деятельности производителя, в том числе о технологиях
-                      выполнения работ, связанных с размещаемым оборудованием и/или материалом. <br>
-                      Статьи размещаются в нижней части страницы карточки компании, а также в новостном блоке
-                      «Интересное» в случайном порядке на всем Сайте.
-                    </td>
-                    <td class="text-align-center"><span class="color-success">Подключено</span>
-                      <br>
-                      <br>
-                      <div class="description">Базовая услуга</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Личный кабинет. Статистика</td>
-                    <td class="text-align-center">Бесплатно</td>
-                    <td>Неограниченная информация о статистике по скачиваниям, запросам и просмотрам страниц
-                      моделей.
-                    </td>
-                    <td class="text-align-center"><span class="color-success">Подключено</span>
-                      <br>
-                      <br>
-                      <div class="description">Базовая услуга</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Уведомления о загрузке модели</td>
-                    <td class="text-align-center">Бесплатно</td>
-                    <td>Отправка уведомлений на адрес электронной почты, указанный в Личном кабинете при скачивании
-                      моделей.
-                    </td>
-                    <td class="text-align-center"><span class="color-success">Подключено</span>
-                      <br>
-                      <br>
-                      <div class="description">Базовая услуга</div>
-                    </td>
-                  </tr>
-                </table>
-
-                <table class="table table-hover" data-hex-list="lots">
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="property_sets">
-                      Наборы свойств
-                    </td>
-                    <td>
-                      10000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="video_files_to_models">
-                      Видеофайлы к моделям
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="adding_reviews_about_model">
-                      Добавлять отзывы о модели
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="add_company_reviews">
-                      Добавлять отзывы о компании
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="youtube_block_on_page_card">
-                      Блок Youtube на страничке карточки товара
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden"
-                             value="chat_ability_communicate_with_designers">
-                      Чат - возможность общаться с проектировщиками
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="inclusion_in_the_newsletter">
-                      Включение в новостной рассылке
-                    </td>
-                    <td>
-                      10000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden"
-                             value="placement_of_articles_on_the_home_page_static">
-                      Размещение статей статическое на главной странице
-                    </td>
-                    <td>
-                      10000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="button_buy_with_popup_window">
-                      Кнопка купить с выплывающим окошком-заявкой
-                    </td>
-                    <td>
-                      6000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <label class='checkbox'><i class="icon-check"></i><input type="checkbox" name="active"
-                                                                               data-hex-true-value="Y"
-                                                                               data-hex-false-value="N"></label>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden"
-                             value="models_download_format_five_types_of_files">
-                      Формат загрузки моделей (+5 типов файлов)
-                    </td>
-                    <td>
-                      2000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <div class="counter" data-step="5">
-                        <label>Количество</label>
-                        <input type="text" name="value" value="100">
-                        <button data-type="minus" type="button" class="btn btn-default btn-square">-</button>
-                        <b data-hex-bind-html="value"></b>
-                        <button data-type="plus" type="button" class="btn btn-default btn-square">+</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr data-hex-block="lots">
-                    <td>
-                      <input name="id" class="form-control" type="hidden" value="placing_models_100_models">
-                      Размещение моделей (+100 моделей)
-                    </td>
-                    <td>
-                      10000
-                    </td>
-                    <td>
-
-                    </td>
-                    <td>
-                      <div class="counter" data-step="100">
-                        <label>Количество</label>
-                        <input type="text" name="value" value="100">
-                        <button data-type="minus" type="button" class="btn btn-default btn-square">-</button>
-                        <b data-hex-bind-html="value"></b>
-                        <button data-type="plus" type="button" class="btn btn-default btn-square">+</button>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-
-              </form>
             </div>
-
-            <div role="tabpanel" class="tab-pane hex-table-cont" id="history">
-              <table data-url="/?m=Sort&a=BankOperList&id=5"
-                     data-method="POST"
-                     id="stat-table"
-                     class="hex-table table table-hover">
-                <thead>
-                <tr>
-                  <th data-sortable="true" data-field="date">Дата</th>
-                  <th data-align="center" data-sortable="true" data-field="oper">Операция</th>
-                  <th data-sortable="true" data-field="summa">Сумма</th>
-                  <th data-sortable="true" data-field="comment">Комментарий</th>
-                  <th data-sortable="true" data-width="30" data-field="saldo">Остаток</th>
-
-                </tr>
-                </thead>
-              </table>
-
-            </div>
-
-
           </div>
-        </div>
-      </div>
-      <div class="col-xs-2">
 
-      </div>
+          <br>
+
+
+        </div>
+
+      </form>
     </div>
   </div>
 </div>
 
-</div>
-</div>
+<!-- build:js vendor.js -->
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+
+<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
+
+<script src="bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="bower_components/select2/dist/js/i18n/ru.js"></script>
+
+<script src="bower_components/flow.js/dist/flow.js"></script>
+<script src="bower_components/dragula.js/dist/dragula.min.js"></script>
+
+<script src="bower_components/bootstrap/js/tab.js"></script>
+
+<!-- endbuild -->
 
 
-<script>
+<script src="src/index.js"></script>
+
+<!-- build:js hex-form.js -->
+<script src="src/hex.js"></script>
+
+<script src="src/hexBlock.js"></script>
+<script src="src/hexControl.js"></script>
+<script src="src/hexRender.js"></script>
+
+<script src="src/directives/bind.js"></script>
+<script src="src/directives/disable.js"></script>
+<script src="src/directives/show.js"></script>
+<script src="src/directives/if.js"></script>
+<script src="src/directives/list.js"></script>
+<script src="src/directives/listAdd.js"></script>
+<script src="src/directives/listRemove.js"></script>
 
 
-  function createOrder(id_user) {
-    var summa = $('#summ').val();
-    var code = $('#code').val();
-
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      data: 'summ=' + summa + '&code=' + code,
-      url: '/?m=PersonalStudy&a=putmoney&iduser=' + id_user,
-      success: function (response) {
-        var result = response.result;
-        if (result == undefined)
-          result = 0;
-        var succ = response.success;
-        if (succ == undefined)
-          succ = false;
-        //alert($("#tick"+id).attr("class"));
-        //alert( 'Ответ сервера : ' + result + '\n' + succ + '\n' + response.errmsg + '\n' );
-        $('#orderNumber').val(result);
-
-        if (succ == false)
-          alert('Ошибка пополнения счета : заказ № ' + result + '\n' + response.errmsg + '\n');
-        else
-          $('#balance_form').submit();
-      }
-    });
-
-  }
-</script>
+<script src="src/widgets/passwordShow.js"></script>
+<script src="src/widgets/passwordStrength.js"></script>
+<script src="src/widgets/date.js"></script>
+<script src="src/widgets/mask.js"></script>
+<script src="src/widgets/phone.js"></script>
+<script src="src/widgets/select2.js"></script>
+<script src="src/widgets/filesimple.js"></script>
+<script src="src/widgets/fileupload.js"></script>
 
 
-</div>
+<script src="src/validators/required.js"></script>
+<script src="src/validators/email.js"></script>
+<script src="src/validators/unique.js"></script>
+<script src="src/validators/stringLength.js"></script>
+<script src="src/validators/confirm.js"></script>
+<script src="src/validators/mask.js"></script>
+<script src="src/validators/phone.js"></script>
+<script src="src/validators/date.js"></script>
 
 
-<div id="footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-6 col-sm-12">
-        <div class="row">
-          <div class="col-lg-5 col-sm-4 col-xs-12">
-            <a id="logo_footer" href="/"><img src="/res/front/img/logo_full_white.png" alt="BIMLIB">
-              © ООО «Библиотека
-              информационных моделей»
-            </a>
-          </div>
-          <div class="col-lg-4 col-sm-4 col-xs-12">
-            <i class="icon-map-pointer"></i> Москва<br>
-            1-й Автозаводский проезд, 4<br>
-            корпус 1, 5 этаж
-          </div>
-          <div class="col-lg-3 col-sm-4 col-xs-12">
-            <i class="icon-phone"></i> 8-800-333-78-75<br>
-            <a href="mailto:info@bimlib.ru"><i class="icon-email"></i> Напишите нам</a>
-          </div>
-        </div>
-
-      </div>
-      <div class="col-lg-6 col-sm-12">
-        <div class="row">
-          <div class="col-lg-5 col-sm-4  col-xs-12" id="social">
-            <a target="_blank" href="https://vk.com/bimlib"><i class="icon-vk"></i></a>
-            <a target="_blank" href="https://www.facebook.com/groups/1491830067497619/"><i
-              class="icon-facebook"></i></a>
-            <a target="_blank" href="https://twitter.com/BIMLIB_RU"><i class="icon-twitter"></i></a></div>
-          <div class="col-lg-3 col-sm-4  col-xs-12">
-            <ul>
-              <li><a href="/about">О библиотеке</a></li>
-              <li><a target="_blank" href="/res/front/legal_agreement.pdf">Соглашение</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-4 col-sm-4  col-xs-12">
-            <ul>
-              <li><a href="/rights-and-standarts/">Правила и стандарты</a></li>
-              <li><a href="/feedback/">Обратная связь</a></li>
-              <li><a href="/man/">Производителям</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-
-<div class="modal-overflow">
-  <div id="modal-form-message" class="modal">
-    <a class="close-modal" href="#"><i class="icon-cross"></i></a>
-    <form novalidate id="form-message" class='hex-form' action="/user/messages/send/">
-      <div class="padding-40">
-        <div class="h">Отправка сообщения</div>
-        <div class="form-group">
-          <label for="message-recipient">Получатель</label>
-          <select
-            multiple
-            data-hex-widget-select2='{"allowClear":false,"url":"/?m=GetSortList&t=users"}'
-            required
-            style="width: 100%"
-            type="text"
-            name="recipient[]"
-            id="message-recipient" class="form-control"
-            value=""></select>
-
-          <div class="errors">
-            <span class="error error-required">Выберите получателя</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="message-text">Сообщение</label>
-          <textarea rows="5" required name="text" id="message-text" class="form-control"></textarea>
-          <div class="errors">
-            <span class="error error-required">Напишите текст сообщения</span>
-          </div>
-        </div>
-        <div class="alerts"></div>
-        <button class="btn btn-success btn-block" type="submit">Отправить</button>
-
-      </div>
-
-
-    </form>
-  </div>
-
-
-  <div id="modal-form-man" class="modal">
-    <a class="close-modal" href="#"><i class="icon-cross"></i></a>
-    <form novalidate id="form-man" class='hex-form' action="/manregistration/">
-      <div class="padding-40">
-        <div class="h"><img width="50" height="60" src="/res/front/img/logo_full.png" alt="bimlib"><br/><br/>Заявка<br>
-          на регистрацию нового производителя
-        </div>
-        <p>Пожалуйста, укажите ваши контактные данные и наш менеджер свяжется с вами
-          для заключения договора, создания аккаунта и размещения BIM 3D моделей
-          вашего оборудования и материалов на выгодных для вас условиях.</p>
-        <div class="row">
-          <div class="col-xs-6 col-xs-offset-3">
-            <div class="form-group">
-              <input name="email"
-                     required
-                     placeholder="Email"
-                     data-hex-validator-email
-                     class="form-control input-lg"
-                     type="text"
-                     value="">
-              <div class="errors">
-                <span class="error-required">Введите Email</span>
-                <span class="error-email">Введите правильный Email</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <input name="first_name"
-                     required
-                     placeholder="Имя"
-                     class="form-control  input-lg"
-                     type="text"
-                     value="">
-              <div class="errors">
-                <span class="error-required">Введите Имя</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <input
-                autocomplete="off"
-                placeholder="Номер телефона"
-                data-hex-validator-phone
-                required
-                data-hex-widget-phone
-                class="form-control  input-lg"
-                name="phone"
-                value=""
-                type="text"/>
-
-              <div class="errors">
-                <span class="error-required label label-danger">Введите телефон</span>
-                <span class="error-phone label label-danger">Неверный формат телефона</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <br>
-        <div class="alerts"></div>
-        <div class="form-group">
-          <button class="btn btn-success btn-block btn-lg" type="submit">Регистрация</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div id="modal-form-dev" class="modal">
-    <a class="close-modal" href="#"><i class="icon-cross"></i></a>
-    <form novalidate id="form-dev" class='hex-form' action="/devregistration/">
-      <div class="padding-40">
-        <div class="h"><img width="50" height="60" src="/res/front/img/logo_full.png" alt="bimlib"><br/><br/>Регистрация
-          нового проектировщика
-        </div>
-        <div class="form-group">
-          <input name="email"
-                 required
-                 placeholder="Email"
-                 data-hex-validator-email
-                 class="form-control input-lg"
-                 type="text"
-                 value="">
-          <div class="errors">
-            <span class="error-required">Введите Email</span>
-            <span class="error-email">Введите правильный Email</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <input name="name"
-                 required
-                 placeholder="Имя"
-                 class="form-control  input-lg"
-                 type="text"
-                 value="">
-          <div class="errors">
-            <span class="error-required">Введите Имя</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <input
-            autocomplete="off"
-            placeholder="Номер телефона"
-            data-hex-validator-phone
-            required
-            data-hex-widget-phone
-            class="form-control  input-lg"
-            name="phone"
-            value=""
-            type="text"/>
-
-          <div class="errors">
-            <span class="error-required label label-danger">Введите телефон</span>
-            <span class="error-phone label label-danger">Неверный формат телефона</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <textarea name="message" class="form-control  input-lg" cols="5" rows="5"></textarea>
-        </div>
-        <div class="alerts"></div>
-        <div class="form-group">
-          <button class="btn btn-success btn-block btn-lg" type="submit">Регистрация</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div id="modal-form-call" class="modal">
-    <a class="close-modal" href="#"><i class="icon-cross"></i></a>
-    <form novalidate id="form-call" class='hex-form' action="/call/" method="post">
-      <div class="padding-40">
-        <div class="h"><img width="50" height="60" src="/res/front/img/logo_full.png" alt="bimlib"><br/><br/>Заказать
-          обратный звонок
-        </div>
-        <div class="form-group">
-          <input name="name"
-                 required
-                 placeholder="Имя"
-                 class="form-control  input-lg"
-                 type="text"
-                 value="">
-          <div class="errors">
-            <span class="error-required">Введите Имя</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <input
-            autocomplete="off"
-            placeholder="Номер телефона"
-            data-hex-validator-phone
-            required
-            data-hex-widget-phone
-            class="form-control  input-lg"
-            name="phone"
-            value=""
-            type="text"/>
-
-          <div class="errors">
-            <span class="error-required label label-danger">Введите телефон</span>
-            <span class="error-phone label label-danger">Неверный формат телефона</span>
-          </div>
-        </div>
-        <div class="alerts"></div>
-        <div class="form-group">
-          <button class="btn btn-success btn-block btn-lg" type="submit">Заказать обратный звонок</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div id="modal-form-feedback" class="modal">
-    <a class="close-modal" href="#"><i class="icon-cross"></i></a>
-    <form novalidate id="form-feedback" class='hex-form' action="/feedback/" method="post">
-      <div class="padding-40">
-        <div class="h"><img width="50" height="60" src="/res/front/img/logo_full.png" alt="bimlib"><br/><br/>Задать
-          вопрос
-        </div>
-        <div class="form-group">
-          <input name="email"
-                 required
-                 placeholder="Email"
-                 data-hex-validator-email
-                 class="form-control input-lg"
-                 type="text"
-                 value="">
-          <div class="errors">
-            <span class="error-required">Введите Email</span>
-            <span class="error-email">Введите правильный Email</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <textarea placeholder="Сообщение" name="message" class="form-control input-lg" cols="5" rows="5"></textarea>
-        </div>
-        <div class="alerts"></div>
-        <div class="form-group">
-          <button class="btn btn-success btn-block btn-lg" type="submit">Задать вопрос</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!--minify:fv.js-->
-<script type="text/javascript" src="/res/front/bower_components/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/moment/min/moment-with-locales.min.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/owl.carousel/dist/owl.carousel.min.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/jquery-pjax/jquery.pjax.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/fancybox/source/jquery.fancybox.pack.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap/js/transition.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap/js/dropdown.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap/js/collapse.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap/js/tooltip.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap/js/tab.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
-<script type="text/javascript"
-        src="/res/front/bower_components/bootstrap-table/dist/locale/bootstrap-table-ru-RU.min.js"></script>
-<script type="text/javascript"
-        src="/res/front/bower_components/bootstrap-table/src/extensions/sticky-header/bootstrap-table-sticky-header.js"></script>
-<script type="text/javascript"
-        src="/res/front/bower_components/bootstrap-table/src/extensions/filter-control/bootstrap-table-filter-control.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/bootstrap-sweetalert/lib/sweet-alert.min.js"></script>
-<script type="text/javascript"
-        src="/res/front/bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/select2/dist/js/select2.full.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/Chart.js/Chart.min.js"></script>
-<script type="text/javascript" src="/res/front/bower_components/hex-form/dist/hex-form.js"></script>
-<script type="text/javascript" src="/res/front/js/index.js"></script>
-<script type="text/javascript" src="/res/front/js/profile_stat.js"></script>
-<script type="text/javascript" src="/res/front/js/profile_stat_model.js"></script>
-<!--endminify-->
-
-<!--minify:fc.js-->
-<script type="text/javascript" src="/res/front/js/lk.js"></script>
-<script type="text/javascript" src="/res/front/js/profile_stat_model.js"></script>
-<!--endminify-->
-
-
-<script async type="text/javascript">
-  (function (i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r;
-    i[r] = i[r] || function () {
-        (i[r].q = i[r].q || []).push(arguments)
-      }, i[r].l = 1 * new Date();
-    a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0];
-    a.async = 1;
-    a.src = g;
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-  ga('create', 'UA-85450716-1', 'auto');
-  ga('send', 'pageview');
-</script>
-<!-- Yandex.Metrika counter -->
-<script async type="text/javascript">
-  (function (d, w, c) {
-    (w[c] = w[c] || []).push(function () {
-      try {
-        w.yaCounter40131035 = new Ya.Metrika({
-          id: 40131035,
-          clickmap: true,
-          trackLinks: true,
-          accurateTrackBounce: true,
-          webvisor: true,
-          trackHash: true
-        });
-      } catch (e) {
-      }
-    });
-
-    var n = d.getElementsByTagName("script")[0],
-      s = d.createElement("script"),
-      f = function () {
-        n.parentNode.insertBefore(s, n);
-      };
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = "https://mc.yandex.ru/metrika/watch.js";
-
-    if (w.opera == "[object Opera]") {
-      d.addEventListener("DOMContentLoaded", f, false);
-    } else {
-      f();
-    }
-  })(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript>
-  <div><img src="https://mc.yandex.ru/watch/40131035" style="position:absolute; left:-9999px;" alt=""/></div>
-</noscript>
-<!-- /Yandex.Metrika counter -->
-
+<script src="src/hexForm.js"></script>
+<!-- endbuild -->
 
 </body>
 </html>

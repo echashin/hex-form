@@ -24,6 +24,11 @@ var hex = (function (h) {
           default:
           {
             node.attr(attribute, func(data));
+            if (attribute.test(/^data-/)) {
+              var dataOpt = attribute.replace('data-', '');
+              node.data(dataOpt, func(data));
+              node.attr(attribute, func(data));
+            }
           }
         }
       }
