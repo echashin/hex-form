@@ -25,13 +25,14 @@ var hex = (function (h) {
           {
             node.attr(attribute, func(data));
             if (attribute.test(/^data-/)) {
-              var dataOpt = attribute.replace('data-', '');
-              node.data(dataOpt, func(data));
+              var dataOption = attribute.replace('data-', '');
+              node.data(dataOption, func(data));
               node.attr(attribute, func(data));
             }
           }
         }
       }
+
 
 
       var directive = {
