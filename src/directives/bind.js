@@ -24,7 +24,7 @@ var hex = (function (h) {
           default:
           {
             node.attr(attribute, func(data));
-            if (attribute.test(/^data-/)) {
+            if (/^data-/.test(attribute)) {
               var dataOption = attribute.replace('data-', '');
               node.data(dataOption, func(data));
               node.attr(attribute, func(data));
@@ -32,7 +32,6 @@ var hex = (function (h) {
           }
         }
       }
-
 
 
       var directive = {
@@ -59,6 +58,7 @@ var hex = (function (h) {
         directive.node = node;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
+
 
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {

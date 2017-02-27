@@ -419,7 +419,7 @@ var hex = (function (h) {
           default:
           {
             node.attr(attribute, func(data));
-            if (attribute.test(/^data-/)) {
+            if (/^data-/.test(attribute)) {
               var dataOption = attribute.replace('data-', '');
               node.data(dataOption, func(data));
               node.attr(attribute, func(data));
@@ -427,7 +427,6 @@ var hex = (function (h) {
           }
         }
       }
-
 
 
       var directive = {
@@ -454,6 +453,7 @@ var hex = (function (h) {
         directive.node = node;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
+
 
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {
@@ -2547,7 +2547,7 @@ var hex = (function (h) {
 
     //Поиск связей внутри блока
     function initDirectives(currentBlock) {
-      var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
+      var s = '[data-hex-bind-html],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-data-content],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
       var bindNodes = currentBlock.node.find(s).addBack();
 
       bindNodes.each(function () {
@@ -2566,6 +2566,7 @@ var hex = (function (h) {
                 case 'data-hex-bind-src':
                 case 'data-hex-bind-id':
                 case 'data-hex-bind-for':
+                case 'data-hex-bind-data-content':
                 case 'data-hex-bind-class':
                 {
                   directives.push(new h.directives.Bind({
