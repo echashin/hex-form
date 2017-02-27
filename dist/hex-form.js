@@ -3243,8 +3243,10 @@ var hex = (function (h) {
           if (inputs.length < 2) {
             if (checkedValue === controlValue) {
               inputs[0].closest('label').addClass('checked');
+              inputs[0].prop('checked', true);
             } else {
               inputs[0].closest('label').removeClass('checked');
+              inputs[0].prop('checked', false);
             }
           } else {
 
