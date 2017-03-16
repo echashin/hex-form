@@ -3876,8 +3876,13 @@ var hex = (function (h) {
     return hexForms;
   };
 
-  $(document).ready(function () {
+  h.remove = function (id) {
+    if (hexForms[id] !== undefined) {
+      hexForms[id] = undefined;
+    }
+  };
 
+  $(document).ready(function () {
     h.form();
   });
 
