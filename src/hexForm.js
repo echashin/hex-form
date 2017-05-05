@@ -252,9 +252,9 @@ var hex = (function (h) {
     return hexForms;
   };
 
-  h.remove = function (id) {
-    if (hexForms[id] !== undefined) {
-      hexForms[id] = undefined;
+  h.remove = function (formId) {
+    if (hexForms[formId] !== undefined) {
+      hexForms[formId] = undefined;
     }
   };
 
