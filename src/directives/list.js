@@ -46,7 +46,7 @@ var hex = (function (h) {
     }
 
 
-    function add(item) {
+    function add() {
       var newItem = template.clone(false);
       newItem.attr('data-hex-block', namespace);
       if (node.children(itemSelector).size() > 0) {
@@ -87,7 +87,7 @@ var hex = (function (h) {
       trigger('remove', index);
     }
 
-    function render(data) {
+    function render() {
       var currentItems = node.children(itemSelector);
 
       //изменения в списке
