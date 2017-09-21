@@ -3859,6 +3859,10 @@ var hex = (function (h) {
                     }
                     hf.loaderHide();
                   }
+                  if (res.exec !== undefined) {
+                    res.exec();
+                    hf.loaderHide();
+                  }
                 }, 1);
               }
             },
