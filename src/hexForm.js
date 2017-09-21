@@ -179,7 +179,8 @@ var hex = (function (h) {
                     hf.loaderHide();
                   }
                   if (res.run !== undefined) {
-                    res.run();
+                    var runFunc = new Function('form', res.run());
+                    runFunc.call(null, hf);
                     hf.loaderHide();
                   }
                 }, 1);
