@@ -3860,7 +3860,7 @@ var hex = (function (h) {
                     hf.loaderHide();
                   }
                   if (res.run !== undefined) {
-                    var runFunc = new Function('form', res.run());
+                    var runFunc = new Function('form', res.run);
                     runFunc.call(null, hf);
                     hf.loaderHide();
                   }
