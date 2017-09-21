@@ -3859,8 +3859,8 @@ var hex = (function (h) {
                     }
                     hf.loaderHide();
                   }
-                  if (res.exec !== undefined) {
-                    res.exec();
+                  if (res.run !== undefined) {
+                    res.run();
                     hf.loaderHide();
                   }
                 }, 1);
