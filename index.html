@@ -492,7 +492,6 @@
                 multiple="multiple">
                 <option value="5" selected="selected">Talley Richmond</option>
               </select>
-
               <div class="errors">
                 <span class="error-required label label-danger">Выберите пользователей</span>
               </div>
@@ -510,15 +509,32 @@
                 <span class="error-required label label-danger">Выберите пользователей</span>
               </div>
             </div>
+            <div class="row">
+              <div class="col-xs-12 col-md-5">
+                <div class="form-group">
+                  <select
+                    data-hex-widget-select2='{"url":"/server/select2.php", "templateSelection":"selectTemplate","templateResult":"templateResult"}'
+                    data-hex-select-assoc
+                    style="width: 100%" id="user_ajax1" name="user_ajax1[]" class="form-control"
+                    multiple="multiple">
+                    <option value="5" selected="selected">Talley Richmond</option>
+                  </select>
+                  <div class="errors">
+                    <span class="error-required label label-danger">Выберите пользователей</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-2"><button id="select_copy" type="button" class="btn btn-default btn-block">&rightarrow;</button></div>
+              <div class="col-xs-12 col-md-5">
+
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="control-label" for="user_simple">Пользователи</label>
               <select required data-hex-widget-select2 style="width: 100%" id="user_simple" name="user_simple[]"
+                      data-hex-select-assoc
                       class="form-control" multiple="multiple">
-                <option value="190">Buckley Riddle</option>
-                <option value="191">Suarez Tran</option>
-                <option value="192">Morales Preston</option>
-                <option value="193">Sykes Collins</option>
-                <option value="194">Luella Beck</option>
               </select>
 
               <div class="errors">
@@ -606,7 +622,7 @@
 <!-- endbuild -->
 
 
-<script src="src/index.js"></script>
+
 
 <!-- build:js hex-form.js -->
 <script src="src/hex.js"></script>
@@ -647,5 +663,6 @@
 <script src="src/hexForm.js"></script>
 <!-- endbuild -->
 
+<script src="src/index.js"></script>
 </body>
 </html>

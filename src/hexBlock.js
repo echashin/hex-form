@@ -274,7 +274,9 @@ var hex = (function (h) {
       }
 
       for (var i = 0; i <= nml; i++) {
+
         var aName = names[i];
+
         if (i < nml) {
           if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
             cObj[aName] = {};
@@ -344,8 +346,13 @@ var hex = (function (h) {
 
         switch (tagName) {
           case 'select':
+          {
+            controlConfig.type = 'select';
+            break;
+          }
           case 'textarea':
           {
+            controlConfig.type = 'textarea';
             break;
           }
           case 'input':

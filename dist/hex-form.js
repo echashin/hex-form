@@ -70,37 +70,50 @@ var hex = (function () {
       newObject = {};
     }
     for (var o in originalObject) {
-      if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {
-        h.utils.objectExtend(originalObject[o], newObject[o]);
-      } else {
-        if (newObject[o] === undefined) {
-          //originalObject[o] = undefined;
+      //console.log(originalObject[o]);
+      var descr = Object.getOwnPropertyDescriptor(originalObject, o);
+      if (!$.isFunction(descr.set)) {
+        if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {
+          h.utils.objectExtend(originalObject[o], newObject[o]);
         } else {
-          if ($.isArray(originalObject)) {
-            originalObject.push(newObject);
+          if (newObject[o] === undefined) {
+            //originalObject[o] = undefined;
           } else {
-            originalObject[o] = newObject[o];
+            if ($.isArray(originalObject)) {
+              originalObject.push(newObject);
+            } else {
+              originalObject[o] = newObject[o];
+            }
           }
         }
+      }else{
+        originalObject[o] = newObject[o];
       }
     }
 
     for (var a in newObject) {
-      if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
-        if ($.isArray(newObject[a])) {
-          if (originalObject[a] === undefined) {
-            originalObject[a] = [];
+
+      var objectProperty = Object.getOwnPropertyDescriptor(originalObject, o);
+      if (!$.isFunction(objectProperty.set)) {
+        if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
+          if ($.isArray(newObject[a])) {
+            if (originalObject[a] === undefined) {
+              originalObject[a] = [];
+            }
+            h.utils.objectExtend(originalObject[a], newObject[a]);
+          } else if ($.isPlainObject(newObject[a])) {
+            if (originalObject[a] === undefined) {
+              originalObject[a] = {};
+            }
+            h.utils.objectExtend(originalObject[a], newObject[a]);
+          } else {
+            originalObject[a] = newObject[a];
           }
-          h.utils.objectExtend(originalObject[a], newObject[a]);
-        } else if ($.isPlainObject(newObject[a])) {
-          if (originalObject[a] === undefined) {
-            originalObject[a] = {};
-          }
-          h.utils.objectExtend(originalObject[a], newObject[a]);
-        } else {
-          originalObject[a] = newObject[a];
         }
+      }else{
+        originalObject[a] = newObject[a];
       }
+
     }
   };
 
@@ -1368,18 +1381,81 @@ var hex = (function (h) {
 
 var hex = (function (h) {
   'use strict';
+
+  jQuery.fn.rVal = jQuery.fn.val;
+  jQuery.fn.val = function (value) {
+    var assoc = this.attr('data-hex-select-assoc');
+    if (typeof assoc !== typeof undefined) {
+      return this.get(0).assocVal(value);
+    }
+    return this.rVal.apply(this, arguments);
+  };
   h.widgets.select2 = function (control, config) {
     var input;
     var mode = 'local';
 
+
+    function getAssoc() {
+
+      var data = input.select2('data');
+      var res = [];
+      for (var i in data) {
+        res.push({id: data[i].id, text: data[i].text});
+      }
+      return res;
+    }
+
+    function setAssoc(val) {
+      if ($.isArray(val)) {
+        var newVal = [];
+        var isChanged = false;
+        for (var i in val) {
+          if($.isPlainObject(val[i])) {
+            newVal.push(val[i].id);
+            if (input.find('option[value="' + val[i].id + '"]').length === 0) {
+              var newOption = new Option(val[i].text + '', val[i].id + '', true, true);
+              input.append(newOption);
+              isChanged = true;
+            }
+          }else{
+            newVal.push(val[i]);
+          }
+        }
+        if (isChanged) {
+          input.trigger({
+            type: 'select2:select',
+            params: {
+              data: val
+            }
+          });
+        }
+        input.rVal(newVal);
+      } else {
+        input.rVal(val);
+      }
+      return input;
+    }
+
+
     function init() {
       input = control.getInputs()[0];
+
+      input.get(0).assocVal = function (val) {
+        if (val !== undefined) {
+          return setAssoc(val);
+        } else {
+          return getAssoc(val);
+        }
+      };
+
       if (config.templateSelection !== undefined) {
         config.templateSelection = window[config.templateSelection];
       }
       if (config.templateResult !== undefined) {
         config.templateResult = window[config.templateResult];
       }
+
+
       var placeholder = config.placeholder || '';
       var defaultSettings = {
         theme: 'bootstrap',
@@ -1478,6 +1554,8 @@ var hex = (function (h) {
     }
 
     init();
+
+    //return {getAssoc: getAssoc, setAssoc: setAssoc}
   };
 
   return h;
@@ -2802,7 +2880,9 @@ var hex = (function (h) {
       }
 
       for (var i = 0; i <= nml; i++) {
+
         var aName = names[i];
+
         if (i < nml) {
           if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
             cObj[aName] = {};
@@ -2872,8 +2952,13 @@ var hex = (function (h) {
 
         switch (tagName) {
           case 'select':
+          {
+            controlConfig.type = 'select';
+            break;
+          }
           case 'textarea':
           {
+            controlConfig.type = 'textarea';
             break;
           }
           case 'input':
@@ -3191,7 +3276,6 @@ var hex = (function (h) {
 
     //DOM nodes (<input type="text"> || <input type="radio" value="male"><input type="radio" value="female">)
     var inputs = [];
-    //Значение, значение по умолчанию (не обязательно верное)
     var
       controlName,//Имя инпута, так же является именем свойства в объекте данных блока
       type,//тип

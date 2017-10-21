@@ -70,37 +70,50 @@ var hex = (function () {
       newObject = {};
     }
     for (var o in originalObject) {
-      if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {
-        h.utils.objectExtend(originalObject[o], newObject[o]);
-      } else {
-        if (newObject[o] === undefined) {
-          //originalObject[o] = undefined;
+      //console.log(originalObject[o]);
+      var descr = Object.getOwnPropertyDescriptor(originalObject, o);
+      if (!$.isFunction(descr.set)) {
+        if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {
+          h.utils.objectExtend(originalObject[o], newObject[o]);
         } else {
-          if ($.isArray(originalObject)) {
-            originalObject.push(newObject);
+          if (newObject[o] === undefined) {
+            //originalObject[o] = undefined;
           } else {
-            originalObject[o] = newObject[o];
+            if ($.isArray(originalObject)) {
+              originalObject.push(newObject);
+            } else {
+              originalObject[o] = newObject[o];
+            }
           }
         }
+      }else{
+        originalObject[o] = newObject[o];
       }
     }
 
     for (var a in newObject) {
-      if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
-        if ($.isArray(newObject[a])) {
-          if (originalObject[a] === undefined) {
-            originalObject[a] = [];
+
+      var objectProperty = Object.getOwnPropertyDescriptor(originalObject, o);
+      if (!$.isFunction(objectProperty.set)) {
+        if (JSON.stringify(originalObject[a]) !== JSON.stringify(newObject[a])) {
+          if ($.isArray(newObject[a])) {
+            if (originalObject[a] === undefined) {
+              originalObject[a] = [];
+            }
+            h.utils.objectExtend(originalObject[a], newObject[a]);
+          } else if ($.isPlainObject(newObject[a])) {
+            if (originalObject[a] === undefined) {
+              originalObject[a] = {};
+            }
+            h.utils.objectExtend(originalObject[a], newObject[a]);
+          } else {
+            originalObject[a] = newObject[a];
           }
-          h.utils.objectExtend(originalObject[a], newObject[a]);
-        } else if ($.isPlainObject(newObject[a])) {
-          if (originalObject[a] === undefined) {
-            originalObject[a] = {};
-          }
-          h.utils.objectExtend(originalObject[a], newObject[a]);
-        } else {
-          originalObject[a] = newObject[a];
         }
+      }else{
+        originalObject[a] = newObject[a];
       }
+
     }
   };
 

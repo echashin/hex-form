@@ -1,17 +1,80 @@
 var hex = (function (h) {
   'use strict';
+
+  jQuery.fn.rVal = jQuery.fn.val;
+  jQuery.fn.val = function (value) {
+    var assoc = this.attr('data-hex-select-assoc');
+    if (typeof assoc !== typeof undefined) {
+      return this.get(0).assocVal(value);
+    }
+    return this.rVal.apply(this, arguments);
+  };
   h.widgets.select2 = function (control, config) {
     var input;
     var mode = 'local';
 
+
+    function getAssoc() {
+
+      var data = input.select2('data');
+      var res = [];
+      for (var i in data) {
+        res.push({id: data[i].id, text: data[i].text});
+      }
+      return res;
+    }
+
+    function setAssoc(val) {
+      if ($.isArray(val)) {
+        var newVal = [];
+        var isChanged = false;
+        for (var i in val) {
+          if($.isPlainObject(val[i])) {
+            newVal.push(val[i].id);
+            if (input.find('option[value="' + val[i].id + '"]').length === 0) {
+              var newOption = new Option(val[i].text + '', val[i].id + '', true, true);
+              input.append(newOption);
+              isChanged = true;
+            }
+          }else{
+            newVal.push(val[i]);
+          }
+        }
+        if (isChanged) {
+          input.trigger({
+            type: 'select2:select',
+            params: {
+              data: val
+            }
+          });
+        }
+        input.rVal(newVal);
+      } else {
+        input.rVal(val);
+      }
+      return input;
+    }
+
+
     function init() {
       input = control.getInputs()[0];
+
+      input.get(0).assocVal = function (val) {
+        if (val !== undefined) {
+          return setAssoc(val);
+        } else {
+          return getAssoc(val);
+        }
+      };
+
       if (config.templateSelection !== undefined) {
         config.templateSelection = window[config.templateSelection];
       }
       if (config.templateResult !== undefined) {
         config.templateResult = window[config.templateResult];
       }
+
+
       var placeholder = config.placeholder || '';
       var defaultSettings = {
         theme: 'bootstrap',
@@ -110,6 +173,8 @@ var hex = (function (h) {
     }
 
     init();
+
+    //return {getAssoc: getAssoc, setAssoc: setAssoc}
   };
 
   return h;

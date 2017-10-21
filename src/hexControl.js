@@ -6,7 +6,6 @@ var hex = (function (h) {
 
     //DOM nodes (<input type="text"> || <input type="radio" value="male"><input type="radio" value="female">)
     var inputs = [];
-    //Значение, значение по умолчанию (не обязательно верное)
     var
       controlName,//Имя инпута, так же является именем свойства в объекте данных блока
       type,//тип
