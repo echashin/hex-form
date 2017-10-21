@@ -87,6 +87,8 @@ var hex = (function (h) {
       trigger('remove', index);
     }
 
+
+
     function render() {
       var currentItems = node.children(itemSelector);
 
@@ -172,7 +174,7 @@ var hex = (function (h) {
         console.warn('list don`t have namespace');
       }
 
-      var blockData = config.block.getData();
+      var blockData = block.getData();
       if (blockData[namespace] === undefined) {
         h.utils.objectProperty(blockData, namespace, []);
       }

@@ -1,5 +1,6 @@
 var hex = (function () {
   'use strict';
+
   var h = {'widgets': {}, 'validators': {}, 'directives': {}, 'utils': {}};
 
   h.utils.toCamel = function (string) {
@@ -86,7 +87,7 @@ var hex = (function () {
             }
           }
         }
-      }else{
+      } else {
         originalObject[o] = newObject[o];
       }
     }
@@ -110,7 +111,7 @@ var hex = (function () {
             originalObject[a] = newObject[a];
           }
         }
-      }else{
+      } else {
         originalObject[a] = newObject[a];
       }
 
@@ -779,6 +780,8 @@ var hex = (function (h) {
       trigger('remove', index);
     }
 
+
+
     function render() {
       var currentItems = node.children(itemSelector);
 
@@ -864,7 +867,7 @@ var hex = (function (h) {
         console.warn('list don`t have namespace');
       }
 
-      var blockData = config.block.getData();
+      var blockData = block.getData();
       if (blockData[namespace] === undefined) {
         h.utils.objectProperty(blockData, namespace, []);
       }
@@ -1390,6 +1393,7 @@ var hex = (function (h) {
     }
     return this.rVal.apply(this, arguments);
   };
+
   h.widgets.select2 = function (control, config) {
     var input;
     var mode = 'local';
@@ -1444,7 +1448,7 @@ var hex = (function (h) {
         if (val !== undefined) {
           return setAssoc(val);
         } else {
-          return getAssoc(val);
+          return getAssoc();
         }
       };
 

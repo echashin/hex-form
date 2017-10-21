@@ -9,6 +9,7 @@ var hex = (function (h) {
     }
     return this.rVal.apply(this, arguments);
   };
+
   h.widgets.select2 = function (control, config) {
     var input;
     var mode = 'local';
@@ -63,7 +64,7 @@ var hex = (function (h) {
         if (val !== undefined) {
           return setAssoc(val);
         } else {
-          return getAssoc(val);
+          return getAssoc();
         }
       };
 

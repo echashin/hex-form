@@ -1,5 +1,6 @@
 var hex = (function () {
   'use strict';
+
   var h = {'widgets': {}, 'validators': {}, 'directives': {}, 'utils': {}};
 
   h.utils.toCamel = function (string) {
@@ -86,7 +87,7 @@ var hex = (function () {
             }
           }
         }
-      }else{
+      } else {
         originalObject[o] = newObject[o];
       }
     }
@@ -110,7 +111,7 @@ var hex = (function () {
             originalObject[a] = newObject[a];
           }
         }
-      }else{
+      } else {
         originalObject[a] = newObject[a];
       }
 
