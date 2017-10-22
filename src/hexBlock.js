@@ -518,7 +518,7 @@ var hex = (function (h) {
         parentBlock = false;
         block.parent = undefined;
         isRoot = true;
-        render = block.render = new h.Render();
+        render = block.render = new h.Render(root);
         blockData = render.data;
         block.namespaceFull = '';
       }
@@ -634,6 +634,8 @@ var hex = (function (h) {
       }
 
 
+
+
       Object.defineProperty(blockData, '$valid', {
         enumerable: true,
         configurable: true,
@@ -647,7 +649,6 @@ var hex = (function (h) {
 
       initDirectives(block);
       findChildrenBlocks(block);
-
 
       render.clear();
       render.draw(directives);

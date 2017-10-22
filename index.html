@@ -348,6 +348,7 @@
             <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
               <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
                 <br>
+                <div data-hex-bind-html="$root.email"></div>
                 <div class="row">
                   <div class="col-xs-10">
                     <div class="form-group">
@@ -363,6 +364,7 @@
                             <label data-hex-bind-html="'item: '+$index">1</label>
                             <input required type="text" name="dd" class="form-control" value="5">
                             <span class='label label-info' data-hex-bind-html="dd"></span>
+                            <span class='label label-info' data-hex-bind-html="$root.email + dd"></span>
                           </div>
                           <div class="form-group">
                             <input data-hex-widget-filesimple type="file" name="image">
@@ -382,6 +384,7 @@
                 </div>
               </div>
               <div data-hex-block="lots" role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
+                <div data-hex-bind-html="$root.email"></div>
                 <br>
                 <div class="row">
                   <div class="col-xs-10">
@@ -398,6 +401,7 @@
                             <label data-hex-bind-html="'item: '+$index">1</label>
                             <input required type="text" name="dd" class="form-control" value="5">
                             <span class='label label-info' data-hex-bind-html="dd"></span>
+
                           </div>
                           <div class="form-group">
                             <input data-hex-widget-filesimple type="file" name="image">
@@ -562,7 +566,8 @@
         </div>
       </div>
       <div class="col-xs-4">
-        <div data-hex-bind-html="email|filter1|filter2"></div>
+        <div data-hex-bind-html="email"></div>
+        <div data-hex-bind-html="$root.email"></div>
         <div data-hex-bind-html="password"></div>
 
       </div>

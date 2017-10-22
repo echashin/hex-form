@@ -1,6 +1,6 @@
 var hex = (function (h) {
     'use strict';
-    h.Render = function () {
+    h.Render = function (root) {
       var directives = [];
 
 
@@ -39,18 +39,6 @@ var hex = (function (h) {
 
       function removeDirective(d) {
         if (directives.indexOf(d) >= 0) {
-          /*
-           d.variables.forEach(function (v) {
-           if (dataLastVersion[v] !== undefined) {
-           delete dataLastVersion[v];
-           }
-           if (linkedVars !== undefined) {
-           if (linkedVars.indexOf(v) !== -1) {
-           linkedVars.splice(linkedVars.indexOf(v), 1);
-           }
-           }
-           });
-           */
           directives.splice(directives.indexOf(d), 1);
           clear();
         }
@@ -62,7 +50,7 @@ var hex = (function (h) {
 
         var localData = JSON.parse(JSON.stringify(data));
 
-        localData.trololo = '1456';
+
         if (linkedVars.length === 0) {
           linkedVars = getLinkedVariables();
         }
@@ -70,11 +58,19 @@ var hex = (function (h) {
 
         for (var i = 0, length = linkedVars.length; i < length; i++) {
           var paramAsString = linkedVars[i];
-          var value = h.utils.objectProperty(localData, paramAsString);
+
+          var value;
+          if (/\[\'\$root\'\]/.test(paramAsString)) {
+            var rootParam = paramAsString.replace(/^(.*)\[\'\$root\'\]/, '');
+            value = h.utils.objectProperty(root.getData(), rootParam);
+          } else {
+            value = h.utils.objectProperty(localData, paramAsString);
+          }
 
           if (value === undefined) {
             value = '';
           }
+
 
           h.utils.objectProperty(localData, paramAsString, value);
 

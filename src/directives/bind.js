@@ -20,6 +20,7 @@ var hex = (function (h) {
           {
             var r = func(data);
             node.attr(attribute, func(data));
+            break;
           }
           default:
           {
@@ -29,6 +30,7 @@ var hex = (function (h) {
               node.data(dataOption, func(data));
               node.attr(attribute, func(data));
             }
+            break;
           }
         }
       }
@@ -58,8 +60,6 @@ var hex = (function (h) {
         directive.node = node;
         var expr = node.attr(config.attribute);
         attribute = config.attribute.replace('data-hex-bind-', '');
-
-
         var f = h.utils.exprToFunc(expr);
         for (var i = 0, l = f.vars.length; i < l; i++) {
           variables.push(f.vars[i]);

@@ -95,11 +95,8 @@
             <span class="error-required label label-danger">Выберите пользователей</span>
           </div>
         </div>
-        <div class="form-group">
-          <input type="text" id="json_field" name="json_field" data-hex-widget-json>
-          <div data-hex-bind-html="json_field[0].name"></div>
 
-        </div>
+        <div data-hex-bind-html="user_ajax1##filterAssoc"></div>
 
 
       </div>
@@ -110,6 +107,16 @@
   </form>
 
   <script type="text/javascript">
+    function filterAssoc(obj) {
+      var names=[];
+      if($.isArray(obj)) {
+        for (var i in obj) {
+          names.push(obj[i].text);
+        }
+        return names.join(', ');
+      }
+    }
+
     function filter1(email) {
       return '(' + email + ')';
     }
@@ -193,11 +200,6 @@
 <script type="text/javascript">
   $(document).ready(function () {
 
-    var form=hex.form('test');
-    $('#select_copy').click(function(){
-      var users=form.root.getData().user_ajax1;
-      $('#json_field').val(users);
-    });
 
 
   });
