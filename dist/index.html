@@ -327,7 +327,7 @@
                                                                                           class="hide error glyphicon glyphicon-exclamation-sign"></span>
                   <b data-hex-bind-html="label+' tab:'+$index"></b></a>
               </li>
-              <li data-hex-block="lots" role="presentation">
+              <li data-hex-block="lots" role="presentation" class="active">
                 <a data-hex-bind-href="'#tab_'+$index" href="#tab_0" role="tab" data-toggle="tab"><span
                   data-hex-show="!$valid" class="hide error glyphicon glyphicon-exclamation-sign"></span>
                   <b data-hex-bind-html="label+' tab:'+$index">tab: 0</b></a>
@@ -355,7 +355,7 @@
                             <label data-hex-bind-html="'item: '+$index">1</label>
                             <input required type="text" name="dd" class="form-control" value="5">
                             <span class='label label-info' data-hex-bind-html="dd"></span>
-                            <span class='label label-info' data-hex-bind-html="$root.email + dd"></span>
+                            <span class='label label-danger' data-hex-bind-html="$root.lots[$parentIndex].label"></span>
                           </div>
                           <div class="form-group">
                             <input data-hex-widget-filesimple type="file" name="image">
@@ -374,7 +374,7 @@
                   </div>
                 </div>
               </div>
-              <div data-hex-block="lots" role="tabpanel" class="tab-pane" id="tab_0" data-hex-bind-id="'tab_'+$index">
+              <div data-hex-block="lots" role="tabpanel" class="tab-pane active" id="tab_0" data-hex-bind-id="'tab_'+$index">
                 <div data-hex-bind-html="$root.email"></div>
                 <br>
                 <div class="row">
@@ -392,6 +392,7 @@
                             <label data-hex-bind-html="'item: '+$index">1</label>
                             <input required type="text" name="dd" class="form-control" value="5">
                             <span class='label label-info' data-hex-bind-html="dd"></span>
+                            <span class='label label-danger' data-hex-bind-html="$root.lots[$parentIndex].label"></span>
 
                           </div>
                           <div class="form-group">
@@ -557,9 +558,6 @@
         </div>
       </div>
       <div class="col-xs-4">
-        <div data-hex-bind-html="email"></div>
-        <div data-hex-bind-html="$root.email"></div>
-        <div data-hex-bind-html="password"></div>
 
       </div>
     </div>

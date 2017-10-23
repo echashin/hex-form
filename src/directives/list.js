@@ -62,6 +62,7 @@ var hex = (function (h) {
     }
 
     function remove(index) {
+      console.info('list.remove');
       if (!allowEmpty) {
         if (node.children(itemSelector).size() === 1) {
           return false;

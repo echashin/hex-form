@@ -1,9 +1,7 @@
 var hex = (function (h) {
     'use strict';
-    h.Render = function (root) {
+    h.Render = function () {
       var directives = [];
-
-
       var data = {};
       var dataLastVersion = {};
       var linkedVars = [];
@@ -45,12 +43,8 @@ var hex = (function (h) {
       }
 
       function draw(renderDirectives) {
-
         var changedVars = [];
-
         var localData = JSON.parse(JSON.stringify(data));
-
-
         if (linkedVars.length === 0) {
           linkedVars = getLinkedVariables();
         }
@@ -61,8 +55,25 @@ var hex = (function (h) {
 
           var value;
           if (/\[\'\$root\'\]/.test(paramAsString)) {
+
             var rootParam = paramAsString.replace(/^(.*)\[\'\$root\'\]/, '');
-            value = h.utils.objectProperty(root.getData(), rootParam);
+            var nameSpace = paramAsString.replace(/\[\'\$root\'\](.*)$/, '');
+
+
+
+            if (/\$parentIndex/.test(rootParam)) {
+              var $parentIndexStringName = nameSpace + '[\'$parentIndex\']';
+              var $parentIndexValue = h.utils.objectProperty(localData, $parentIndexStringName);
+              rootParam = rootParam.replace(/\$parentIndex/, $parentIndexValue);
+
+              h.utils.objectProperty(localData, $parentIndexStringName, $parentIndexValue);
+
+              if (JSON.stringify($parentIndexValue) !== dataLastVersion[$parentIndexStringName]) {
+                changedVars.push($parentIndexStringName);
+              }
+            }
+
+            value = h.utils.objectProperty(localData, rootParam);
           } else {
             value = h.utils.objectProperty(localData, paramAsString);
           }
@@ -78,30 +89,40 @@ var hex = (function (h) {
             changedVars.push(paramAsString);
           }
         }
-
-
         if (changedVars !== undefined && changedVars.length > 0) {
           var activeDirectives = renderDirectives;
           if (renderDirectives === undefined) {
-            activeDirectives = directives.filter(function (bind) {
+            activeDirectives = [];
+            for (var j = 0, dLength = directives.length; j < dLength; j++) {
+              var bind = directives[j];
               for (i = 0, length = changedVars.length; i < length; i++) {
                 if (bind.variables.indexOf(changedVars[i]) >= 0) {
-                  return true;
+                  activeDirectives.push(bind);
                 }
               }
-              return false;
-            });
+            }
           }
+
 
           for (i = 0; i < activeDirectives.length; i++) {
             activeDirectives[i].render(localData);
           }
+
           //Сохраняем последние изменения данных
           for (i = 0, length = changedVars.length; i < length; i++) {
-            dataLastVersion[changedVars[i]] = JSON.stringify(h.utils.objectProperty(data, changedVars[i]));
+            if (/\[\'\$root\'\]/.test(changedVars[i])) {
+              var rootParamName = changedVars[i].replace(/^(.*)\[\'\$root\'\]/, '');
+              dataLastVersion[changedVars[i]] = JSON.stringify(h.utils.objectProperty(data, rootParamName));
+            } else {
+              dataLastVersion[changedVars[i]] = JSON.stringify(h.utils.objectProperty(data, changedVars[i]));
+            }
           }
+
         }
+
+
       }
+
 
       var render = {
         directives: directives,

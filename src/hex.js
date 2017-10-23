@@ -71,7 +71,6 @@ var hex = (function () {
       newObject = {};
     }
     for (var o in originalObject) {
-      //console.log(originalObject[o]);
       var descr = Object.getOwnPropertyDescriptor(originalObject, o);
       if (!$.isFunction(descr.set)) {
         if ($.isArray(originalObject[o]) || $.isPlainObject(originalObject[o])) {

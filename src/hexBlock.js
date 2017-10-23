@@ -48,11 +48,27 @@ var hex = (function (h) {
       render.draw();
     }
 
+
+    function removeDirectives() {
+      //Убираем директивы
+      for (var i = 0, l = directives.length; i < l; i++) {
+        render.removeDirective(directives[i]);
+      }
+      directives = [];
+      for (var j = 0, lc = childBlocks.length; j < lc; j++) {
+        childBlocks[j].removeDirectives();
+      }
+
+    }
+
     function listRemoveItem(params) {
       var parentData = parentBlock.getData()[params.namespace];
       var index = parentData.indexOf(params.data);
+
       if (index !== -1) {
         parentData.splice(index, 1);
+        removeDirectives();
+
         render.clear();
         render.draw();
       }
@@ -422,6 +438,7 @@ var hex = (function (h) {
       disable: disable,
       enable: enable,
       directives: directives,
+      removeDirectives: removeDirectives,
       logErrors: logErrors
     };
 
@@ -444,10 +461,7 @@ var hex = (function (h) {
         removeControl(block.controls[0]);
       }
 
-      //Убираем директивы
-      for (var i = 0, l = directives.length; i < l; i++) {
-        render.removeDirective(directives[i]);
-      }
+      removeDirectives();
 
       if (!h.utils.isEmpty(parentBlock)) {
         if (!h.utils.isEmpty(namespace)) {
@@ -518,7 +532,7 @@ var hex = (function (h) {
         parentBlock = false;
         block.parent = undefined;
         isRoot = true;
-        render = block.render = new h.Render(root);
+        render = block.render = new h.Render();
         blockData = render.data;
         block.namespaceFull = '';
       }
@@ -632,8 +646,6 @@ var hex = (function (h) {
           }
         });
       }
-
-
 
 
       Object.defineProperty(blockData, '$valid', {
