@@ -182,6 +182,18 @@ var hex = (function () {
     }
     return map;
   };
+  //Очистка объекта от спец переменных типа $index
+  h.utils.clearValues = function (data) {
+    for (var name in data) {
+      if (/^\$(.*)/.test(name)) {
+        delete data[name];
+      }
+      if (!h.utils.isEmpty(data[name]) && ($.isArray(data[name]) || typeof data[name] === 'object')) {
+        data[name] = h.utils.clearValues(data[name]);
+      }
+    }
+    return data;
+  };
 
   //Строка в md5
   h.utils.md5 = function (string) {
@@ -3853,13 +3865,8 @@ var hex = (function (h) {
     };
 
     function getValues() {
-      var data = $.extend({}, hf.root.getData());
-      for (var name in data) {
-        if (/^\$(.*)/.test(name)) {
-          delete data[name];
-        }
-      }
-      return data;
+      var data = JSON.parse(JSON.stringify(hf.root.getData()));
+      return h.utils.clearValues(data);
     }
 
 

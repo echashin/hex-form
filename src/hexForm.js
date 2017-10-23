@@ -54,13 +54,8 @@ var hex = (function (h) {
     };
 
     function getValues() {
-      var data = $.extend({}, hf.root.getData());
-      for (var name in data) {
-        if (/^\$(.*)/.test(name)) {
-          delete data[name];
-        }
-      }
-      return data;
+      var data = JSON.parse(JSON.stringify(hf.root.getData()));
+      return h.utils.clearValues(data);
     }
 
 
