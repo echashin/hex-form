@@ -3438,6 +3438,9 @@ var hex = (function (h) {
           } else {
 
             for (var ci = 0, l = inputs.length; ci < l; ci++) {
+              if (controlValue === undefined) {
+                controlValue = [];
+              }
               if (controlValue.indexOf(inputs[ci].val()) !== -1) {
                 inputs[ci].closest('label').addClass('checked');
                 inputs[ci].prop('checked', true);
