@@ -87,7 +87,9 @@ var hex = (function () {
           }
         }
       } else {
-        originalObject[o] = newObject[o];
+        if (newObject[o] !== undefined) {
+          originalObject[o] = newObject[o];
+        }
       }
     }
 
