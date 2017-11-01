@@ -190,9 +190,6 @@ var hex = (function () {
       if (/^\$(.*)/.test(name)) {
         delete data[name];
       }
-      if (!h.utils.isEmpty(data[name]) && ($.isArray(data[name]) || typeof data[name] === 'object')) {
-        data[name] = h.utils.clearValues(data[name]);
-      }
     }
     return data;
   };
