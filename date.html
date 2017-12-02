@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="bower_components/dragula.js/dist/dragula.min.css"/>
   <!-- endbuild -->
 
-  <!-- build:css data-hex-form.css -->
+  <!-- build:css hex-form.css -->
   <link rel="stylesheet" href="src/hex-form.css">
   <!-- endbuild -->
 
@@ -26,109 +26,7 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-  <style>
 
-    .dropdown-menu {
-      background-color: white;
-      display: block;
-      max-height: 0;
-      position: absolute;
-      z-index: 1000;
-      list-style: none;
-      padding: 0;
-      margin: 0 0 24px 0;
-      top: 100%;
-      left: 0;
-      box-shadow: 0 5px 20px #777;
-      overflow: hidden;
-      transition: max-height 0.15s ease-out;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      border-radius: 3px;
-    }
-    .dropdown-menu li {
-      display: block;
-      padding: 0;
-      margin: 0;
-      float: none;
-    }
-    .dropdown-menu li input {
-      display: none;
-    }
-    .dropdown-menu a,
-    .dropdown-menu label {
-      display: block;
-      padding: 0 24px;
-      margin: 0;
-      color: #000000;
-      text-decoration: none;
-      line-height: 48px;
-      white-space: nowrap;
-      font-weight: normal;
-      cursor: pointer;
-    }
-    .dropdown-menu a:hover,
-    .dropdown-menu label:hover {
-      background-color: #ffffff;
-    }
-    .dropdown-menu > li.active {
-      color: #87c4c8;
-      font-weight: bold;
-    }
-    .dropdown-menu > li.divider {
-      height: 1px;
-      background-color: #ffffff;
-      margin-top: -1px;
-    }
-    .dropdown-menu-block {
-      min-width: 100%;
-    }
-    .dropdown-menu-right {
-      right: 0;
-      left: auto;
-    }
-    .dropdown-menu-top {
-      top: auto;
-      bottom: 100%;
-      margin: 0;
-    }
-    .dropdown-menu.s {
-      top: 34px;
-      left: 0;
-      right: auto;
-      min-width: 100%;
-    }
-    .dropdown-menu.open {
-      max-height: 400px;
-      overflow: hidden;
-      transition: max-height 0.25s ease-in;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    [data-hex-dropdown].open .caret {
-      -webkit-transform: rotate(180deg);
-      -moz-transform: rotate(180deg);
-      -o-transform: rotate(180deg);
-      -ms-transform: rotate(180deg);
-      transform: rotate(180deg);
-      transition: all 0.15s ease-out;
-    }
-
-    .select{
-      width: 100%;
-      display: block;
-      position: relative;
-    }
-    .select select{
-      display: none;
-    }
-    .select div{
-      width: 100%;
-    }
-
-  </style>
 
 </head>
 <body>
@@ -138,40 +36,26 @@
 <![endif]-->
 
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-
-
-      <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off"
-            data-hex-block>
-        <div class="form-group">
-          <br><br><br>
-          <label for="select_simple">
-            <select name="select_simple" id="select_simple" data-hex-widget-select>
-              <option value="1">option_1</option>
-              <option value="2">option_2</option>
-              <option value="3">option_3</option>
-              <option value="4">option_4</option>
-              <option value="5">option_5</option>
-              <option value="6">option_6</option>
-              <option value="7">option_7</option>
-              <option value="8">option_8</option>
-              <option value="9">option_9</option>
-              <option value="10">option_10</option>
-            </select>
-          </label>
-        </div>
-
-        <button class="btn btn-info" type="submit">submit</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <button class="btn btn-warning" type="reset">reset</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <button id="set_data" class="btn btn-danger" type="button">set data</button>
-      </form>
+  <form action="" class="hex-form" id="statsManufacturersForm" novalidate autocomplete="off">
+    <div class="btn-group btn-group-xs" role="group">
+      <label class="btn btn-default checked"><input style="display: none" type="radio" checked name="datebtn" value="2017-06-28 - 2017-06-28">Вчера</label>
+      <label class="btn btn-default "><input style="display: none" type="radio"  name="datebtn" value="2017-06-28 - 2017-06-28">Сегодня</label>
+      <label class="btn btn-default "><input style="display: none" type="radio"  name="datebtn" value="2016-06-28 - 2017-06-28">Неделя</label>
+      <label class="btn btn-default "><input style="display: none" type="radio"  name="datebtn" value="2015-06-28 - 2017-06-28">Месяц</label>
+      <label class="btn btn-default "><input style="display: none" type="radio"  name="datebtn" value="2014-06-28 - 2017-06-28">3 Месяца</label>
+      <label class="btn btn-default "><input style="display: none" type="radio"  name="datebtn" value="2013-06-28 - 2017-06-28">Год</label>
     </div>
-  </div>
-</div>
+    <input
+      autocomplete="off"
+      required
+      data-hex-validator-date
+      data-hex-widget-date='{"singleDatePicker":false}'
+      class="form-control" name="date" id="date" type="text">
+    <label for="date" type="button" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-calendar"></i> <span data-hex-bind-html="date"></span></label>
+  </form>
 
+
+</div>
 
 <!-- build:js vendor.js -->
 
@@ -192,7 +76,7 @@
 <!-- endbuild -->
 
 
-
+<script src="src/index.js"></script>
 
 <!-- build:js hex-form.js -->
 <script src="src/hex.js"></script>
@@ -211,7 +95,6 @@
 <script src="src/widgets/date.js"></script>
 <script src="src/widgets/mask.js"></script>
 <script src="src/widgets/phone.js"></script>
-<script src="src/widgets/select.js"></script>
 <script src="src/widgets/select2.js"></script>
 <script src="src/widgets/filesimple.js"></script>
 <script src="src/widgets/fileupload.js"></script>
@@ -233,6 +116,26 @@
 <script src="src/hexControl.js"></script>
 <script src="src/hexForm.js"></script>
 <!-- endbuild -->
+<script type="text/javascript">
+  $(document).ready(function () {
+    //Форма create
+    if ($('#statsManufacturersForm').size() > 0) {
+      var form = hex.form('statsManufacturersForm');
+
+      function datebtnChange() {
+        var params = form.root.getData();
+        console.warn(params['datebtn']);
+        form.root.setData({date:params['datebtn']});
+        form.draw();
+
+      }
+
+      //datebtnChange();
+      $('#statsManufacturersForm input[name="datebtn"]').on('change', datebtnChange);
+
+    }
+  });
+</script>
 
 
 </body>

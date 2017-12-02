@@ -5913,7 +5913,7 @@ if(this.$element.prop("multiple"))this.current(function(d){var e=[];a=[a],a.push
 
   var Tab = function (element) {
     // jscs:disable requireDollarBeforejQueryAssignment
-    this.element = $(element);
+    this.element = $(element)
     // jscs:enable requireDollarBeforejQueryAssignment
   };
 
@@ -5928,7 +5928,7 @@ if(this.$element.prop("multiple"))this.current(function(d){var e=[];a=[a],a.push
 
     if (!selector) {
       selector = $this.attr('href');
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, ''); // strip for ie7
+      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
 
     if ($this.parent('li').hasClass('active')) return;
