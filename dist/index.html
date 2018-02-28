@@ -5,7 +5,8 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>hex</title>
-
+  <meta name="hex:errortext" content="Unable to save form, please try again">
+  <meta name="hex:invalidtext" content="The form contains errors">
 
   <!-- Place favicon.ico in the root directory -->
 
@@ -339,7 +340,7 @@
             <div class="tab-content" data-hex-list="lots" data-hex-list-allowempty>
               <div data-hex-list-tpl role="tabpanel" class="tab-pane" data-hex-bind-id="'tab_'+$index">
                 <br>
-                <div data-hex-bind-html="$root.email"></div>
+                <div data-hex-bind-html="this.filter1($root.email)"></div>
                 <div class="row">
                   <div class="col-xs-10">
                     <div class="form-group">
@@ -481,22 +482,7 @@
               <textarea class="form-control" id="comment" name="comment"></textarea>
             </div>
 
-            <div class="form-group">
-              <label for="select_simple">
-                <select name="select_simple" id="select_simple" data-hex-widget-select>
-                  <option value="1">option_1</option>
-                  <option value="2">option_2</option>
-                  <option value="3">option_3</option>
-                  <option value="4">option_4</option>
-                  <option value="5">option_5</option>
-                  <option value="6">option_6</option>
-                  <option value="7">option_7</option>
-                  <option value="8">option_8</option>
-                  <option value="9">option_9</option>
-                  <option value="10">option_10</option>
-                </select>
-              </label>
-            </div>
+
 
             <div class="form-group">
               <label class="control-label" for="user_ajax">Пользователи AJAX главный</label>

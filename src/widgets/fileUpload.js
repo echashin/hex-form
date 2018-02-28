@@ -22,6 +22,9 @@ var hex = (function (h) {
           tmp.push(parseInt(files[i].id));
         }
       }
+      if(single){
+        tmp=tmp[0];
+      }
       control.setValue(tmp);
       input.trigger('change');
     }
@@ -98,8 +101,9 @@ var hex = (function (h) {
         appendParams(message);
         element.removeClass('loading');
         var preview = element.find('.upload-preview');
-        preview.attr('href', self.url);
+        //preview.attr('href', self.url);
         preview.show();
+
         if (self.thumb !== undefined) {
           preview.html('<img src="' + self.thumb + '"/>');
         }
@@ -271,6 +275,7 @@ var hex = (function (h) {
       }
       if (config.single === true) {
         single = true;
+
       }
 
       if (config.limit !== undefined) {
@@ -315,6 +320,10 @@ var hex = (function (h) {
       input.closest('.form-group').find('.upload-dropzone *').remove();
 
       dropzone = input.closest('.form-group').find('.upload-dropzone');
+
+      if(single){
+          dropzone.addClass('upload-dropzone-single');
+      }
       dropzone.on('dragenter', function () {
         $(this).addClass('drag');
       });
@@ -376,7 +385,7 @@ var hex = (function (h) {
             add(file);
           } else {
             add(file);
-            markError(file, '"' + file.name + '" - неверный тип файла. Разрешены файлы типа: ' + allowedTypes.join(', '));
+            markError(file, '"' + file.name + '" - wrong file type. Allowed: ' + allowedTypes.join(', '));
           }
           return valid;
         });

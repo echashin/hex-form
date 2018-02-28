@@ -416,7 +416,7 @@ var hex = (function (h) {
       });
 
       if (type === 'text' || type === 'textarea' || type === 'password') {
-        input.on('keyup', function () {
+        input.on('keyup', function (e) {
           controlValue = getDomValue();
           input.trigger('change');
         });

@@ -23,17 +23,19 @@ var hex = (function (h) {
       if (config.events !== undefined) {
         self.setEvents(config.events);
       }
-
       input = control.getInputs()[0];
-
     }
 
     self.isValid = function (value) {
       if (h.utils.isEmpty(value)) {
         return true;
       }
-      var mask = input.inputmask('option', 'mask');
-      return Inputmask.isValid(input.val(), {alias: mask});
+      var phone = value.replace(/\D+/g,'');
+      if(phone.length!=11){
+        return false;
+      }else{
+        return true;
+      }
     };
     init();
   };

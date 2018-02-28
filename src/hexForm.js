@@ -5,8 +5,11 @@ var hex = (function (h) {
 
   function HexForm(formId) {
     var hf = this;
-    hf.errorText = 'Не удалось сохранить форму, попробуйте обновить страницу';
-    hf.invalidText = 'Форма содержит ошибки';
+
+     hf.errorText=$('meta[name="hex:errortext"]').attr('content');
+     hf.invalidText=$('meta[name="hex:invalidtext"]').attr('content');
+
+
     var form = $('#' + formId);
     var handlers = {};
     var dataType = 'formdata';
@@ -194,7 +197,13 @@ var hex = (function (h) {
         }
       } else {
         form.find('.alerts div').remove();
-        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.invalidText));
+        var invalidText=hf.invalidText+':<ul>';
+          form.find('.errors>.active').each(function () {
+              invalidText+='<li>'+$(this).html()+'</li>';
+          });
+          invalidText+='<ul>';
+
+        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
       }
       return false;
     };

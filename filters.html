@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>hex</title>
+
+
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css vendor.css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css"/>
+
+    <link rel="stylesheet" href="bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/dragula.js/dist/dragula.min.css"/>
+    <!-- endbuild -->
+
+    <!-- build:css hex-form.css -->
+    <link rel="stylesheet" href="src/hex-form.css">
+    <!-- endbuild -->
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<body>
+<!--[if lt IE 10]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="container">
+    <form novalidate id='test' class="hex-form" action="/server/submit.php" method="POST" autocomplete="off">
+        <div class="form-group"><input type="text" name="name" id="name" class="form-control" placeholder="name"></div>
+
+        <!--<div data-hex-bind-html="this.filter1(this.globalFilter(name)+'asdfasdf'+this.a)"></div>-->
+
+
+        <div data-hex-bind-html="$root.name"></div>
+
+        <div class="label label-success" data-hex-show="name === 'Bob'">data-hex-show name='Bob'</div>
+        <div class="label label-danger" data-hex-show="name!=='Bob'">data-hex-show name!='Bob'</div>
+
+        <div class="label label-success" data-hex-if="name === 'Bob'">data-hex-if name='Bob'</div>
+        <div class="label label-danger" data-hex-if="name!=='Bob'">data-hex-if name!='Bob'</div>
+
+
+
+
+
+        <div class="alerts"></div>
+        <div class="row">
+            <div class="col-xs-6">
+                <button class="btn btn-lg btn-default btn-block" type="reset">Сброс формы</button>
+            </div>
+            <div class="col-xs-6">
+                <button data-hex-disable="name!=='Bob'" class="btn btn-lg btn-success btn-block" type="submit"><i class="icon-ok"></i> Бесплатная
+                    регистрация
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+    <script type="text/javascript">
+
+        window.a = 45;
+        var globalFilter = function (state) {
+            return '[' + state + ']';
+        };
+
+        function filter1(email){
+            return email+';';
+        }
+
+        function selectTemplate(state) {
+            return '[' + state.text + ']';
+        }
+
+        function templateResult(state) {
+
+            var $node = $('<span>');
+            $node.html('[' + state.text + ']<br>' + '<b>' + state.text + '</b>');
+            return $node;
+
+        }
+    </script>
+
+</div>
+
+<!-- build:js vendor.js -->
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+
+<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
+
+<script src="bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="bower_components/select2/dist/js/i18n/ru.js"></script>
+
+<script src="bower_components/flow.js/dist/flow.js"></script>
+<script src="bower_components/dragula.js/dist/dragula.min.js"></script>
+
+<script src="bower_components/bootstrap/js/tab.js"></script>
+
+<!-- endbuild -->
+
+
+<!-- build:js hex-form.js -->
+<script src="src/hex.js"></script>
+
+<script src="src/directives/bind.js"></script>
+<script src="src/directives/show.js"></script>
+<script src="src/directives/if.js"></script>
+<script src="src/directives/disable.js"></script>
+<script src="src/directives/list.js"></script>
+<script src="src/directives/listAdd.js"></script>
+<script src="src/directives/listRemove.js"></script>
+
+
+<script src="src/widgets/passwordShow.js"></script>
+<script src="src/widgets/passwordStrength.js"></script>
+<script src="src/widgets/date.js"></script>
+<script src="src/widgets/mask.js"></script>
+<script src="src/widgets/phone.js"></script>
+<script src="src/widgets/select2.js"></script>
+<script src="src/widgets/filesimple.js"></script>
+<script src="src/widgets/fileupload.js"></script>
+<script src="src/widgets/search.js"></script>
+
+
+<script src="src/validators/required.js"></script>
+<script src="src/validators/email.js"></script>
+<script src="src/validators/unique.js"></script>
+<script src="src/validators/stringLength.js"></script>
+<script src="src/validators/numSize.js"></script>
+<script src="src/validators/confirm.js"></script>
+<script src="src/validators/mask.js"></script>
+<script src="src/validators/phone.js"></script>
+<script src="src/validators/date.js"></script>
+
+<script src="src/hexRender.js"></script>
+<script src="src/hexBlock.js"></script>
+<script src="src/hexControl.js"></script>
+<script src="src/hexForm.js"></script>
+<!-- endbuild -->
+
+<script src="src/index.js"></script>
+</body>
+</html>

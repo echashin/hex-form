@@ -62,7 +62,6 @@ var hex = (function (h) {
     }
 
     function remove(index) {
-      console.info('list.remove');
       if (!allowEmpty) {
         if (node.children(itemSelector).size() === 1) {
           return false;
@@ -130,7 +129,7 @@ var hex = (function (h) {
        currentItems.each(function (j) {
        var currentIndex=$(this).get(0).getBlock().getData().$index;
        if (currentIndex!== j) {
-       console.info('!=');
+
        $(this).insertBefore(node.children(itemSelector + ':nth-child(' + currentIndex+ ')').first());
        }
        });
