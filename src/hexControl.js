@@ -213,9 +213,6 @@ var hex = (function (h) {
     }
 
     function getValue() {
-      if (isDisabled) {
-        return undefined;
-      }
       return controlValue;
     }
 
@@ -235,7 +232,9 @@ var hex = (function (h) {
       }
       if (errorsBlock !== undefined) {
         errorsBlock.find('span').removeClass('active');
+        errorsBlock.closest('form').get(0).getForm().renderErrors();
       }
+
     }
 
     function showErrors() {

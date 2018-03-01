@@ -2975,9 +2975,7 @@ var hex = (function (h) {
       }
 
       for (var i = 0; i <= nml; i++) {
-
         var aName = names[i];
-
         if (i < nml) {
           if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
             cObj[aName] = {};
@@ -3575,9 +3573,6 @@ var hex = (function (h) {
     }
 
     function getValue() {
-      if (isDisabled) {
-        return undefined;
-      }
       return controlValue;
     }
 
@@ -3597,7 +3592,9 @@ var hex = (function (h) {
       }
       if (errorsBlock !== undefined) {
         errorsBlock.find('span').removeClass('active');
+        errorsBlock.closest('form').get(0).getForm().renderErrors();
       }
+
     }
 
     function showErrors() {
@@ -3867,6 +3864,9 @@ var hex = (function (h) {
 
 
     var form = $('#' + formId);
+    form.get(0).getForm=function () {
+      return hf;
+    };
     var handlers = {};
     var dataType = 'formdata';
     hf.root = undefined;
@@ -3969,6 +3969,18 @@ var hex = (function (h) {
       }
     }
 
+    hf.renderErrors=function(){
+        form.find('.alerts div').remove();
+        if(hf.root!==undefined && !hf.root.getData().$valid) {
+            var invalidText = hf.invalidText + ':<ul>';
+            form.find('.errors>.active').each(function () {
+                invalidText += '<li>' + $(this).html() + '</li>';
+            });
+            invalidText += '<ul>';
+            form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
+        }
+    };
+
     var submit = function (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -4052,14 +4064,7 @@ var hex = (function (h) {
           });
         }
       } else {
-        form.find('.alerts div').remove();
-        var invalidText=hf.invalidText+':<ul>';
-          form.find('.errors>.active').each(function () {
-              invalidText+='<li>'+$(this).html()+'</li>';
-          });
-          invalidText+='<ul>';
-
-        form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
+        hf.renderErrors();
       }
       return false;
     };
