@@ -3970,7 +3970,7 @@ var hex = (function (h) {
     }
 
     hf.renderErrors=function(){
-        form.find('.alerts div').remove();
+        form.find('.alerts').html('');
         window.setTimeout(function () {
             if (form.find('.errors>.active').size() > 0) {
                 var invalidText = hf.invalidText + ':<ul>';
@@ -3978,7 +3978,7 @@ var hex = (function (h) {
                     invalidText += '<li>' + $(this).html() + '</li>';
                 });
                 invalidText += '<ul>';
-                form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
+                form.find('.alerts').html($('<div>').addClass('alert alert-danger').html(invalidText));
             }
         },300);
     };
