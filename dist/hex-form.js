@@ -3971,14 +3971,16 @@ var hex = (function (h) {
 
     hf.renderErrors=function(){
         form.find('.alerts div').remove();
-        if(hf.root!==undefined && !hf.root.getData().$valid && form.find('.errors>.active').size()>0) {
-            var invalidText = hf.invalidText + ':<ul>';
-            form.find('.errors>.active').each(function () {
-                invalidText += '<li>' + $(this).html() + '</li>';
-            });
-            invalidText += '<ul>';
-            form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
-        }
+        window.setTimeout(function () {
+            if (form.find('.errors>.active').size() > 0) {
+                var invalidText = hf.invalidText + ':<ul>';
+                form.find('.errors>.active').each(function () {
+                    invalidText += '<li>' + $(this).html() + '</li>';
+                });
+                invalidText += '<ul>';
+                form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(invalidText));
+            }
+        },300);
     };
 
     var submit = function (event) {
