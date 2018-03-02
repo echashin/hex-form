@@ -118,7 +118,7 @@ var hex = (function (h) {
 
     hf.renderErrors=function(){
         form.find('.alerts div').remove();
-        if(hf.root!==undefined && !hf.root.getData().$valid) {
+        if(hf.root!==undefined && !hf.root.getData().$valid && form.find('.errors>.active').size()>0) {
             var invalidText = hf.invalidText + ':<ul>';
             form.find('.errors>.active').each(function () {
                 invalidText += '<li>' + $(this).html() + '</li>';
