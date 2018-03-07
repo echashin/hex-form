@@ -4132,7 +4132,7 @@ var hex = (function (h) {
                     errorsText += '<div class="hide" data-hex-error-element="' + c.getName() + '" data-hex-error-name="' + j + '">' + em[j] + '</div>';
                 }
             }
-            form.find('.alerts').after('<div class="alert alert-danger hide" data-hex-form-errors>' + errorsText + '</div>');
+            form.find('.alerts').after('<div class="alert alert-danger hide f-1" data-hex-form-errors>' + errorsText + '</div>');
 
         };
 
