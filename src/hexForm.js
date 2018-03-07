@@ -237,7 +237,7 @@ var hex = (function (h) {
 
             var ctrls = hf.root.getAllControls(false);
 
-            var errorsText = '<b>'+hf.invalidText+'</b><br>';
+            var errorsText = '<b>'+hf.invalidText+'</b> <br>';
             for (var i in ctrls) {
                 var c = ctrls[i];
                 var em = c.getErrorsMessages();
@@ -246,6 +246,7 @@ var hex = (function (h) {
                 }
             }
             form.find('.alerts').after('<div class="alert alert-danger hide" data-hex-form-errors>' + errorsText + '</div>');
+
         };
 
         init();
