@@ -1,291 +1,289 @@
 var hex = (function (h) {
-  'use strict';
+    'use strict';
 
-  var hexForms = {};
+    var hexForms = {};
 
-  function HexForm(formId) {
-    var hf = this;
+    function HexForm(formId) {
+        var hf = this;
 
-     hf.errorText=$('meta[name="hex:errortext"]').attr('content');
-     hf.invalidText=$('meta[name="hex:invalidtext"]').attr('content');
-
-
-    var form = $('#' + formId);
-    form.get(0).getForm=function () {
-      return hf;
-    };
-    var handlers = {};
-    var dataType = 'formdata';
-    hf.root = undefined;
-
-    var formData = new FormData();
-    var FormEvent = function (type) {
-      this.type = type;
-      this.stoped = false;
-      this.stop = function () {
-        this.stoped = true;
-      };
-    };
-
-    hf.on = function (eventName, fn) {
-      if (handlers[eventName] === undefined) {
-        handlers[eventName] = [];
-      }
-      if (handlers[eventName].indexOf(fn) < 0) {
-        handlers[eventName].push(fn);
-      }
-    };
-
-    hf.off = function (eventName, fn) {
-      if (handlers[eventName] !== undefined) {
-        handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
-      }
-    };
-
-    hf.trigger = function (eventName, params) {
-      if (handlers[eventName] !== undefined) {
-        var formEvent = new FormEvent(eventName);
-        for (var fnIndex in handlers[eventName]) {
-          var func = handlers[eventName][fnIndex];
-          func(params, formEvent);
-        }
-        return !formEvent.stoped;
-      } else {
-        return true;
-      }
-    };
-
-    hf.getHandlers = function () {
-      return handlers;
-    };
-
-    function getValues() {
-      var data = $.extend({}, hf.root.getData());
-      for (var name in data) {
-        if (/^\$(.*)/.test(name)) {
-          delete data[name];
-        }
-      }
-      return data;
-    }
+        hf.errorText = $('meta[name="hex:errortext"]').attr('content');
+        hf.invalidText = $('meta[name="hex:invalidtext"]').attr('content');
 
 
-    hf.draw = function () {
-      hf.root.render.draw();
-    };
+        var form = $('#' + formId);
+        form.get(0).getForm = function () {
+            return hf;
+        };
+        var handlers = {};
+        var dataType = 'formdata';
+        hf.root = undefined;
 
-    function clearErrors() {
-      form.find('.has-error').removeClass('has-error');
-      form.find('.alerts div').remove();
-    }
+        var formData = new FormData();
+        var FormEvent = function (type) {
+            this.type = type;
+            this.stoped = false;
+            this.stop = function () {
+                this.stoped = true;
+            };
+        };
 
-    function reset(event) {
-      var dontBreakReset = hf.trigger('beforeReset', {values: getValues()});
-      if (dontBreakReset) {
-        window.setTimeout(function () {
-          clearErrors();
-          hf.root.reset();
-        }, 1);
-      } else {
-        event.preventDefault();
-      }
-      hf.trigger('afterReset', {});
-    }
-
-
-    function setFormData(data, name) {
-      var namespace = '';
-      if (name !== undefined) {
-        namespace = name;
-      }
-      for (var k in data) {
-        var v = data[k];
-        k += '';
-        if (k.indexOf('$') !== 0) {
-          var nameZ = k;
-          if (namespace !== '') {
-            nameZ = namespace + '[' + k + ']';
-          }
-
-          if ($.isArray(v) || $.isPlainObject(v)) {
-            setFormData(v, nameZ);
-          } else {
-            formData.append(nameZ, v);
-          }
-        }
-      }
-    }
-
-    hf.renderErrors=function(){
-        form.find('.alerts').html('');
-        window.setTimeout(function () {
-            if (form.find('.errors>.active').size() > 0) {
-                var invalidText = hf.invalidText + ':<ul>';
-                form.find('.errors>.active').each(function () {
-                    invalidText += '<li>' + $(this).html() + '</li>';
-                });
-                invalidText += '<ul>';
-                form.find('.alerts').html($('<div>').addClass('alert alert-danger').html(invalidText));
+        hf.on = function (eventName, fn) {
+            if (handlers[eventName] === undefined) {
+                handlers[eventName] = [];
             }
-        },300);
-    };
-
-    var submit = function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var data = getValues();
-      var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
-      if (!dontBreakBeforeValidation) {
-        return false;
-      }
-      var formValid = hf.root.validate(true);
-
-      if (formValid === true) {
-        clearErrors();
-
-        var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
-        if (dontBreakBefore) {
-          hf.loaderShow();
-          var url = form.attr('action');
-          /*Отправка на разные URL аттрибут data-action*/
-          var submitBtn = form.find('button[type=submit]:focus');
-          if (submitBtn.size() > 0) {
-            if (submitBtn.attr('data-action') !== undefined) {
-              url = submitBtn.attr('data-action');
+            if (handlers[eventName].indexOf(fn) < 0) {
+                handlers[eventName].push(fn);
             }
-          }
-          var method = 'POST';
+        };
 
-          if (form.attr('method') !== undefined) {
-            method = form.attr('method');
-          }
+        hf.off = function (eventName, fn) {
+            if (handlers[eventName] !== undefined) {
+                handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
+            }
+        };
 
-          if (dataType === 'formdata') {
-            setFormData(data);
-          } else {
-            formData = data;
-          }
+        hf.trigger = function (eventName, params) {
+            if (handlers[eventName] !== undefined) {
+                var formEvent = new FormEvent(eventName);
+                for (var fnIndex in handlers[eventName]) {
+                    var func = handlers[eventName][fnIndex];
+                    func(params, formEvent);
+                }
+                return !formEvent.stoped;
+            } else {
+                return true;
+            }
+        };
 
-          $.ajax({
-            url: url,
-            data: formData,
-            type: method,
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            success: function (res) {
-              var dontBreakAfter = hf.trigger('afterSubmit', res);
-              if (dontBreakAfter) {
+        hf.getHandlers = function () {
+            return handlers;
+        };
+
+        function getValues() {
+            var data = $.extend({}, hf.root.getData());
+            for (var name in data) {
+                if (/^\$(.*)/.test(name)) {
+                    delete data[name];
+                }
+            }
+            return data;
+        }
+
+
+        hf.draw = function () {
+            hf.root.render.draw();
+        };
+
+        function clearErrors() {
+            form.find('.has-error').removeClass('has-error');
+            form.find('.alerts div').remove();
+        }
+
+        function reset(event) {
+            var dontBreakReset = hf.trigger('beforeReset', {values: getValues()});
+            if (dontBreakReset) {
                 window.setTimeout(function () {
-                  if (res.success === true) {
                     clearErrors();
-                    if (res.reload !== undefined) {
-                      if (res.reload === true) {
-                        window.location.href = window.location.href;
-                      } else {
-                        window.location.href = res.reload;
-                      }
-                    } else {
-                      hf.loaderHide();
-                    }
-                  } else {
-                    hf.loaderHide();
-                  }
-                  if (res.alerts !== undefined) {
-                    for (var m in res.alerts) {
-                      var message = res.alerts[m];
-                      form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
-                    }
-                    hf.loaderHide();
-                  }
-                  if (res.run !== undefined) {
-                    var runFunc = new Function('form', res.run);
-                    runFunc.call(null, hf);
-                    hf.loaderHide();
-                  }
+                    hf.root.reset();
                 }, 1);
-              }
-            },
-            error: function () {
-              hf.loaderHide();
-              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.errorText));
+            } else {
+                event.preventDefault();
             }
-          });
+            hf.trigger('afterReset', {});
         }
-      } else {
-        hf.renderErrors();
-      }
-      return false;
-    };
 
-    hf.loaderShow = function () {
-      form.find('.loader').show();
-    };
-    hf.loaderHide = function () {
-      form.find('.loader').hide();
-    };
 
-    hf.submit = function () {
-      submit();
-    };
+        function setFormData(data, name) {
+            var namespace = '';
+            if (name !== undefined) {
+                namespace = name;
+            }
+            for (var k in data) {
+                var v = data[k];
+                k += '';
+                if (k.indexOf('$') !== 0) {
+                    var nameZ = k;
+                    if (namespace !== '') {
+                        nameZ = namespace + '[' + k + ']';
+                    }
 
-    hf.getValues = function () {
-      return getValues();
-    };
+                    if ($.isArray(v) || $.isPlainObject(v)) {
+                        setFormData(v, nameZ);
+                    } else {
+                        formData.append(nameZ, v);
+                    }
+                }
+            }
+        }
 
-    var init = function () {
-      form.addClass('loader-container').append('<div class="loader"></div>');
-      form.attr('data-hex-block', '');
-      form.on('submit', submit);
-      form.on('reset', reset);
-      if (form.find('.loader').size() === 0) {
-        form.append('<div class="loader"></div>');
-      }
 
-      if (form.data('datatype') !== undefined) {
-        dataType = form.data('datatype');
-      }
 
-      hf.root = new h.Block(form);
+        var submit = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var data = getValues();
+            var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
+            if (!dontBreakBeforeValidation) {
+                return false;
+            }
+            var formValid = hf.root.validate(true);
 
-    };
+            if (formValid === true) {
+                clearErrors();
 
-    init();
-    return hf;
-  }
+                var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
+                if (dontBreakBefore) {
+                    hf.loaderShow();
+                    var url = form.attr('action');
+                    /*Отправка на разные URL аттрибут data-action*/
+                    var submitBtn = form.find('button[type=submit]:focus');
+                    if (submitBtn.size() > 0) {
+                        if (submitBtn.attr('data-action') !== undefined) {
+                            url = submitBtn.attr('data-action');
+                        }
+                    }
+                    var method = 'POST';
 
-  h.form = function (id) {
-    if (id === undefined) {
-      var forms = $('form.hex-form');
-      forms.each(function () {
-        var formId = $(this).attr('id');
-        if (formId === undefined) {
-          throw new Error('Form dont have id attr');
+                    if (form.attr('method') !== undefined) {
+                        method = form.attr('method');
+                    }
+
+                    if (dataType === 'formdata') {
+                        setFormData(data);
+                    } else {
+                        formData = data;
+                    }
+
+                    $.ajax({
+                        url: url,
+                        data: formData,
+                        type: method,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            var dontBreakAfter = hf.trigger('afterSubmit', res);
+                            if (dontBreakAfter) {
+                                window.setTimeout(function () {
+                                    if (res.success === true) {
+                                        clearErrors();
+                                        if (res.reload !== undefined) {
+                                            if (res.reload === true) {
+                                                window.location.href = window.location.href;
+                                            } else {
+                                                window.location.href = res.reload;
+                                            }
+                                        } else {
+                                            hf.loaderHide();
+                                        }
+                                    } else {
+                                        hf.loaderHide();
+                                    }
+                                    if (res.alerts !== undefined) {
+                                        for (var m in res.alerts) {
+                                            var message = res.alerts[m];
+                                            form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                                        }
+                                        hf.loaderHide();
+                                    }
+                                    if (res.run !== undefined) {
+                                        var runFunc = new Function('form', res.run);
+                                        runFunc.call(null, hf);
+                                        hf.loaderHide();
+                                    }
+                                }, 1);
+                            }
+                        },
+                        error: function () {
+                            hf.loaderHide();
+                            form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.errorText));
+                        }
+                    });
+                }
+            }
+            return false;
+        };
+
+        hf.loaderShow = function () {
+            form.find('.loader').show();
+        };
+        hf.loaderHide = function () {
+            form.find('.loader').hide();
+        };
+
+        hf.submit = function () {
+            submit();
+        };
+
+        hf.getValues = function () {
+            return getValues();
+        };
+
+        var init = function () {
+            form.addClass('loader-container').append('<div class="loader"></div>');
+            form.attr('data-hex-block', '');
+            form.on('submit', submit);
+            form.on('reset', reset);
+            if (form.find('.loader').size() === 0) {
+                form.append('<div class="loader"></div>');
+            }
+
+            if (form.data('datatype') !== undefined) {
+                dataType = form.data('datatype');
+            }
+
+
+            hf.root = new h.Block(form);
+
+            var ctrls = hf.root.getAllControls(false);
+
+            var errorsText = '<b>'+hf.invalidText+'</b><br>';
+            for (var i in ctrls) {
+                var c = ctrls[i];
+                var em = c.getErrorsMessages();
+                for (var j in em) {
+                    errorsText += '<div class="hide" data-hex-error-element="' + c.getName() + '" data-hex-error-name="' + j + '">' + em[j] + '</div>';
+                }
+            }
+            form.find('.alerts').after('<div class="alert alert-danger hide" data-hex-form-errors>' + errorsText + '</div>');
+        };
+
+        init();
+        return hf;
+    }
+
+    h.form = function (id) {
+        if (id === undefined) {
+            var forms = $('form.hex-form');
+            forms.each(function () {
+                var formId = $(this).attr('id');
+                if (formId === undefined) {
+                    throw new Error('Form dont have id attr');
+                } else {
+                    if (hexForms[formId] === undefined) {
+                        hexForms[formId] = new HexForm(formId);
+                    }
+                }
+            });
         } else {
-          if (hexForms[formId] === undefined) {
-            hexForms[formId] = new HexForm(formId);
-          }
+            if (hexForms[id] === undefined) {
+                hexForms[id] = new HexForm(id);
+            }
+            return hexForms[id];
         }
-      });
-    } else {
-      if (hexForms[id] === undefined) {
-        hexForms[id] = new HexForm(id);
-      }
-      return hexForms[id];
-    }
-    return hexForms;
-  };
+        return hexForms;
+    };
 
-  h.remove = function (formId) {
-    if (hexForms[formId] !== undefined) {
-      hexForms[formId] = undefined;
-    }
-  };
+    h.remove = function (formId) {
+        if (hexForms[formId] !== undefined) {
+            hexForms[formId] = undefined;
+        }
+    };
 
-  $(document).ready(function () {
-    h.form();
-  });
+    $(document).ready(function () {
+        h.form();
+    });
 
-  return h;
+    return h;
 }(hex));
 

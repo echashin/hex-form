@@ -2684,1461 +2684,1493 @@ var hex = (function (h) {
 
 
 var hex = (function (h) {
-  'use strict';
-  h.Block = function (node, parentBlock) {
-    var
-      isValid = true; //Валиден блок или нет
-    var blockId = false;
-    var directives = [];
-    var blockData = {};
-    var childBlocks = [];
-    var namespace = '';
-    var controls = [];
-    var render;
-    var root;
+    'use strict';
+    h.Block = function (node, parentBlock) {
+        var
+            isValid = true; //Валиден блок или нет
+        var blockId = false;
+        var directives = [];
+        var blockData = {};
+        var childBlocks = [];
+        var namespace = '';
+        var controls = [];
+        var render;
+        var root;
 
-    var $index;
-    var isRoot = false;
-    var lists = {};
-    var listAdd = [];
-    var listUp = [];
-    var listRemove = [];
+        var $index;
+        var isRoot = false;
+        var lists = {};
+        var listAdd = [];
+        var listUp = [];
+        var listRemove = [];
 
-    function getId() {
-      return blockId;
-    }
-
-
-    function getLists(ns) {
-      if (ns === undefined) {
-        return lists;
-      } else {
-        return lists[ns];
-      }
-    }
-
-    function logErrors() {
-      for (var i = 0, il = controls.length; i < il; i++) {
-        if (!controls[i].validate(true)) {
-          console.warn(controls[i].getName());
+        function getId() {
+            return blockId;
         }
-      }
-      for (i = 0, il = childBlocks.length; i < il; i++) {
-        childBlocks[i].logErrors();
-      }
-    }
-
-    function listAddItem(params) {
-      blockData[params.namespace].push({});
-      render.draw();
-    }
 
 
-    function removeDirectives() {
-      //Убираем директивы
-      for (var i = 0, l = directives.length; i < l; i++) {
-        render.removeDirective(directives[i]);
-      }
-      directives = [];
-      for (var j = 0, lc = childBlocks.length; j < lc; j++) {
-        childBlocks[j].removeDirectives();
-      }
-
-    }
-
-    function listRemoveItem(params) {
-      var parentData = parentBlock.getData()[params.namespace];
-      var index = parentData.indexOf(params.data);
-
-      if (index !== -1) {
-        parentData.splice(index, 1);
-        removeDirectives();
-
-        render.clear();
-        render.draw();
-      }
-    }
-
-    function listUpItem(params) {
-      var parentData = parentBlock.getData()[params.namespace];
-      var index = parentData.indexOf(params.data);
-      if (index > 0) {
-        var from = index;
-        var to = index - 1;
-        parentData.splice(to, 0, parentData.splice(from, 1)[0]);
-      }
-      for (var i = index + 1, l = parentData.length; i < l; i++) {
-        parentData[i].$index = i;
-      }
-
-      render.draw();
-    }
-
-    //Поиск связей внутри блока
-    function initDirectives(currentBlock) {
-      var s = '[data-hex-bind-html],[data-hex-bind-title],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-data-content],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
-      var bindNodes = currentBlock.node.find(s).addBack();
-
-      bindNodes.each(function () {
-        var findedNode = $(this);
-        //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
-
-        if (findedNode.parents('[data-hex-if]').size() === 0 && findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
-          var attributes = h.utils.getAttributes(findedNode);
-          for (var a in attributes) {
-            if (attributes.hasOwnProperty(a)) {
-              switch (a) {
-                case 'data-hex-bind-html':
-                case 'data-hex-bind-css':
-                case 'data-hex-bind-title':
-                case 'data-hex-bind-name':
-                case 'data-hex-bind-href':
-                case 'data-hex-bind-src':
-                case 'data-hex-bind-id':
-                case 'data-hex-bind-for':
-                case 'data-hex-bind-data-content':
-                case 'data-hex-bind-class':
-                {
-                  directives.push(new h.directives.Bind({
-                    node: findedNode,
-                    attribute: a,
-                    block: currentBlock
-                  }));
-                  break;
-                }
-                case 'data-hex-show':
-                {
-                  directives.push(new h.directives.Show({node: findedNode, block: currentBlock}));
-                  break;
-                }
-                case 'data-hex-data':
-                {
-                  directives.push(new h.directives.Data({node: findedNode, block: currentBlock}));
-                  break;
-                }
-                case 'data-hex-if':
-                {
-                  directives.push(new h.directives.If({
-                    node: findedNode,
-                    block: currentBlock
-                  }));
-                  break;
-                }
-                case 'data-hex-disable':
-                {
-                  directives.push(new h.directives.Disable({
-                    node: findedNode,
-                    block: currentBlock
-                  }));
-                  break;
-                }
-                case 'data-hex-list':
-                {
-                  var list = new h.directives.List({
-                    node: findedNode,
-                    block: currentBlock
-                  });
-
-                  if (lists[list.getNamespace()] === undefined) {
-                    lists[list.getNamespace()] = [];
-                  }
-                  lists[list.getNamespace()].push(list);
-                  directives.push(list);
-                  break;
-                }
-                case 'data-hex-list-add':
-                {
-                  var listAddNew = new h.directives.ListAdd({node: findedNode});
-                  listAddNew.on('add', listAddItem);
-                  listAdd.push(listAddNew);
-                  break;
-                }
-                case 'data-hex-list-remove':
-                {
-                  var listRemoveNew = new h.directives.ListRemove({node: findedNode, block: currentBlock});
-                  listRemoveNew.on('remove', listRemoveItem);
-                  directives.push(listRemoveNew);
-                  break;
-                }
-                case 'data-hex-list-up':
-                {
-                  var listUpNew = new h.directives.ListUp({node: findedNode});
-                  listUpNew.on('up', listUpItem);
-                  listUp.push(listUpNew);
-                  break;
-                }
-              }
-            }
-          }
-
-          for (var d = 0, dl = directives.length; d < dl; d++) {
-            render.addDirective(directives[d]);
-          }
-        }
-      });
-
-    }
-
-    function disable() {
-
-      for (var i = 0, il = controls.length; i < il; i++) {
-        controls[i].disable();
-      }
-    }
-
-    function enable() {
-      for (var i = 0, il = controls.length; i < il; i++) {
-        controls[i].enable();
-      }
-    }
-
-    function setData(data) {
-      h.utils.objectExtend(blockData, data);
-    }
-
-    function getData() {
-      return blockData;
-    }
-
-
-    function validate(update) {
-      var blockValid = true;
-      for (var i = 0, il = controls.length; i < il; i++) {
-        if (!controls[i].validate(update)) {
-          blockValid = false;
-        }
-      }
-      for (i = 0, il = childBlocks.length; i < il; i++) {
-        if (!childBlocks[i].validate(update)) {
-          blockValid = false;
-        }
-      }
-      isValid = blockValid;
-      return isValid;
-    }
-
-
-    function reset() {
-      isValid = true;
-      for (var i = 0, il = controls.length; i < il; i++) {
-        controls[i].reset();
-      }
-      for (i = 0, il = childBlocks.length; i < il; i++) {
-        childBlocks[i].reset();
-      }
-      render.draw();
-    }
-
-
-    function removeControl(control) {
-
-      var controlName = control.getName();
-      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').replace(/^\./, '').split('.');
-      var nml = names.length - 1;
-
-      var cObj = blockData;
-      for (var i = 0; i <= nml; i++) {
-        var aName = names[i];
-
-        if (i < nml) {
-          if (cObj[aName] !== undefined) {
-            cObj = cObj[aName];
-          }
-        } else {
-
-          if (cObj[aName] !== undefined) {
-            if ($.isArray(cObj)) {
-              cObj.splice(aName, 1);
+        function getLists(ns) {
+            if (ns === undefined) {
+                return lists;
             } else {
-              delete cObj[aName];
+                return lists[ns];
             }
-          }
-        }
-      }
-      var index = controls.indexOf(control);
-      if (index !== -1) {
-        controls.splice(index, 1);
-      }
-
-    }
-
-    function addControl(control) {
-      var cObj = blockData;
-      var controlName = control.getName();
-      var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.').filter(function (n) {
-        return !h.utils.isEmpty(n);
-      });
-      var nml = names.length - 1;
-      var defaultVal = hex.utils.objectProperty(blockData, controlName);
-      if (!h.utils.isEmpty(defaultVal)) {
-        control.setValue(defaultVal);
-      }
-
-      for (var i = 0; i <= nml; i++) {
-        var aName = names[i];
-        if (i < nml) {
-          if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
-            cObj[aName] = {};
-          }
-          cObj = cObj[aName];
-        } else {
-          Object.defineProperty(cObj, aName, {
-            enumerable: true,
-            configurable: true,
-            get: control.getValue,
-            set: control.setValue
-          });
-        }
-      }
-
-
-      control.on('change', function () {
-        //h.utils.objectProperty(blockData, controlName, value);
-        render.draw();
-      });
-
-
-      control.on('disable', function () {
-
-      });
-      control.on('enable', function () {
-
-      });
-
-
-      control.on('validate', function () {
-        root.validate(false);
-        render.draw();
-      });
-    }
-
-    //Добавляем контролы в блок
-    function addControls(newInputs, currentBlock) {
-      var tmpConfigs = {};
-      for (var i in newInputs) {
-        var input = newInputs[i];
-
-        var controlName = input.attr('name');
-        var errorsBlock;
-        var formGroup = input.closest('.form-group');
-        if (formGroup.size() <= 0) {
-          formGroup = undefined;
-        } else {
-          errorsBlock = formGroup.find('.errors');
-          if (errorsBlock.size() <= 0) {
-            errorsBlock = undefined;
-          }
         }
 
-        var tagName = input.prop('tagName').toLowerCase();
-        var inputType = tagName;
+        function logErrors() {
+            for (var i = 0, il = controls.length; i < il; i++) {
+                if (!controls[i].validate(true)) {
+                    console.warn(controls[i].getName());
+                }
+            }
+            for (i = 0, il = childBlocks.length; i < il; i++) {
+                childBlocks[i].logErrors();
+            }
+        }
 
-        var controlConfig = {
-          type: inputType,
-          inputs: [input],
-          formGroup: formGroup,
-          errorsBlock: errorsBlock,
-          block: currentBlock,
-          name: controlName
+        function listAddItem(params) {
+            blockData[params.namespace].push({});
+            render.draw();
+        }
+
+
+        function removeDirectives() {
+            //Убираем директивы
+            for (var i = 0, l = directives.length; i < l; i++) {
+                render.removeDirective(directives[i]);
+            }
+            directives = [];
+            for (var j = 0, lc = childBlocks.length; j < lc; j++) {
+                childBlocks[j].removeDirectives();
+            }
+
+        }
+
+        function listRemoveItem(params) {
+            var parentData = parentBlock.getData()[params.namespace];
+            var index = parentData.indexOf(params.data);
+
+            if (index !== -1) {
+                parentData.splice(index, 1);
+                removeDirectives();
+
+                render.clear();
+                render.draw();
+            }
+        }
+
+        function listUpItem(params) {
+            var parentData = parentBlock.getData()[params.namespace];
+            var index = parentData.indexOf(params.data);
+            if (index > 0) {
+                var from = index;
+                var to = index - 1;
+                parentData.splice(to, 0, parentData.splice(from, 1)[0]);
+            }
+            for (var i = index + 1, l = parentData.length; i < l; i++) {
+                parentData[i].$index = i;
+            }
+
+            render.draw();
+        }
+
+        //Поиск связей внутри блока
+        function initDirectives(currentBlock) {
+            var s = '[data-hex-bind-html],[data-hex-bind-title],[data-hex-bind-for],[data-hex-bind-class],[data-hex-bind-data-content],[data-hex-bind-id],[data-hex-bind-href],[data-hex-disable],[data-hex-bind-name],[data-hex-bind-src],[data-hex-show],[data-hex-hide],[data-hex-list],[data-hex-list-add],[data-hex-list-remove],[data-hex-list-up],[data-hex-if],[data-hex-data]';
+            var bindNodes = currentBlock.node.find(s).addBack();
+
+            bindNodes.each(function () {
+                var findedNode = $(this);
+                //Проверка того, что найденные элементы лежат непосредственно внутри нашего блока
+
+                if (findedNode.parents('[data-hex-if]').size() === 0 && findedNode.closest('[data-hex-list-tpl]').size() === 0 && (findedNode.closest('[data-hex-block]').first().get(0) === currentBlock.node.get(0) || findedNode.get(0) === currentBlock.node.get(0))) {
+                    var attributes = h.utils.getAttributes(findedNode);
+                    for (var a in attributes) {
+                        if (attributes.hasOwnProperty(a)) {
+                            switch (a) {
+                                case 'data-hex-bind-html':
+                                case 'data-hex-bind-css':
+                                case 'data-hex-bind-title':
+                                case 'data-hex-bind-name':
+                                case 'data-hex-bind-href':
+                                case 'data-hex-bind-src':
+                                case 'data-hex-bind-id':
+                                case 'data-hex-bind-for':
+                                case 'data-hex-bind-data-content':
+                                case 'data-hex-bind-class': {
+                                    directives.push(new h.directives.Bind({
+                                        node: findedNode,
+                                        attribute: a,
+                                        block: currentBlock
+                                    }));
+                                    break;
+                                }
+                                case 'data-hex-show': {
+                                    directives.push(new h.directives.Show({node: findedNode, block: currentBlock}));
+                                    break;
+                                }
+                                case 'data-hex-data': {
+                                    directives.push(new h.directives.Data({node: findedNode, block: currentBlock}));
+                                    break;
+                                }
+                                case 'data-hex-if': {
+                                    directives.push(new h.directives.If({
+                                        node: findedNode,
+                                        block: currentBlock
+                                    }));
+                                    break;
+                                }
+                                case 'data-hex-disable': {
+                                    directives.push(new h.directives.Disable({
+                                        node: findedNode,
+                                        block: currentBlock
+                                    }));
+                                    break;
+                                }
+                                case 'data-hex-list': {
+                                    var list = new h.directives.List({
+                                        node: findedNode,
+                                        block: currentBlock
+                                    });
+
+                                    if (lists[list.getNamespace()] === undefined) {
+                                        lists[list.getNamespace()] = [];
+                                    }
+                                    lists[list.getNamespace()].push(list);
+                                    directives.push(list);
+                                    break;
+                                }
+                                case 'data-hex-list-add': {
+                                    var listAddNew = new h.directives.ListAdd({node: findedNode});
+                                    listAddNew.on('add', listAddItem);
+                                    listAdd.push(listAddNew);
+                                    break;
+                                }
+                                case 'data-hex-list-remove': {
+                                    var listRemoveNew = new h.directives.ListRemove({
+                                        node: findedNode,
+                                        block: currentBlock
+                                    });
+                                    listRemoveNew.on('remove', listRemoveItem);
+                                    directives.push(listRemoveNew);
+                                    break;
+                                }
+                                case 'data-hex-list-up': {
+                                    var listUpNew = new h.directives.ListUp({node: findedNode});
+                                    listUpNew.on('up', listUpItem);
+                                    listUp.push(listUpNew);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    for (var d = 0, dl = directives.length; d < dl; d++) {
+                        render.addDirective(directives[d]);
+                    }
+                }
+            });
+
+        }
+
+        function disable() {
+
+            for (var i = 0, il = controls.length; i < il; i++) {
+                controls[i].disable();
+            }
+        }
+
+        function enable() {
+            for (var i = 0, il = controls.length; i < il; i++) {
+                controls[i].enable();
+            }
+        }
+
+        function setData(data) {
+            h.utils.objectExtend(blockData, data);
+        }
+
+        function getAllControls(allc) {
+            if (allc === undefined || allc === false) {
+                allc = [];
+            }
+            allc = allc.concat(controls);
+            for (var i = 0, il = childBlocks.length; i < il; i++) {
+                allc=childBlocks[i].getAllControls(allc);
+            }
+            return allc;
+        }
+
+        function getData() {
+            return blockData;
+        }
+
+
+        function validate(update) {
+            var blockValid = true;
+            for (var i = 0, il = controls.length; i < il; i++) {
+                if (!controls[i].validate(update)) {
+                    blockValid = false;
+                }
+            }
+            for (i = 0, il = childBlocks.length; i < il; i++) {
+                if (!childBlocks[i].validate(update)) {
+                    blockValid = false;
+                }
+            }
+            isValid = blockValid;
+            return isValid;
+        }
+
+
+        function reset() {
+            isValid = true;
+            for (var i = 0, il = controls.length; i < il; i++) {
+                controls[i].reset();
+            }
+            for (i = 0, il = childBlocks.length; i < il; i++) {
+                childBlocks[i].reset();
+            }
+            render.draw();
+        }
+
+
+        function removeControl(control) {
+
+            var controlName = control.getName();
+            var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').replace(/^\./, '').split('.');
+            var nml = names.length - 1;
+
+            var cObj = blockData;
+            for (var i = 0; i <= nml; i++) {
+                var aName = names[i];
+
+                if (i < nml) {
+                    if (cObj[aName] !== undefined) {
+                        cObj = cObj[aName];
+                    }
+                } else {
+
+                    if (cObj[aName] !== undefined) {
+                        if ($.isArray(cObj)) {
+                            cObj.splice(aName, 1);
+                        } else {
+                            delete cObj[aName];
+                        }
+                    }
+                }
+            }
+            var index = controls.indexOf(control);
+            if (index !== -1) {
+                controls.splice(index, 1);
+            }
+
+        }
+
+        function addControl(control) {
+            var cObj = blockData;
+            var controlName = control.getName();
+            var names = controlName.replace(/['"]/g, '').replace(/[\[\]]/g, '.').replace(/\.+/g, '.').replace(/\.$/, '').split('.').filter(function (n) {
+                return !h.utils.isEmpty(n);
+            });
+            var nml = names.length - 1;
+            var defaultVal = hex.utils.objectProperty(blockData, controlName);
+            if (!h.utils.isEmpty(defaultVal)) {
+                control.setValue(defaultVal);
+            }
+
+            for (var i = 0; i <= nml; i++) {
+                var aName = names[i];
+                if (i < nml) {
+                    if (h.utils.isEmpty(cObj[aName]) || typeof cObj[aName] !== 'object') {
+                        cObj[aName] = {};
+                    }
+                    cObj = cObj[aName];
+                } else {
+                    Object.defineProperty(cObj, aName, {
+                        enumerable: true,
+                        configurable: true,
+                        get: control.getValue,
+                        set: control.setValue
+                    });
+                }
+            }
+
+
+            control.on('change', function () {
+                //h.utils.objectProperty(blockData, controlName, value);
+                render.draw();
+            });
+
+
+            control.on('disable', function () {
+
+            });
+            control.on('enable', function () {
+
+            });
+
+
+            control.on('validate', function () {
+                root.validate(false);
+                render.draw();
+            });
+        }
+
+        //Добавляем контролы в блок
+        function addControls(newInputs, currentBlock) {
+            var tmpConfigs = {};
+            for (var i in newInputs) {
+                var input = newInputs[i];
+
+                var controlName = input.attr('name');
+                var errorsBlock;
+                var formGroup = input.closest('.form-group');
+                if (formGroup.size() <= 0) {
+                    formGroup = undefined;
+                } else {
+                    errorsBlock = formGroup.find('.errors');
+                    if (errorsBlock.size() <= 0) {
+                        errorsBlock = undefined;
+                    }
+                }
+
+                var tagName = input.prop('tagName').toLowerCase();
+                var inputType = tagName;
+
+                var controlConfig = {
+                    type: inputType,
+                    inputs: [input],
+                    formGroup: formGroup,
+                    errorsBlock: errorsBlock,
+                    block: currentBlock,
+                    name: controlName
+                };
+
+
+                switch (tagName) {
+                    case 'select': {
+                        controlConfig.type = 'select';
+                        break;
+                    }
+                    case 'textarea': {
+                        controlConfig.type = 'textarea';
+                        break;
+                    }
+                    case 'input': {
+                        inputType = input.attr('type').toLowerCase();
+                        switch (inputType) {
+                            default: {
+                                controlConfig.type = inputType;
+                                break;
+                            }
+                            case 'checkbox': {
+                                inputType = 'checkbox';
+                                controlConfig.type = inputType;
+                                if (input.attr('value') !== undefined) {
+                                    controlConfig.trueValue = input.attr('value');
+                                }
+                                if (input.attr('data-hex-true-value') !== undefined) {
+                                    controlConfig.trueValue = input.attr('data-hex-true-value');
+                                }
+                                if (input.attr('data-hex-false-value') !== undefined) {
+                                    controlConfig.falseValue = input.attr('data-hex-false-value');
+                                }
+                                break;
+                            }
+                            case 'radio': {
+                                controlConfig.type = 'radio';
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (tmpConfigs[controlName] === undefined) {
+                    tmpConfigs[controlName] = controlConfig;
+                } else {
+                    tmpConfigs[controlName].inputs.push(input);
+                }
+            }
+
+            for (var cName in tmpConfigs) {
+                if (tmpConfigs.hasOwnProperty(cName)) {
+                    controls.push(new hex.Control(tmpConfigs[cName]));
+                }
+            }
+
+            for (var c = 0, len = controls.length; c < len; c++) {
+                addControl(controls[c]);
+            }
+
+        }
+
+
+        var block = {
+            controls: controls,
+            getAllControls: getAllControls,
+            parent: parentBlock,
+            childBlocks: childBlocks,
+            $hexBlock: true,
+            validate: validate,
+            reset: reset,
+            getId: getId,
+            getLists: getLists,
+            setData: setData,
+            getData: getData,
+            disable: disable,
+            enable: enable,
+            directives: directives,
+            removeDirectives: removeDirectives,
+            logErrors: logErrors
+        };
+
+        block.addBlock = function (newBlock) {
+            if (newBlock.$hexBlock === undefined) {
+                newBlock = new h.Block(newBlock, block);
+            }
+            var index = childBlocks.indexOf(newBlock);
+            if (index === -1) {
+                childBlocks.push(newBlock);
+                return newBlock;
+            } else {
+                return childBlocks[index];
+            }
+        };
+
+        block.remove = function () {
+            //Убираем контролы и их привязки к данным
+            while (block.controls.length > 0) {
+                removeControl(block.controls[0]);
+            }
+
+            removeDirectives();
+
+            if (!h.utils.isEmpty(parentBlock)) {
+                if (!h.utils.isEmpty(namespace)) {
+                    var parentData = parentBlock.getData()[namespace];
+                    if (parentData !== undefined) {
+                        if (parentData === blockData) {
+                            delete parentBlock.getData()[namespace];
+                        } else {
+                            if ($.isArray(parentData)) {
+                                var dIndex = parentData.indexOf(blockData);
+                                if (dIndex !== undefined && dIndex !== -1) {
+                                    parentData.splice(dIndex, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+                var bIndex = parentBlock.childBlocks.indexOf(block);
+                if (bIndex !== -1) {
+                    parentBlock.childBlocks.splice(bIndex, 1);
+                }
+            }
+
+            while (block.childBlocks.length > 0) {
+                block.childBlocks[0].remove();
+            }
+            node.remove();
+            root.validate(false);
         };
 
 
-        switch (tagName) {
-          case 'select':
-          {
-            controlConfig.type = 'select';
-            break;
-          }
-          case 'textarea':
-          {
-            controlConfig.type = 'textarea';
-            break;
-          }
-          case 'input':
-          {
-            inputType = input.attr('type').toLowerCase();
-            switch (inputType) {
-              default:
-              {
-                controlConfig.type = inputType;
-                break;
-              }
-              case 'checkbox':
-              {
-                inputType = 'checkbox';
-                controlConfig.type = inputType;
-                if (input.attr('value') !== undefined) {
-                  controlConfig.trueValue = input.attr('value');
+        function findChildrenBlocks(currentBlock) {
+            var ownInputs = [];
+            //Находим все инпуты внутри блока
+            currentBlock.node.find('input[type!="submit"],select,textarea').each(function () {
+                var el = $(this);
+                var parentBlockNode = el.closest('[data-hex-block]');
+                //Инпут находится непосредственно внутри нашего блока не в шаблоне и не в hex-if
+                if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && parentBlockNode.get(0) === node.get(0)) {
+                    ownInputs.push(el);
                 }
-                if (input.attr('data-hex-true-value') !== undefined) {
-                  controlConfig.trueValue = input.attr('data-hex-true-value');
+            });
+            addControls(ownInputs, currentBlock);
+
+            currentBlock.node.find('[data-hex-block]').each(function () {
+                var el = $(this);
+                if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
+                    currentBlock.addBlock(el);
                 }
-                if (input.attr('data-hex-false-value') !== undefined) {
-                  controlConfig.falseValue = input.attr('data-hex-false-value');
-                }
-                break;
-              }
-              case 'radio':
-              {
-                controlConfig.type = 'radio';
-                break;
-              }
-            }
-            break;
-          }
+            });
+
         }
-        if (tmpConfigs[controlName] === undefined) {
-          tmpConfigs[controlName] = controlConfig;
-        } else {
-          tmpConfigs[controlName].inputs.push(input);
-        }
-      }
-
-      for (var cName in tmpConfigs) {
-        if (tmpConfigs.hasOwnProperty(cName)) {
-          controls.push(new hex.Control(tmpConfigs[cName]));
-        }
-      }
-
-      for (var c = 0, len = controls.length; c < len; c++) {
-        addControl(controls[c]);
-      }
-
-    }
 
 
-    var block = {
-      controls: controls,
-      parent: parentBlock,
-      childBlocks: childBlocks,
-      $hexBlock: true,
-      validate: validate,
-      reset: reset,
-      getId: getId,
-      getLists: getLists,
-      setData: setData,
-      getData: getData,
-      disable: disable,
-      enable: enable,
-      directives: directives,
-      removeDirectives: removeDirectives,
-      logErrors: logErrors
-    };
+        function initBlock() {
+            block.node = node;
 
-    block.addBlock = function (newBlock) {
-      if (newBlock.$hexBlock === undefined) {
-        newBlock = new h.Block(newBlock, block);
-      }
-      var index = childBlocks.indexOf(newBlock);
-      if (index === -1) {
-        childBlocks.push(newBlock);
-        return newBlock;
-      } else {
-        return childBlocks[index];
-      }
-    };
+            node.get(0).getBlock = function () {
+                return block;
+            };
 
-    block.remove = function () {
-      //Убираем контролы и их привязки к данным
-      while (block.controls.length > 0) {
-        removeControl(block.controls[0]);
-      }
-
-      removeDirectives();
-
-      if (!h.utils.isEmpty(parentBlock)) {
-        if (!h.utils.isEmpty(namespace)) {
-          var parentData = parentBlock.getData()[namespace];
-          if (parentData !== undefined) {
-            if (parentData === blockData) {
-              delete parentBlock.getData()[namespace];
+            if (!h.utils.isEmpty(parentBlock)) {
+                root = parentBlock.root;
+                render = block.render = parentBlock.render;
+                isRoot = false;
             } else {
-              if ($.isArray(parentData)) {
-                var dIndex = parentData.indexOf(blockData);
-                if (dIndex !== undefined && dIndex !== -1) {
-                  parentData.splice(dIndex, 1);
+                root = block;
+                parentBlock = false;
+                block.parent = undefined;
+                isRoot = true;
+                render = block.render = new h.Render();
+                blockData = render.data;
+                block.namespaceFull = '';
+            }
+            block.root = root;
+
+
+            if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
+                namespace = node.attr('data-hex-block');
+                $index = undefined;
+                if (node.closest('[data-hex-list="' + namespace + '"]').size() > 0) {
+                    $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
                 }
-              }
             }
-          }
+
+            if (!isRoot) {
+                if (h.utils.isEmpty(namespace)) {
+                    blockData = parentBlock.getData();
+                    Object.defineProperty(block, 'namespaceFull', {
+                        enumerable: true,
+                        configurable: true,
+                        get: function () {
+                            return parentBlock.namespaceFull;
+                        },
+                        set: function () {
+
+                        }
+                    });
+                } else {
+                    //Если блок внутри списка
+                    if ($index !== undefined) {
+                        var bd = parentBlock.getData();
+                        if (bd !== undefined) {
+                            bd = bd[namespace];
+                            if (bd[$index] === undefined) {
+                                bd[$index] = blockData;
+                            } else {
+                                blockData = bd[$index];
+                            }
+                        }
+
+                        Object.defineProperty(blockData, '$index', {
+                            enumerable: true,
+                            configurable: true,
+                            get: function () {
+                                var ind = parentBlock.getData()[namespace].indexOf(blockData);
+                                return ind;
+                            },
+                            set: function () {
+
+                            }
+                        });
+
+                        Object.defineProperty(block, 'namespaceFull', {
+                            enumerable: true,
+                            configurable: true,
+                            get: function () {
+                                return parentBlock.namespaceFull + '[\'' + namespace + '\'][\'' + blockData.$index + '\']';
+                            },
+                            set: function () {
+
+                            }
+                        });
+                    }
+                    else {
+                        var pd = parentBlock.getData();
+                        if (pd !== undefined) {
+                            if (pd[namespace] === undefined) {
+                                pd[namespace] = blockData;
+                            } else {
+                                blockData = pd[namespace];
+                            }
+                        }
+
+                        Object.defineProperty(block, 'namespaceFull', {
+                            enumerable: true,
+                            configurable: true,
+                            get: function () {
+                                return parentBlock.namespaceFull + '[\'' + namespace + '\']';
+                            },
+                            set: function () {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            if (!h.utils.isEmpty(node.attr('id'))) {
+                blockId = node.attr('id');
+                Object.defineProperty(blockData, '$' + blockId, {
+                    enumerable: true,
+                    configurable: true,
+                    get: function () {
+                        return isValid;
+                    },
+                    set: function (v) {
+                        isValid = v;
+                    }
+                });
+            }
+
+            if (!isRoot && parentBlock.getData().$index !== undefined) {
+                Object.defineProperty(blockData, '$parentIndex', {
+                    enumerable: true,
+                    configurable: true,
+                    get: function () {
+                        return parentBlock.getData().$index;
+                    },
+                    set: function () {
+
+                    }
+                });
+            }
+
+
+            Object.defineProperty(blockData, '$valid', {
+                enumerable: true,
+                configurable: true,
+                get: function () {
+                    return isValid;
+                },
+                set: function (v) {
+                    isValid = v;
+                }
+            });
+
+            initDirectives(block);
+            findChildrenBlocks(block);
+
+            render.clear();
+            render.draw(directives);
+
+
         }
-        var bIndex = parentBlock.childBlocks.indexOf(block);
-        if (bIndex !== -1) {
-          parentBlock.childBlocks.splice(bIndex, 1);
-        }
-      }
 
-      while (block.childBlocks.length > 0) {
-        block.childBlocks[0].remove();
-      }
-      node.remove();
-      root.validate(false);
-    };
-
-
-    function findChildrenBlocks(currentBlock) {
-      var ownInputs = [];
-      //Находим все инпуты внутри блока
-      currentBlock.node.find('input[type!="submit"],select,textarea').each(function () {
-        var el = $(this);
-        var parentBlockNode = el.closest('[data-hex-block]');
-        //Инпут находится непосредственно внутри нашего блока не в шаблоне и не в hex-if
-        if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && parentBlockNode.get(0) === node.get(0)) {
-          ownInputs.push(el);
-        }
-      });
-      addControls(ownInputs, currentBlock);
-
-      currentBlock.node.find('[data-hex-block]').each(function () {
-        var el = $(this);
-        if (el.closest('[data-hex-list-tpl]').size() === 0 && el.closest('[data-hex-if]').size() === 0 && (el.parents('[data-hex-block]:first').get(0) === currentBlock.node.get(0))) {
-          currentBlock.addBlock(el);
-        }
-      });
-
-    }
-
-
-    function initBlock() {
-      block.node = node;
-
-      node.get(0).getBlock = function () {
+        initBlock();
         return block;
-      };
-
-      if (!h.utils.isEmpty(parentBlock)) {
-        root = parentBlock.root;
-        render = block.render = parentBlock.render;
-        isRoot = false;
-      } else {
-        root = block;
-        parentBlock = false;
-        block.parent = undefined;
-        isRoot = true;
-        render = block.render = new h.Render();
-        blockData = render.data;
-        block.namespaceFull = '';
-      }
-      block.root = root;
-
-
-      if (!h.utils.isEmpty(node.attr('data-hex-block'))) {
-        namespace = node.attr('data-hex-block');
-        $index = undefined;
-        if (node.closest('[data-hex-list="' + namespace + '"]').size() > 0) {
-          $index = node.closest('[data-hex-list="' + namespace + '"]').children('[data-hex-block="' + namespace + '"]').index(node);
-        }
-      }
-
-      if (!isRoot) {
-        if (h.utils.isEmpty(namespace)) {
-          blockData = parentBlock.getData();
-          Object.defineProperty(block, 'namespaceFull', {
-            enumerable: true,
-            configurable: true,
-            get: function () {
-              return parentBlock.namespaceFull;
-            },
-            set: function () {
-
-            }
-          });
-        } else {
-          //Если блок внутри списка
-          if ($index !== undefined) {
-            var bd = parentBlock.getData();
-            if (bd !== undefined) {
-              bd = bd[namespace];
-              if (bd[$index] === undefined) {
-                bd[$index] = blockData;
-              } else {
-                blockData = bd[$index];
-              }
-            }
-
-            Object.defineProperty(blockData, '$index', {
-              enumerable: true,
-              configurable: true,
-              get: function () {
-                var ind = parentBlock.getData()[namespace].indexOf(blockData);
-                return ind;
-              },
-              set: function () {
-
-              }
-            });
-
-            Object.defineProperty(block, 'namespaceFull', {
-              enumerable: true,
-              configurable: true,
-              get: function () {
-                return parentBlock.namespaceFull + '[\'' + namespace + '\'][\'' + blockData.$index + '\']';
-              },
-              set: function () {
-
-              }
-            });
-          }
-          else {
-            var pd = parentBlock.getData();
-            if (pd !== undefined) {
-              if (pd[namespace] === undefined) {
-                pd[namespace] = blockData;
-              } else {
-                blockData = pd[namespace];
-              }
-            }
-
-            Object.defineProperty(block, 'namespaceFull', {
-              enumerable: true,
-              configurable: true,
-              get: function () {
-                return parentBlock.namespaceFull + '[\'' + namespace + '\']';
-              },
-              set: function () {
-
-              }
-            });
-          }
-        }
-      }
-
-      if (!h.utils.isEmpty(node.attr('id'))) {
-        blockId = node.attr('id');
-        Object.defineProperty(blockData, '$' + blockId, {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return isValid;
-          },
-          set: function (v) {
-            isValid = v;
-          }
-        });
-      }
-
-      if (!isRoot && parentBlock.getData().$index !== undefined) {
-        Object.defineProperty(blockData, '$parentIndex', {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return parentBlock.getData().$index;
-          },
-          set: function () {
-
-          }
-        });
-      }
-
-
-      Object.defineProperty(blockData, '$valid', {
-        enumerable: true,
-        configurable: true,
-        get: function () {
-          return isValid;
-        },
-        set: function (v) {
-          isValid = v;
-        }
-      });
-
-      initDirectives(block);
-      findChildrenBlocks(block);
-
-      render.clear();
-      render.draw(directives);
-
-
-    }
-
-    initBlock();
-    return block;
-  };
-  return h;
+    };
+    return h;
 }(hex));
 
 
 /* global moment:true*/
 var hex = (function (h) {
-  'use strict';
-  h.Control = function (config) {
+    'use strict';
+    h.Control = function (config) {
 
 
-    //DOM nodes (<input type="text"> || <input type="radio" value="male"><input type="radio" value="female">)
-    var inputs = [];
-    var
-      controlName,//Имя инпута, так же является именем свойства в объекте данных блока
-      type,//тип
-      controlValue,//значение
-      defaultValue,//значение по умолчанию
-      errors = [], //ошибки
-      handlers = {},//привязанные к контролу события
-      validationEvents = {},//события при которых происходит запуск валидации
-      isReadonly = false, //только для чтения или нет
-      isDisabled = false,//отключен или нет
-      isValid = true,//Валиден или нет
-      validators = [],//подключенные валидаторы
-      widgets = {}, //подключенные виджеты
-      checkedValue = true, //для чекбокса, значение при включенном
-      uncheckedValue = false, //для чекбокса, значение при выключенном
-      lastValidateValue,
-      formGroup,
-      errorsBlock;
+        //DOM nodes (<input type="text"> || <input type="radio" value="male"><input type="radio" value="female">)
+        var inputs = [];
+        var
+            controlName,//Имя инпута, так же является именем свойства в объекте данных блока
+            type,//тип
+            controlValue,//значение
+            defaultValue,//значение по умолчанию
+            errors = [], //ошибки
+            errorsMessages = {}, //текст ошибок
+            handlers = {},//привязанные к контролу события
+            validationEvents = {},//события при которых происходит запуск валидации
+            isReadonly = false, //только для чтения или нет
+            isDisabled = false,//отключен или нет
+            isValid = true,//Валиден или нет
+            validators = [],//подключенные валидаторы
+            widgets = {}, //подключенные виджеты
+            checkedValue = true, //для чекбокса, значение при включенном
+            uncheckedValue = false, //для чекбокса, значение при выключенном
+            lastValidateValue,
+            formGroup,
+            errorsBlock;
 
+        function getErrorsMessages() {
+          return errorsMessages;
+        }
 
-    function getDomValue() {
-      switch (type) {
-        case 'text':
-        default:
-        {
-          if (widgets.date !== undefined) {
-            var picker = inputs[0].data('daterangepicker');
-            if (picker === undefined) {
-              return inputs[0].val();
-            } else {
-              if (inputs[0].val() === '') {
-                return false;
-              } else {
-                var v = '';
-                var format = 'YYYY-MM-DD';
-                if (picker.timePicker === true) {
-                  format += ' HH:mm';
+        function getDomValue() {
+            switch (type) {
+                case 'text':
+                default: {
+                    if (widgets.date !== undefined) {
+                        var picker = inputs[0].data('daterangepicker');
+                        if (picker === undefined) {
+                            return inputs[0].val();
+                        } else {
+                            if (inputs[0].val() === '') {
+                                return false;
+                            } else {
+                                var v = '';
+                                var format = 'YYYY-MM-DD';
+                                if (picker.timePicker === true) {
+                                    format += ' HH:mm';
+                                }
+                                v += picker.startDate.format(format);
+                                if (picker.singleDatePicker === false) {
+                                    var endDate = picker.endDate.format(format);
+                                    v += ' - ' + endDate;
+                                }
+                                return v;
+                            }
+                        }
+                    } else if (widgets.fileupload !== undefined || widgets.filesimple !== undefined) {
+                        return controlValue;
+                    } else {
+                        return inputs[0].val();
+                    }
+
                 }
-                v += picker.startDate.format(format);
-                if (picker.singleDatePicker === false) {
-                  var endDate = picker.endDate.format(format);
-                  v += ' - ' + endDate;
+                case 'radio': {
+                    var r = false;
+                    for (var i in inputs) {
+                        if (inputs.hasOwnProperty(i)) {
+                            if (inputs[i].is(':checked') === true) {
+                                inputs[i].closest('label').addClass('checked');
+                                r = inputs[i].val();
+                            } else {
+                                inputs[i].closest('label').removeClass('checked');
+                            }
+                        }
+                    }
+                    return r;
                 }
-                return v;
-              }
+                case 'checkbox': {
+                    if (inputs.length < 2) {
+                        if (inputs[0].is(':checked') === true) {
+                            inputs[0].closest('label').addClass('checked');
+                            return checkedValue;
+                        } else {
+                            inputs[0].closest('label').removeClass('checked');
+                            return uncheckedValue;
+                        }
+                    } else {
+                        var vals = [];
+                        for (var ci = 0, l = inputs.length; ci < l; ci++) {
+                            if (inputs[ci].is(':checked') === true) {
+                                vals.push(inputs[ci].val());
+                                inputs[ci].closest('label').addClass('checked');
+                            } else {
+                                inputs[ci].closest('label').removeClass('checked');
+                                if (inputs[ci].attr('data-hex-false-value') !== undefined) {
+                                    vals.push(inputs[ci].attr('data-hex-false-value'));
+                                }
+                            }
+                        }
+                        return vals;
+                    }
+                }
             }
-          } else if (widgets.fileupload !== undefined || widgets.filesimple !== undefined) {
+        }
+
+        function setDomValue() {
+            switch (type) {
+                case 'file': {
+                    break;
+                }
+                case 'checkbox': {
+                    if (inputs.length < 2) {
+                        if (checkedValue === controlValue) {
+                            inputs[0].closest('label').addClass('checked');
+                            inputs[0].prop('checked', true);
+                        } else {
+                            inputs[0].closest('label').removeClass('checked');
+                            inputs[0].prop('checked', false);
+                        }
+                    } else {
+                        for (var ci = 0, l = inputs.length; ci < l; ci++) {
+                            if (controlValue.indexOf(inputs[ci].val()) !== -1) {
+                                inputs[ci].closest('label').addClass('checked');
+                                inputs[ci].prop('checked', true);
+                            } else {
+                                inputs[ci].closest('label').removeClass('checked');
+                                inputs[ci].prop('checked', false);
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 'radio': {
+                    for (var i in inputs) {
+                        if (inputs.hasOwnProperty(i)) {
+                            if (inputs[i].attr('value') === controlValue) {
+                                inputs[i].prop('checked', true);
+                                inputs[i].closest('label').addClass('checked');
+                            } else {
+                                inputs[i].prop('checked', false);
+                                inputs[i].closest('label').removeClass('checked');
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 'text':
+                default: {
+                    if (widgets.date !== undefined) {
+                        if (!h.utils.isEmpty(controlValue)) {
+                            var picker = inputs[0].data('daterangepicker');
+                            var dates = controlValue.split(' - ');
+                            if (dates[0] !== undefined) {
+                                picker.setStartDate(moment(dates[0]));
+                            }
+                            if (dates[1] !== undefined) {
+                                picker.setEndDate(moment(dates[1]));
+                            }
+                        }
+                    } else {
+                        inputs[0].val(controlValue);
+                        inputs[0].trigger('change');
+                    }
+                    break;
+                }
+            }
+        }
+
+        function getName() {
+            return controlName;
+        }
+
+        function on(eventName, fn) {
+            if (handlers[eventName] === undefined) {
+                handlers[eventName] = [];
+            }
+            if (handlers[eventName].indexOf(fn) < 0) {
+                handlers[eventName].push(fn);
+            }
+        }
+
+        function off(eventName, fn) {
+            if (handlers[eventName] !== undefined) {
+                handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
+            }
+        }
+
+        function trigger(eventName, params) {
+            if (handlers[eventName] !== undefined) {
+                for (var fnIndex in handlers[eventName]) {
+                    var func = handlers[eventName][fnIndex];
+                    func(params);
+                }
+            } else {
+                return true;
+            }
+        }
+
+
+        function getInputs() {
+            return inputs;
+        }
+
+        function setValue(v) {
+            if (controlValue !== v) {
+                controlValue = v;
+                setDomValue();
+            }
+        }
+
+        function getValue() {
             return controlValue;
-          } else {
-            return inputs[0].val();
-          }
+        }
 
-        }
-        case 'radio':
-        {
-          var r = false;
-          for (var i in inputs) {
-            if (inputs.hasOwnProperty(i)) {
-              if (inputs[i].is(':checked') === true) {
-                inputs[i].closest('label').addClass('checked');
-                r = inputs[i].val();
-              } else {
-                inputs[i].closest('label').removeClass('checked');
-              }
-            }
-          }
-          return r;
-        }
-        case 'checkbox':
-        {
-          if (inputs.length < 2) {
-            if (inputs[0].is(':checked') === true) {
-              inputs[0].closest('label').addClass('checked');
-              return checkedValue;
-            } else {
-              inputs[0].closest('label').removeClass('checked');
-              return uncheckedValue;
-            }
-          } else {
-            var vals = [];
-            for (var ci = 0, l = inputs.length; ci < l; ci++) {
-              if (inputs[ci].is(':checked') === true) {
-                vals.push(inputs[ci].val());
-                inputs[ci].closest('label').addClass('checked');
-              } else {
-                inputs[ci].closest('label').removeClass('checked');
-                if (inputs[ci].attr('data-hex-false-value') !== undefined) {
-                  vals.push(inputs[ci].attr('data-hex-false-value'));
+        function sortByProperty(prop) {
+            return function (a, b) {
+                if (typeof a[prop] === 'number') {
+                    return (a[prop] - b[prop]);
+                } else {
+                    return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
                 }
-              }
+            };
+        }
+
+        function hideErrors() {
+            if (formGroup !== undefined) {
+                formGroup.removeClass('has-error');
             }
-            return vals;
-          }
-        }
-      }
-    }
-
-    function setDomValue() {
-      switch (type) {
-        case 'file':
-        {
-          break;
-        }
-        case 'checkbox':
-        {
-          if (inputs.length < 2) {
-            if (checkedValue === controlValue) {
-              inputs[0].closest('label').addClass('checked');
-              inputs[0].prop('checked', true);
-            } else {
-              inputs[0].closest('label').removeClass('checked');
-              inputs[0].prop('checked', false);
-            }
-          } else {
-            for (var ci = 0, l = inputs.length; ci < l; ci++) {
-              if (controlValue.indexOf(inputs[ci].val()) !== -1) {
-                inputs[ci].closest('label').addClass('checked');
-                inputs[ci].prop('checked', true);
-              } else {
-                inputs[ci].closest('label').removeClass('checked');
-                inputs[ci].prop('checked', false);
-              }
-            }
-          }
-          break;
-        }
-        case 'radio':
-        {
-          for (var i in inputs) {
-            if (inputs.hasOwnProperty(i)) {
-              if (inputs[i].attr('value') === controlValue) {
-                inputs[i].prop('checked', true);
-                inputs[i].closest('label').addClass('checked');
-              } else {
-                inputs[i].prop('checked', false);
-                inputs[i].closest('label').removeClass('checked');
-              }
-            }
-          }
-          break;
-        }
-        case 'text':
-        default:
-        {
-          if (widgets.date !== undefined) {
-            if (!h.utils.isEmpty(controlValue)) {
-              var picker = inputs[0].data('daterangepicker');
-              var dates = controlValue.split(' - ');
-              if (dates[0] !== undefined) {
-                picker.setStartDate(moment(dates[0]));
-              }
-              if (dates[1] !== undefined) {
-                picker.setEndDate(moment(dates[1]));
-              }
-            }
-          } else {
-            inputs[0].val(controlValue);
-            inputs[0].trigger('change');
-          }
-          break;
-        }
-      }
-    }
-
-    function getName() {
-      return controlName;
-    }
-
-    function on(eventName, fn) {
-      if (handlers[eventName] === undefined) {
-        handlers[eventName] = [];
-      }
-      if (handlers[eventName].indexOf(fn) < 0) {
-        handlers[eventName].push(fn);
-      }
-    }
-
-    function off(eventName, fn) {
-      if (handlers[eventName] !== undefined) {
-        handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
-      }
-    }
-
-    function trigger(eventName, params) {
-      if (handlers[eventName] !== undefined) {
-        for (var fnIndex in handlers[eventName]) {
-          var func = handlers[eventName][fnIndex];
-          func(params);
-        }
-      } else {
-        return true;
-      }
-    }
-
-
-    function getInputs() {
-      return inputs;
-    }
-
-    function setValue(v) {
-      if (controlValue !== v) {
-        controlValue = v;
-        setDomValue();
-      }
-    }
-
-    function getValue() {
-      return controlValue;
-    }
-
-    function sortByProperty(prop) {
-      return function (a, b) {
-        if (typeof a[prop] === 'number') {
-          return (a[prop] - b[prop]);
-        } else {
-          return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
-        }
-      };
-    }
-
-    function hideErrors() {
-      if (formGroup !== undefined) {
-        formGroup.removeClass('has-error');
-      }
-      if (errorsBlock !== undefined) {
-        errorsBlock.find('span').removeClass('active');
-        errorsBlock.closest('form').get(0).getForm().renderErrors();
-      }
-
-    }
-
-    function showErrors() {
-      if (errorsBlock !== undefined) {
-        for (var i = 0, length = errors.length; i < length; i++) {
-          errorsBlock.find('.error-' + errors[i]).addClass('active');
-        }
-      }
-      if (formGroup !== undefined) {
-        formGroup.addClass('has-error');
-      }
-    }
-
-    function reset() {
-      lastValidateValue = defaultValue;
-      setValue(defaultValue);
-      hideErrors();
-    }
-
-
-    function readonly(v) {
-      if (v === undefined) {
-        return isReadonly;
-      } else {
-        if (v !== false && v !== true) {
-          throw new Error('Wrong value in readonly method ');
-        }
-        for (var i = 0, length = inputs.length; i < length; i++) {
-          inputs[i].prop('readonly', v);
-        }
-        isReadonly = v;
-      }
-    }
-
-    function disable() {
-      for (var i = 0, len = inputs.length; i < len; i++) {
-        inputs[i].prop('disabled', true);
-      }
-      isDisabled = true;
-      trigger('disable');
-      hideErrors();
-    }
-
-    function enable() {
-      for (var i = 0, len = inputs.length; i < len; i++) {
-        inputs[i].prop('disabled', false);
-      }
-      isDisabled = false;
-      trigger('enable');
-    }
-
-
-    function validate(update, event) {
-      if (update === false) {
-        return isValid;
-      }
-      else {
-        lastValidateValue = controlValue;
-        hideErrors();
-        errors = [];
-        if (!isDisabled) {
-          for (var v in validators) {
-            if (validators.hasOwnProperty(v)) {
-              if (event === undefined || validators[v].getEvents().indexOf(event) !== -1) {
-                if (!validators[v].isValid(controlValue)) {
-                  errors.push(validators[v].getClassName());
-                  break;
+            if (errorsBlock !== undefined) {
+                errorsBlock.find('span').removeClass('active');
+                var formErrors=errorsBlock.closest('form').find('[data-hex-form-errors]:first');
+                formErrors.find('[data-hex-error-element="'+controlName+'"]').addClass('hide');
+                if(formErrors.find('div:not(.hide)').size()>0){
+                    formErrors.removeClass('hide');
+                }else{
+                    formErrors.addClass('hide');
                 }
-              }
             }
-          }
         }
-        if (errors.length > 0) {
-          isValid = false;
-          showErrors();
-        }
-        else {
-          isValid = true;
-          hideErrors();
-        }
-        trigger('validate', update);
-        return isValid;
-      }
-    }
 
-    var control = {
-      getName: getName,
-      setValue: setValue,
-      getValue: getValue,
-      reset: reset,
-      readonly: readonly,
-      disable: disable,
-      enable: enable,
-      validate: validate,
-      getInputs: getInputs,
-      errors: errors,
-      showErrors: showErrors,
-      hideErrors: hideErrors,
-      inputs: inputs,
-      on: on,
-      off: off,
-      trigger: trigger,
-      toString: function () {
-        return getValue();
-      },
-      valueOf: function () {
-        return getValue();
-      },
-      toJSON: function () {
-        return getValue();
-      }
+        function showErrors() {
+            if (errorsBlock !== undefined) {
+                for (var i = 0, length = errors.length; i < length; i++) {
+                    errorsBlock.find('.error-' + errors[i]).addClass('active');
+                    var formErrors=errorsBlock.closest('form').find('[data-hex-form-errors]');
+                    formErrors.find('[data-hex-error-element="'+controlName+'"]').removeClass('hide');
+
+                    if(formErrors.find('div:not(.hide)').size()>0){
+                        formErrors.removeClass('hide');
+                    }else{
+                        formErrors.addClass('hide');
+                    }
+                }
+            }
+            if (formGroup !== undefined) {
+                formGroup.addClass('has-error');
+            }
+        }
+
+        function reset() {
+            lastValidateValue = defaultValue;
+            setValue(defaultValue);
+            hideErrors();
+        }
+
+
+        function readonly(v) {
+            if (v === undefined) {
+                return isReadonly;
+            } else {
+                if (v !== false && v !== true) {
+                    throw new Error('Wrong value in readonly method ');
+                }
+                for (var i = 0, length = inputs.length; i < length; i++) {
+                    inputs[i].prop('readonly', v);
+                }
+                isReadonly = v;
+            }
+        }
+
+        function disable() {
+            for (var i = 0, len = inputs.length; i < len; i++) {
+                inputs[i].prop('disabled', true);
+            }
+            isDisabled = true;
+            trigger('disable');
+            hideErrors();
+        }
+
+        function enable() {
+            for (var i = 0, len = inputs.length; i < len; i++) {
+                inputs[i].prop('disabled', false);
+            }
+            isDisabled = false;
+            trigger('enable');
+        }
+
+
+        function validate(update, event) {
+            if (update === false) {
+                return isValid;
+            }
+            else {
+                lastValidateValue = controlValue;
+                hideErrors();
+                errors = [];
+                if (!isDisabled) {
+                    for (var v in validators) {
+                        if (validators.hasOwnProperty(v)) {
+                            if (event === undefined || validators[v].getEvents().indexOf(event) !== -1) {
+                                if (!validators[v].isValid(controlValue)) {
+                                    errors.push(validators[v].getClassName());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (errors.length > 0) {
+                    isValid = false;
+                    showErrors();
+                }
+                else {
+                    isValid = true;
+                    hideErrors();
+                }
+                trigger('validate', update);
+                return isValid;
+            }
+        }
+
+        var control = {
+            getName: getName,
+            setValue: setValue,
+            getValue: getValue,
+            reset: reset,
+            readonly: readonly,
+            disable: disable,
+            enable: enable,
+            validate: validate,
+            getInputs: getInputs,
+            errors: errors,
+            getErrorsMessages: getErrorsMessages,
+            showErrors: showErrors,
+            hideErrors: hideErrors,
+            inputs: inputs,
+            on: on,
+            off: off,
+            trigger: trigger,
+            toString: function () {
+                return getValue();
+            },
+            valueOf: function () {
+                return getValue();
+            },
+            toJSON: function () {
+                return getValue();
+            }
+        };
+
+        function addValidator(vType, conf) {
+            var vConfig = {};
+            vType = h.utils.toCamel(vType);
+            if (conf !== undefined && conf !== '') {
+                $.extend(vConfig, jQuery.parseJSON(conf));
+            }
+
+            if (h.validators[vType] !== undefined) {
+                var validator = new h.validators[vType](control, vConfig);
+                var validatorEvents = validator.getEvents();
+                for (var eventName in validatorEvents) {
+                    if (validatorEvents.hasOwnProperty(eventName)) {
+                        validationEvents[validatorEvents[eventName]] = true;
+                    }
+                }
+                validators.push(validator);
+            } else {
+                console.warn('Validator "' + vType + '" not loaded!');
+            }
+        }
+
+        function addWidget(wType, conf) {
+            wType = h.utils.toCamel(wType);
+            var widgetConfig = {};
+            if (conf !== undefined && conf !== '') {
+                $.extend(widgetConfig, jQuery.parseJSON(conf));
+            }
+            if (h.widgets[wType] !== undefined) {
+                widgets[wType] = new h.widgets[wType](control, widgetConfig);
+            } else {
+                console.warn('Widget "' + wType + '" not loaded!');
+            }
+        }
+
+        function trigValidate(event) {
+            validate(true, event.type);
+        }
+
+        function addInput(input) {
+            inputs.push(input);
+            //Подключение валидаторов и виджетов
+            var attributes = h.utils.getAttributes(input);
+            for (var aName in attributes) {
+                if (attributes.hasOwnProperty(aName)) {
+                    var wMatch = aName.match(/^data-hex-widget-(.*)$/i);
+                    if (wMatch !== null) {
+                        if (wMatch[1] !== undefined) {
+                            addWidget(wMatch[1], attributes[aName]);
+                        }
+                    }
+                    if (aName === 'required') {
+                        addValidator('required', attributes[aName]);
+                    } else {
+                        var vMatch = aName.match(/^data-hex-validator-(.*)$/i);
+                        if (vMatch !== null && vMatch[1] !== undefined) {
+                            addValidator(vMatch[1], attributes[aName]);
+                        }
+                    }
+                }
+            }
+
+            input.on('change', function () {
+                controlValue = getDomValue();
+                trigger('change', controlValue);
+            });
+
+            if (type === 'text' || type === 'textarea' || type === 'password') {
+                input.on('keyup', function (e) {
+                    controlValue = getDomValue();
+                    input.trigger('change');
+                });
+            }
+
+            validators.sort(sortByProperty('weight'));
+            for (var eventName in validationEvents) {
+                if (validationEvents.hasOwnProperty(eventName)) {
+                    input.on(eventName, trigValidate);
+                }
+            }
+
+
+            if (input.prop('disabled')) {
+                disable();
+            }
+            if (input.prop('readonly')) {
+                readonly(true);
+            }
+
+            input.on('disable', function () {
+                disable();
+            });
+            input.on('enable', function () {
+                enable();
+            });
+
+        }
+
+
+        function init(conf) {
+            type = conf.type;
+
+            if (type === 'checkbox') {
+                if (conf.trueValue !== undefined) {
+                    checkedValue = conf.trueValue;
+                }
+                if (conf.falseValue !== undefined) {
+                    uncheckedValue = conf.falseValue;
+                }
+            }
+
+            controlName = conf.name;
+
+            if (controlName === undefined) {
+                console.error('Control dont have name');
+                console.error(conf.inputs);
+            }
+
+
+            formGroup = conf.formGroup;
+
+            errorsBlock = conf.errorsBlock;
+
+
+
+            if (conf.inputs !== undefined) {
+                for (var i in conf.inputs) {
+                    if (conf.inputs.hasOwnProperty(i)) {
+                        addInput(conf.inputs[i]);
+                    }
+                }
+            }
+            controlValue = defaultValue = getDomValue();
+            lastValidateValue = controlValue;
+
+            if (errorsBlock !== undefined && errorsBlock.size() > 0) {
+                errorsBlock.find('span').each(function () {
+                    var span = $(this);
+                    var cl = span.attr('class').split(/\s+/);
+
+                    $.each(cl, function (index, item) {
+                        if (item.search(/error-/) >= 0) {
+                            var mestext = span.html();
+                            if (mestext !== '') {
+                                errorsMessages[item.replace(/error-/, '')] = mestext;
+
+                            }
+
+                        }
+                    });
+
+                });
+            } else {
+                errorsBlock = undefined;
+            }
+
+            hideErrors();
+        }
+
+        init(config);
+        return control;
     };
 
-    function addValidator(vType, conf) {
-      var vConfig = {};
-      vType = h.utils.toCamel(vType);
-      if (conf !== undefined && conf !== '') {
-        $.extend(vConfig, jQuery.parseJSON(conf));
-      }
-
-      if (h.validators[vType] !== undefined) {
-        var validator = new h.validators[vType](control, vConfig);
-        var validatorEvents = validator.getEvents();
-        for (var eventName in validatorEvents) {
-          if (validatorEvents.hasOwnProperty(eventName)) {
-            validationEvents[validatorEvents[eventName]] = true;
-          }
-        }
-        validators.push(validator);
-      } else {
-        console.warn('Validator "' + vType + '" not loaded!');
-      }
-    }
-
-    function addWidget(wType, conf) {
-      wType = h.utils.toCamel(wType);
-      var widgetConfig = {};
-      if (conf !== undefined && conf !== '') {
-        $.extend(widgetConfig, jQuery.parseJSON(conf));
-      }
-      if (h.widgets[wType] !== undefined) {
-        widgets[wType] = new h.widgets[wType](control, widgetConfig);
-      } else {
-        console.warn('Widget "' + wType + '" not loaded!');
-      }
-    }
-
-    function trigValidate(event) {
-      validate(true, event.type);
-    }
-
-    function addInput(input) {
-      inputs.push(input);
-      //Подключение валидаторов и виджетов
-      var attributes = h.utils.getAttributes(input);
-      for (var aName in attributes) {
-        if (attributes.hasOwnProperty(aName)) {
-          var wMatch = aName.match(/^data-hex-widget-(.*)$/i);
-          if (wMatch !== null) {
-            if (wMatch[1] !== undefined) {
-              addWidget(wMatch[1], attributes[aName]);
-            }
-          }
-          if (aName === 'required') {
-            addValidator('required', attributes[aName]);
-          } else {
-            var vMatch = aName.match(/^data-hex-validator-(.*)$/i);
-            if (vMatch !== null && vMatch[1] !== undefined) {
-              addValidator(vMatch[1], attributes[aName]);
-            }
-          }
-        }
-      }
-
-      input.on('change', function () {
-        controlValue = getDomValue();
-        trigger('change', controlValue);
-      });
-
-      if (type === 'text' || type === 'textarea' || type === 'password') {
-        input.on('keyup', function (e) {
-          controlValue = getDomValue();
-          input.trigger('change');
-        });
-      }
-
-      validators.sort(sortByProperty('weight'));
-      for (var eventName in validationEvents) {
-        if (validationEvents.hasOwnProperty(eventName)) {
-          input.on(eventName, trigValidate);
-        }
-      }
-
-
-      if (input.prop('disabled')) {
-        disable();
-      }
-      if (input.prop('readonly')) {
-        readonly(true);
-      }
-
-      input.on('disable', function () {
-        disable();
-      });
-      input.on('enable', function () {
-        enable();
-      });
-
-    }
-
-
-    function init(conf) {
-      type = conf.type;
-
-      if (type === 'checkbox') {
-        if (conf.trueValue !== undefined) {
-          checkedValue = conf.trueValue;
-        }
-        if (conf.falseValue !== undefined) {
-          uncheckedValue = conf.falseValue;
-        }
-      }
-
-      controlName = conf.name;
-
-      if (controlName === undefined) {
-        console.error('Control dont have name');
-        console.error(conf.inputs);
-      }
-
-
-      formGroup = conf.formGroup;
-
-      errorsBlock = conf.errorsBlock;
-
-      if (conf.inputs !== undefined) {
-        for (var i in conf.inputs) {
-          if (conf.inputs.hasOwnProperty(i)) {
-            addInput(conf.inputs[i]);
-          }
-        }
-      }
-      controlValue = defaultValue = getDomValue();
-      lastValidateValue = controlValue;
-
-      hideErrors();
-    }
-
-    init(config);
-    return control;
-  };
-
-  return h;
+    return h;
 }(hex));
 
 
 var hex = (function (h) {
-  'use strict';
+    'use strict';
 
-  var hexForms = {};
+    var hexForms = {};
 
-  function HexForm(formId) {
-    var hf = this;
+    function HexForm(formId) {
+        var hf = this;
 
-     hf.errorText=$('meta[name="hex:errortext"]').attr('content');
-     hf.invalidText=$('meta[name="hex:invalidtext"]').attr('content');
-
-
-    var form = $('#' + formId);
-    form.get(0).getForm=function () {
-      return hf;
-    };
-    var handlers = {};
-    var dataType = 'formdata';
-    hf.root = undefined;
-
-    var formData = new FormData();
-    var FormEvent = function (type) {
-      this.type = type;
-      this.stoped = false;
-      this.stop = function () {
-        this.stoped = true;
-      };
-    };
-
-    hf.on = function (eventName, fn) {
-      if (handlers[eventName] === undefined) {
-        handlers[eventName] = [];
-      }
-      if (handlers[eventName].indexOf(fn) < 0) {
-        handlers[eventName].push(fn);
-      }
-    };
-
-    hf.off = function (eventName, fn) {
-      if (handlers[eventName] !== undefined) {
-        handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
-      }
-    };
-
-    hf.trigger = function (eventName, params) {
-      if (handlers[eventName] !== undefined) {
-        var formEvent = new FormEvent(eventName);
-        for (var fnIndex in handlers[eventName]) {
-          var func = handlers[eventName][fnIndex];
-          func(params, formEvent);
-        }
-        return !formEvent.stoped;
-      } else {
-        return true;
-      }
-    };
-
-    hf.getHandlers = function () {
-      return handlers;
-    };
-
-    function getValues() {
-      var data = $.extend({}, hf.root.getData());
-      for (var name in data) {
-        if (/^\$(.*)/.test(name)) {
-          delete data[name];
-        }
-      }
-      return data;
-    }
+        hf.errorText = $('meta[name="hex:errortext"]').attr('content');
+        hf.invalidText = $('meta[name="hex:invalidtext"]').attr('content');
 
 
-    hf.draw = function () {
-      hf.root.render.draw();
-    };
+        var form = $('#' + formId);
+        form.get(0).getForm = function () {
+            return hf;
+        };
+        var handlers = {};
+        var dataType = 'formdata';
+        hf.root = undefined;
 
-    function clearErrors() {
-      form.find('.has-error').removeClass('has-error');
-      form.find('.alerts div').remove();
-    }
+        var formData = new FormData();
+        var FormEvent = function (type) {
+            this.type = type;
+            this.stoped = false;
+            this.stop = function () {
+                this.stoped = true;
+            };
+        };
 
-    function reset(event) {
-      var dontBreakReset = hf.trigger('beforeReset', {values: getValues()});
-      if (dontBreakReset) {
-        window.setTimeout(function () {
-          clearErrors();
-          hf.root.reset();
-        }, 1);
-      } else {
-        event.preventDefault();
-      }
-      hf.trigger('afterReset', {});
-    }
-
-
-    function setFormData(data, name) {
-      var namespace = '';
-      if (name !== undefined) {
-        namespace = name;
-      }
-      for (var k in data) {
-        var v = data[k];
-        k += '';
-        if (k.indexOf('$') !== 0) {
-          var nameZ = k;
-          if (namespace !== '') {
-            nameZ = namespace + '[' + k + ']';
-          }
-
-          if ($.isArray(v) || $.isPlainObject(v)) {
-            setFormData(v, nameZ);
-          } else {
-            formData.append(nameZ, v);
-          }
-        }
-      }
-    }
-
-    hf.renderErrors=function(){
-        form.find('.alerts').html('');
-        window.setTimeout(function () {
-            if (form.find('.errors>.active').size() > 0) {
-                var invalidText = hf.invalidText + ':<ul>';
-                form.find('.errors>.active').each(function () {
-                    invalidText += '<li>' + $(this).html() + '</li>';
-                });
-                invalidText += '<ul>';
-                form.find('.alerts').html($('<div>').addClass('alert alert-danger').html(invalidText));
+        hf.on = function (eventName, fn) {
+            if (handlers[eventName] === undefined) {
+                handlers[eventName] = [];
             }
-        },300);
-    };
-
-    var submit = function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var data = getValues();
-      var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
-      if (!dontBreakBeforeValidation) {
-        return false;
-      }
-      var formValid = hf.root.validate(true);
-
-      if (formValid === true) {
-        clearErrors();
-
-        var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
-        if (dontBreakBefore) {
-          hf.loaderShow();
-          var url = form.attr('action');
-          /*Отправка на разные URL аттрибут data-action*/
-          var submitBtn = form.find('button[type=submit]:focus');
-          if (submitBtn.size() > 0) {
-            if (submitBtn.attr('data-action') !== undefined) {
-              url = submitBtn.attr('data-action');
+            if (handlers[eventName].indexOf(fn) < 0) {
+                handlers[eventName].push(fn);
             }
-          }
-          var method = 'POST';
+        };
 
-          if (form.attr('method') !== undefined) {
-            method = form.attr('method');
-          }
+        hf.off = function (eventName, fn) {
+            if (handlers[eventName] !== undefined) {
+                handlers[eventName].splice(handlers[eventName].indexOf(fn), 1);
+            }
+        };
 
-          if (dataType === 'formdata') {
-            setFormData(data);
-          } else {
-            formData = data;
-          }
+        hf.trigger = function (eventName, params) {
+            if (handlers[eventName] !== undefined) {
+                var formEvent = new FormEvent(eventName);
+                for (var fnIndex in handlers[eventName]) {
+                    var func = handlers[eventName][fnIndex];
+                    func(params, formEvent);
+                }
+                return !formEvent.stoped;
+            } else {
+                return true;
+            }
+        };
 
-          $.ajax({
-            url: url,
-            data: formData,
-            type: method,
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            success: function (res) {
-              var dontBreakAfter = hf.trigger('afterSubmit', res);
-              if (dontBreakAfter) {
+        hf.getHandlers = function () {
+            return handlers;
+        };
+
+        function getValues() {
+            var data = $.extend({}, hf.root.getData());
+            for (var name in data) {
+                if (/^\$(.*)/.test(name)) {
+                    delete data[name];
+                }
+            }
+            return data;
+        }
+
+
+        hf.draw = function () {
+            hf.root.render.draw();
+        };
+
+        function clearErrors() {
+            form.find('.has-error').removeClass('has-error');
+            form.find('.alerts div').remove();
+        }
+
+        function reset(event) {
+            var dontBreakReset = hf.trigger('beforeReset', {values: getValues()});
+            if (dontBreakReset) {
                 window.setTimeout(function () {
-                  if (res.success === true) {
                     clearErrors();
-                    if (res.reload !== undefined) {
-                      if (res.reload === true) {
-                        window.location.href = window.location.href;
-                      } else {
-                        window.location.href = res.reload;
-                      }
-                    } else {
-                      hf.loaderHide();
-                    }
-                  } else {
-                    hf.loaderHide();
-                  }
-                  if (res.alerts !== undefined) {
-                    for (var m in res.alerts) {
-                      var message = res.alerts[m];
-                      form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
-                    }
-                    hf.loaderHide();
-                  }
-                  if (res.run !== undefined) {
-                    var runFunc = new Function('form', res.run);
-                    runFunc.call(null, hf);
-                    hf.loaderHide();
-                  }
+                    hf.root.reset();
                 }, 1);
-              }
-            },
-            error: function () {
-              hf.loaderHide();
-              form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.errorText));
+            } else {
+                event.preventDefault();
             }
-          });
+            hf.trigger('afterReset', {});
         }
-      } else {
-        hf.renderErrors();
-      }
-      return false;
-    };
 
-    hf.loaderShow = function () {
-      form.find('.loader').show();
-    };
-    hf.loaderHide = function () {
-      form.find('.loader').hide();
-    };
 
-    hf.submit = function () {
-      submit();
-    };
+        function setFormData(data, name) {
+            var namespace = '';
+            if (name !== undefined) {
+                namespace = name;
+            }
+            for (var k in data) {
+                var v = data[k];
+                k += '';
+                if (k.indexOf('$') !== 0) {
+                    var nameZ = k;
+                    if (namespace !== '') {
+                        nameZ = namespace + '[' + k + ']';
+                    }
 
-    hf.getValues = function () {
-      return getValues();
-    };
+                    if ($.isArray(v) || $.isPlainObject(v)) {
+                        setFormData(v, nameZ);
+                    } else {
+                        formData.append(nameZ, v);
+                    }
+                }
+            }
+        }
 
-    var init = function () {
-      form.addClass('loader-container').append('<div class="loader"></div>');
-      form.attr('data-hex-block', '');
-      form.on('submit', submit);
-      form.on('reset', reset);
-      if (form.find('.loader').size() === 0) {
-        form.append('<div class="loader"></div>');
-      }
 
-      if (form.data('datatype') !== undefined) {
-        dataType = form.data('datatype');
-      }
 
-      hf.root = new h.Block(form);
+        var submit = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var data = getValues();
+            var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
+            if (!dontBreakBeforeValidation) {
+                return false;
+            }
+            var formValid = hf.root.validate(true);
 
-    };
+            if (formValid === true) {
+                clearErrors();
 
-    init();
-    return hf;
-  }
+                var dontBreakBefore = hf.trigger('beforeSubmit', {values: data});
+                if (dontBreakBefore) {
+                    hf.loaderShow();
+                    var url = form.attr('action');
+                    /*Отправка на разные URL аттрибут data-action*/
+                    var submitBtn = form.find('button[type=submit]:focus');
+                    if (submitBtn.size() > 0) {
+                        if (submitBtn.attr('data-action') !== undefined) {
+                            url = submitBtn.attr('data-action');
+                        }
+                    }
+                    var method = 'POST';
 
-  h.form = function (id) {
-    if (id === undefined) {
-      var forms = $('form.hex-form');
-      forms.each(function () {
-        var formId = $(this).attr('id');
-        if (formId === undefined) {
-          throw new Error('Form dont have id attr');
+                    if (form.attr('method') !== undefined) {
+                        method = form.attr('method');
+                    }
+
+                    if (dataType === 'formdata') {
+                        setFormData(data);
+                    } else {
+                        formData = data;
+                    }
+
+                    $.ajax({
+                        url: url,
+                        data: formData,
+                        type: method,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            var dontBreakAfter = hf.trigger('afterSubmit', res);
+                            if (dontBreakAfter) {
+                                window.setTimeout(function () {
+                                    if (res.success === true) {
+                                        clearErrors();
+                                        if (res.reload !== undefined) {
+                                            if (res.reload === true) {
+                                                window.location.href = window.location.href;
+                                            } else {
+                                                window.location.href = res.reload;
+                                            }
+                                        } else {
+                                            hf.loaderHide();
+                                        }
+                                    } else {
+                                        hf.loaderHide();
+                                    }
+                                    if (res.alerts !== undefined) {
+                                        for (var m in res.alerts) {
+                                            var message = res.alerts[m];
+                                            form.find('.alerts').append($('<div>').addClass('alert alert-' + message.type).html(message.text));
+                                        }
+                                        hf.loaderHide();
+                                    }
+                                    if (res.run !== undefined) {
+                                        var runFunc = new Function('form', res.run);
+                                        runFunc.call(null, hf);
+                                        hf.loaderHide();
+                                    }
+                                }, 1);
+                            }
+                        },
+                        error: function () {
+                            hf.loaderHide();
+                            form.find('.alerts').append($('<div>').addClass('alert alert-danger').html(hf.errorText));
+                        }
+                    });
+                }
+            }
+            return false;
+        };
+
+        hf.loaderShow = function () {
+            form.find('.loader').show();
+        };
+        hf.loaderHide = function () {
+            form.find('.loader').hide();
+        };
+
+        hf.submit = function () {
+            submit();
+        };
+
+        hf.getValues = function () {
+            return getValues();
+        };
+
+        var init = function () {
+            form.addClass('loader-container').append('<div class="loader"></div>');
+            form.attr('data-hex-block', '');
+            form.on('submit', submit);
+            form.on('reset', reset);
+            if (form.find('.loader').size() === 0) {
+                form.append('<div class="loader"></div>');
+            }
+
+            if (form.data('datatype') !== undefined) {
+                dataType = form.data('datatype');
+            }
+
+
+            hf.root = new h.Block(form);
+
+            var ctrls = hf.root.getAllControls(false);
+
+            var errorsText = '<b>'+hf.invalidText+'</b><br>';
+            for (var i in ctrls) {
+                var c = ctrls[i];
+                var em = c.getErrorsMessages();
+                for (var j in em) {
+                    errorsText += '<div class="hide" data-hex-error-element="' + c.getName() + '" data-hex-error-name="' + j + '">' + em[j] + '</div>';
+                }
+            }
+            form.find('.alerts').after('<div class="alert alert-danger hide" data-hex-form-errors>' + errorsText + '</div>');
+        };
+
+        init();
+        return hf;
+    }
+
+    h.form = function (id) {
+        if (id === undefined) {
+            var forms = $('form.hex-form');
+            forms.each(function () {
+                var formId = $(this).attr('id');
+                if (formId === undefined) {
+                    throw new Error('Form dont have id attr');
+                } else {
+                    if (hexForms[formId] === undefined) {
+                        hexForms[formId] = new HexForm(formId);
+                    }
+                }
+            });
         } else {
-          if (hexForms[formId] === undefined) {
-            hexForms[formId] = new HexForm(formId);
-          }
+            if (hexForms[id] === undefined) {
+                hexForms[id] = new HexForm(id);
+            }
+            return hexForms[id];
         }
-      });
-    } else {
-      if (hexForms[id] === undefined) {
-        hexForms[id] = new HexForm(id);
-      }
-      return hexForms[id];
-    }
-    return hexForms;
-  };
+        return hexForms;
+    };
 
-  h.remove = function (formId) {
-    if (hexForms[formId] !== undefined) {
-      hexForms[formId] = undefined;
-    }
-  };
+    h.remove = function (formId) {
+        if (hexForms[formId] !== undefined) {
+            hexForms[formId] = undefined;
+        }
+    };
 
-  $(document).ready(function () {
-    h.form();
-  });
+    $(document).ready(function () {
+        h.form();
+    });
 
-  return h;
+    return h;
 }(hex));
 
