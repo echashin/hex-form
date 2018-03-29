@@ -4009,6 +4009,7 @@ var hex = (function (h) {
             event.preventDefault();
             event.stopPropagation();
             var data = getValues();
+            formData = new FormData();
             var dontBreakBeforeValidation = hf.trigger('beforeValidation', {values: data});
             if (!dontBreakBeforeValidation) {
                 return false;
